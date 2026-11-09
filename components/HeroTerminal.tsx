@@ -23,11 +23,12 @@ export default function HeroTerminal() {
         clearInterval(timer);
         return;
       }
-      const text = LINES[line].text;
+      const item = LINES[line];
+      const text = item.text;
       char += 1;
       setCurrent(text.slice(0, char));
       if (char >= text.length) {
-        setDone((prev) => [...prev, LINES[line]]);
+        setDone((prev) => [...prev, item]);
         setCurrent("");
         line += 1;
         char = 0;
@@ -48,7 +49,7 @@ export default function HeroTerminal() {
         </span>
       </div>
       <div className="p-5 font-mono text-sm leading-7 min-h-[220px]">
-        {done.map((l, i) => (
+        {done.filter(Boolean).map((l, i) => (
           <div key={i} className={l.type === "cmd" ? "text-cyan-300" : "text-emerald-300"}>
             {l.type === "cmd" && <span className="text-slate-500 select-none">$ </span>}
             {l.text}
