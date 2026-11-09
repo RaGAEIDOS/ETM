@@ -68,6 +68,23 @@ export const stageMetas: StageMeta[] = [
           { name: "Git Documentation", url: "https://git-scm.com/doc" },
         ],
       },
+      {
+        id: "elzero-fundamentals",
+        title: "أساسيات البرمجة مع C++ — مسار الزيرو",
+        titleEn: "Fundamentals Of Programming With C++ — ElZero Track",
+        description:
+          "مسار مرافق لقناة الزيرو (فيديوهات #001 لحد #078): المتغيرات، الأنواع، العوامل، If و Switch، المصفوفات، الحلقات، الدوال، Vector والمؤشرات — بأمثلة وتتبع مصطلحات وأمثلة شغالة.",
+        sources: [
+          {
+            name: "ElZero Web School — Fundamentals Of Programming With C++",
+            url: "https://www.youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS",
+          },
+          {
+            name: "قائمة الفيديوهات والجدول الرسمي",
+            url: "https://github.com/ElzeroWebSchool/Fundamentals_Of_Programming",
+          },
+        ],
+      },
     ],
   },
   {
