@@ -120,8 +120,8 @@ export default function HomePage() {
         <div className="absolute -top-40 right-1/4 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px]" />
         <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-20 lg:pt-24 lg:pb-28">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pt-24 lg:pb-28">
+          <div className="grid items-center gap-10 lg:gap-12 lg:grid-cols-2">
             <div>
               <Reveal>
                 <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-semibold text-cyan-300">
@@ -130,7 +130,7 @@ export default function HomePage() {
                 </span>
               </Reveal>
               <Reveal delay={100}>
-                <h1 className="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.25] text-white">
+                <h1 className="mt-6 text-[1.9rem] leading-[1.4] sm:text-5xl lg:text-6xl font-black text-white">
                   تعلّم البرمجة من{" "}
                   <span className="gradient-text">الصفر</span>
                   <br />
@@ -185,7 +185,7 @@ export default function HomePage() {
               </Reveal>
             </div>
 
-            <Reveal delay={200} className="hidden lg:block">
+            <Reveal delay={200}>
               <div className="animate-float">
                 <HeroTerminal />
               </div>

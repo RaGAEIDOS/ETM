@@ -22,7 +22,7 @@ export default function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex min-h-16 items-center justify-between py-2">
           <Link href="/" className="flex items-center gap-2.5 group">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
               <Terminal className="h-5 w-5" strokeWidth={2.5} />
@@ -60,15 +60,16 @@ export default function SiteHeader() {
           <div className="flex items-center gap-2">
             <Link
               href="/curriculum"
-              className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
             >
-              <Flame className="h-4 w-4" />
-              ابدأ الرحلة
+              <Flame className="h-4 w-4 shrink-0" />
+              <span className="whitespace-nowrap">ابدأ الرحلة</span>
             </Link>
             <button
               onClick={() => setOpen(!open)}
-              className="lg:hidden p-2 rounded-lg text-slate-300 hover:bg-white/5"
+              className="lg:hidden p-2.5 rounded-lg text-slate-300 hover:bg-white/5 min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="القائمة"
+              aria-expanded={open}
             >
               {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -77,7 +78,7 @@ export default function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="lg:hidden border-t border-white/5 bg-ink-900/95 px-4 py-3 space-y-1">
+        <nav className="lg:hidden border-t border-white/5 bg-ink-900/95 px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
           {NAV.map((item) => {
             const active =
               item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -86,7 +87,7 @@ export default function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`block px-3 py-2.5 rounded-lg text-sm font-semibold ${
+                className={`block px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center ${
                   active
                     ? "text-cyan-300 bg-cyan-500/10"
                     : "text-slate-300 hover:bg-white/5"

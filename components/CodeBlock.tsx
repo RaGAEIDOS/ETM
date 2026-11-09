@@ -98,26 +98,28 @@ export default function CodeBlock({
         <div className="flex items-center gap-1.5">
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] justify-center"
+            aria-label="نسخ الكود"
           >
             {copied ? (
-              <Check className="h-3.5 w-3.5 text-emerald-400" />
+              <Check className="h-4 w-4 text-emerald-400" />
             ) : (
-              <Copy className="h-3.5 w-3.5" />
+              <Copy className="h-4 w-4" />
             )}
             <span className="hidden sm:inline">{copied ? "تم النسخ" : "نسخ"}</span>
           </button>
           <Link
             href={`/playground?code=${encodeURIComponent(code)}`}
-            className="flex items-center gap-1.5 rounded-lg bg-cyan-500/10 px-2.5 py-1.5 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition-colors"
+            className="flex items-center gap-1.5 rounded-lg bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition-colors min-h-[44px] min-w-[44px] justify-center"
+            aria-label="تشغيل في الملعب"
           >
-            <Play className="h-3.5 w-3.5" />
+            <Play className="h-4 w-4" />
             <span className="hidden sm:inline">تشغيل</span>
           </Link>
         </div>
       </div>
 
-      <div className="code-scroll overflow-x-auto p-4 text-sm leading-6">
+      <div className="code-scroll overflow-x-auto p-3 sm:p-4 text-[12.5px] sm:text-sm leading-6">
         {isHighlighted ? (
           <SyntaxHighlighter
             language={lang}

@@ -238,7 +238,7 @@ export default function Playground() {
           <button
             onClick={run}
             disabled={compiling}
-            className="flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90 disabled:opacity-50 transition-opacity"
+            className="flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-3 sm:py-2.5 text-sm font-bold text-ink-950 hover:opacity-90 disabled:opacity-50 transition-opacity min-h-[48px]"
           >
             {compiling ? (
               <Loader2 className="h-4 w-4 animate-spin" />

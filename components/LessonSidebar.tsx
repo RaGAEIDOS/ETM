@@ -40,7 +40,7 @@ export default function LessonSidebar({
             {done} من {course.lessons.length} درس مكتمل
           </p>
         </div>
-        <nav className="max-h-[60vh] overflow-y-auto p-2">
+        <nav className="max-h-[40vh] lg:max-h-[60vh] overflow-y-auto p-2">
           {course.lessons.map((lesson, i) => {
             const active = lesson.id === currentLessonId;
             const completed = isDone(lesson.id);

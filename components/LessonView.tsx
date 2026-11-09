@@ -60,14 +60,16 @@ export default function LessonView({
       </nav>
 
       <div className="grid gap-8 lg:grid-cols-[320px_1fr]">
-        <LessonSidebar
-          stageId={stage.id}
-          course={course}
-          currentLessonId={lesson.id}
-          isDone={isDone}
-        />
+        <div className="order-2 lg:order-1">
+          <LessonSidebar
+            stageId={stage.id}
+            course={course}
+            currentLessonId={lesson.id}
+            isDone={isDone}
+          />
+        </div>
 
-        <article className="min-w-0">
+        <article className="min-w-0 order-1 lg:order-2">
           {/* Header */}
           <header>
             <div className="flex flex-wrap items-center gap-2">
@@ -100,7 +102,7 @@ export default function LessonView({
             {lesson.sections.map((section, i) => (
               <section
                 key={i}
-                className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 sm:p-8"
+                className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-8"
               >
                 {section.heading && (
                   <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
