@@ -4,12 +4,51 @@ import { useCallback, useEffect, useState } from "react";
 import type { Lesson, Stage } from "./types";
 
 const STORAGE_KEY = "etm-progress-v1";
+const SESSION_KEY = "etm-auth-session-v1";
 
 export type ProgressMap = Record<string, boolean>;
+
+function currentUserId(): string | null {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    const u = JSON.parse(raw) as { id?: string };
+    return u.id || null;
+  } catch {
+    return null;
+  }
+}
+
+function userProgressKey(userId: string) {
+  return `etm-progress-${userId}`;
+}
+
+function readUserProgress(userId: string): ProgressMap {
+  try {
+    const raw = localStorage.getItem(userProgressKey(userId));
+    return raw ? (JSON.parse(raw) as ProgressMap) : {};
+  } catch {
+    return {};
+  }
+}
 
 export function loadProgress(): ProgressMap {
   if (typeof window === "undefined") return {};
   try {
+    const uid = currentUserId();
+    if (uid) {
+      const fromUser = readUserProgress(uid);
+      // دمج السحابة (المستخدم) مع المحلي - السحابة لها الأولوية لكن مفيش حذف
+      const guest = (() => {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? (JSON.parse(raw) as ProgressMap) : {};
+        } catch {
+          return {};
+        }
+      })();
+      return { ...guest, ...fromUser };
+    }
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return {};
     return JSON.parse(raw) as ProgressMap;
@@ -22,9 +61,29 @@ export function saveProgress(map: ProgressMap) {
   if (typeof window === "undefined") return;
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    const uid = currentUserId();
+    if (uid) {
+      localStorage.setItem(userProgressKey(uid), JSON.stringify(map));
+      // تحديث وقت المزامنة (sync)
+      localStorage.setItem(
+        `etm-lastsync-${uid}`,
+        new Date().toISOString()
+      );
+    }
   } catch {
     // ignore quota errors
   }
+}
+
+export function saveElzeroProgress(videoId: string, done: boolean) {
+  const map = loadProgress();
+  if (done) map[`elzero-${videoId}`] = true;
+  else delete map[`elzero-${videoId}`];
+  saveProgress(map);
+}
+
+export function isElzeroDone(videoId: string): boolean {
+  return Boolean(loadProgress()[`elzero-${videoId}`]);
 }
 
 export function countCompleted(map: ProgressMap, lessons: Lesson[]) {
