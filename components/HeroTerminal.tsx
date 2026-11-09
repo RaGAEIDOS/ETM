@@ -50,15 +50,31 @@ export default function HeroTerminal() {
       </div>
       <div className="p-5 font-mono text-sm leading-7 min-h-[220px]">
         {done.filter(Boolean).map((l, i) => (
-          <div key={i} className={l.type === "cmd" ? "text-cyan-300" : "text-emerald-300"}>
-            {l.type === "cmd" && <span className="text-slate-500 select-none">$ </span>}
-            {l.text}
+          <div
+            key={i}
+            dir={l.type === "cmd" ? "ltr" : "auto"}
+            className={
+              l.type === "cmd"
+                ? "text-cyan-300 text-left"
+                : "text-emerald-300 text-left"
+            }
+          >
+            {l.type === "cmd" && (
+              <span className="text-slate-500 select-none" dir="ltr">
+                ${" "}
+              </span>
+            )}
+            <bdi>{l.text}</bdi>
           </div>
         ))}
-        <div className="text-cyan-300">
-          <span className="text-slate-500 select-none">$ </span>
-          {current}
-          <span className="inline-block w-2 h-4 bg-cyan-300 align-middle animate-pulse" />
+        <div className="text-cyan-300 flex items-start gap-1" dir="auto">
+          <span className="text-slate-500 select-none shrink-0" dir="ltr">
+            $ {" "}
+          </span>
+          <span className="min-w-0 break-words">
+            <bdi>{current}</bdi>
+            <span className="inline-block w-2 h-4 bg-cyan-300 align-middle animate-pulse" />
+          </span>
         </div>
       </div>
     </div>

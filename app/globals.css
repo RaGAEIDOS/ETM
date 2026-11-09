@@ -208,6 +208,30 @@ input, textarea, select, button {
   direction: ltr;
 }
 
+/* ---------- Bidi fixes (Arabic <-> English) ---------- */
+.markdown code {
+  unicode-bidi: isolate;
+}
+
+.markdown pre,
+.code-scroll pre {
+  unicode-bidi: plaintext;
+}
+
+.code-scroll .token {
+  unicode-bidi: plaintext;
+}
+
+kbd {
+  unicode-bidi: isolate;
+}
+
+/* Program output: detect direction per line (Arabic vs English errors) */
+.output-pre {
+  unicode-bidi: plaintext;
+  text-align: start;
+}
+
 /* ---------- Prism syntax tokens ---------- */
 .token.comment,
 .token.prolog,

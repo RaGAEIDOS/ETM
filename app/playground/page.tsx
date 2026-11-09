@@ -18,8 +18,9 @@ export default function PlaygroundPage() {
           اكتب. ترجم. <span className="gradient-text">شغّل.</span>
         </h1>
         <p className="mt-4 text-lg text-slate-400 leading-8">
-          مترجم C++ حقيقي في المتصفح — من غير تثبيت أي حاجة. جرّب كل أمثلة
-          الدروس، أو اكتب كودك الخاص.
+          مترجم <bdi dir="ltr" className="font-mono text-cyan-300">C++</bdi>
+          حقيقي في المتصفح — من غير تثبيت أي حاجة. جرّب كل أمثلة الدروس، أو
+          اكتب كودك الخاص.
         </p>
       </div>
 

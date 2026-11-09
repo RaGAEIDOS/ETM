@@ -91,7 +91,10 @@ export default function CodeBlock({
             <span className="h-3 w-3 rounded-full bg-amber-400/70" />
             <span className="h-3 w-3 rounded-full bg-emerald-400/70" />
           </span>
-          <span className="text-xs font-mono text-slate-400 truncate">
+          <span
+            className="text-xs text-slate-400 truncate"
+            dir="auto"
+          >
             {title || LANG_LABEL[lang] || language}
           </span>
         </div>

@@ -181,6 +181,8 @@ export default function Playground() {
               }}
               className="rounded-lg bg-white/5 border border-white/10 px-2 py-1.5 text-xs text-slate-300 outline-none"
               defaultValue=""
+              dir="rtl"
+              aria-label="أمثلة جاهزة"
             >
               <option value="" disabled>
                 أمثلة جاهزة
@@ -232,12 +234,14 @@ export default function Playground() {
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-white/5 bg-white/[0.03] px-4 py-3">
-          <span className="text-xs text-slate-500">
-            {code.split("\n").length} سطر · {code.length} حرف
+          <span className="text-xs text-slate-500" dir="rtl">
+            {code.split("\n").length} <bdi>سطر</bdi> · {code.length}{" "}
+            <bdi>حرف</bdi>
           </span>
           <button
             onClick={run}
             disabled={compiling}
+            dir="rtl"
             className="flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-3 sm:py-2.5 text-sm font-bold text-ink-950 hover:opacity-90 disabled:opacity-50 transition-opacity min-h-[48px]"
           >
             {compiling ? (
@@ -252,21 +256,31 @@ export default function Playground() {
 
       {/* Output */}
       <div className="flex flex-col gap-4">
-        <div className="flex-1 rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden" dir="ltr">
+        <div className="flex-1 rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
           <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
             <Terminal className="h-4 w-4 text-emerald-400" />
-            <span className="text-xs font-mono text-slate-400">المخرجات</span>
+            <span className="text-xs text-slate-400">المخرجات</span>
           </div>
-          <div className="p-4 font-mono text-sm leading-7 min-h-[200px] max-h-[360px] overflow-auto code-scroll">
+          <div className="p-4 font-mono text-sm leading-7 min-h-[200px] max-h-[360px] overflow-auto">
             {error ? (
-              <div className="flex items-start gap-2 text-rose-300">
+              <div
+                className="flex items-start gap-2 text-rose-300"
+                dir="auto"
+              >
                 <AlertTriangle className="h-4 w-4 mt-1 shrink-0" />
-                <pre className="whitespace-pre-wrap">{error}</pre>
+                <pre className="whitespace-pre-wrap output-pre break-words">
+                  {error}
+                </pre>
               </div>
             ) : output ? (
-              <pre className="whitespace-pre-wrap text-emerald-200">{output}</pre>
+              <pre
+                dir="auto"
+                className="whitespace-pre-wrap text-emerald-200 output-pre break-words"
+              >
+                {output}
+              </pre>
             ) : (
-              <span className="text-slate-600">
+              <span className="text-slate-600" dir="rtl">
                 اضغط &quot;تشغيل&quot; لرؤية ناتج البرنامج هنا...
               </span>
             )}
