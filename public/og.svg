@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05070f"/>
+      <stop offset="1" stop-color="#0a0f1e"/>
+    </linearGradient>
+    <linearGradient id="t" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="60" y="60" width="1080" height="510" rx="28" fill="none" stroke="url(#t)" stroke-width="3"/>
+  <text x="600" y="250" text-anchor="middle" font-family="Segoe UI, Arial" font-size="90" font-weight="bold" fill="#ffffff">ETM</text>
+  <text x="600" y="350" text-anchor="middle" font-family="Segoe UI, Arial" font-size="44" fill="#94a3b8">تعلّم البرمجة من الصفر إلى بناء نظام تشغيل</text>
+  <text x="600" y="430" text-anchor="middle" font-family="Segoe UI, Arial" font-size="34" font-weight="bold" fill="url(#t)">لغة C++ — منهج OSSU بالعربية</text>
+</svg>

@@ -1,0 +1,210 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink-950 text-slate-300 font-sans antialiased;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(34, 211, 238, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(139, 92, 246, 0.06), transparent);
+  background-attachment: fixed;
+}
+
+::selection {
+  @apply bg-cyan-500/30 text-white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0f1e;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ---------- Markdown / Lesson content ---------- */
+.markdown {
+  @apply text-slate-300 leading-8 text-[1.05rem];
+}
+
+.markdown p {
+  @apply my-4;
+}
+
+.markdown strong {
+  @apply text-white font-bold;
+}
+
+.markdown em {
+  @apply text-cyan-300;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  @apply text-white font-bold mt-8 mb-4;
+  scroll-margin-top: 90px;
+}
+
+.markdown h1 {
+  @apply text-3xl border-b border-white/10 pb-3;
+}
+.markdown h2 {
+  @apply text-2xl;
+}
+.markdown h3 {
+  @apply text-xl text-cyan-300;
+}
+.markdown h4 {
+  @apply text-lg;
+}
+
+.markdown ul {
+  @apply list-disc pr-6 my-4 space-y-2;
+}
+.markdown ol {
+  @apply list-decimal pr-6 my-4 space-y-2;
+}
+.markdown li {
+  @apply leading-7;
+}
+.markdown li::marker {
+  @apply text-cyan-400;
+}
+
+.markdown code {
+  @apply font-mono text-[0.85em] bg-white/[0.07] text-cyan-200 px-1.5 py-0.5 rounded-md border border-white/10;
+  direction: ltr;
+  display: inline-block;
+}
+
+.markdown pre {
+  @apply bg-transparent p-0 m-0;
+}
+
+.markdown pre code {
+  @apply bg-transparent border-0 p-0 text-inherit;
+  display: block;
+}
+
+.markdown blockquote {
+  @apply border-r-4 border-cyan-500/60 bg-cyan-500/[0.06] rounded-lg px-5 py-4 my-6 text-slate-200;
+}
+
+.markdown blockquote p {
+  @apply my-1;
+}
+
+.markdown a {
+  @apply text-cyan-400 hover:text-cyan-300 underline decoration-cyan-500/40 hover:decoration-cyan-300 transition-colors;
+}
+
+.markdown table {
+  @apply w-full border-collapse my-6 text-sm overflow-hidden rounded-xl;
+}
+
+.markdown thead {
+  @apply bg-white/[0.06];
+}
+
+.markdown th {
+  @apply px-4 py-3 text-right text-white font-bold border-b border-white/10;
+}
+
+.markdown td {
+  @apply px-4 py-2.5 border-b border-white/5 text-slate-300;
+}
+
+.markdown hr {
+  @apply my-8 border-white/10;
+}
+
+.markdown img {
+  @apply rounded-xl border border-white/10 my-6;
+}
+
+/* ---------- Utilities ---------- */
+.glass {
+  @apply bg-white/[0.04] backdrop-blur-xl border border-white/10;
+}
+
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-l from-cyan-300 via-sky-400 to-violet-400;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(to left, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+.glow-cyan {
+  box-shadow: 0 0 40px -10px rgba(34, 211, 238, 0.5);
+}
+
+.code-scroll {
+  direction: ltr;
+}
+
+/* ---------- Prism syntax tokens ---------- */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #64748b;
+  font-style: italic;
+}
+.token.keyword,
+.token.directive,
+.token.important {
+  color: #c084fc;
+}
+.token.string,
+.token.char,
+.token.regex {
+  color: #86efac;
+}
+.token.number,
+.token.boolean,
+.token.constant {
+  color: #fbbf24;
+}
+.token.function,
+.token.title {
+  color: #22d3ee;
+}
+.token.class-name,
+.token.type,
+.token.macro,
+.token.namespace {
+  color: #f472b6;
+}
+.token.operator,
+.token.punctuation {
+  color: #94a3b8;
+}
+.token.property,
+.token.attr-name,
+.token.variable {
+  color: #7dd3fc;
+}
+.token.preprocessor {
+  color: #f472b6;
+}
