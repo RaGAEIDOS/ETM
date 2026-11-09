@@ -8,3 +8,5 @@ dist
 *.err
 .DS_Store
 Thumbs.db
+tsconfig.tsbuildinfo
+*.tsbuildinfo
