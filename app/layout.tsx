@@ -4,6 +4,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://etm-learning.vercel.app"),
   title: {
     default: "ETM | تعلّم البرمجة من الصفر إلى الاحتراف بلغة C++",
     template: "%s | ETM",
