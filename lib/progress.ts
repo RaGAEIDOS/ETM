@@ -143,3 +143,37 @@ export function useProgress() {
 
   return { map, ready, toggle, isDone, reset };
 }
+
+/**
+ * English-track progress keys: `eng-${courseId}-${videoId}`.
+ * Playlists from the @ZAmericanEnglish channel start each at 001, so the
+ * course id is required to keep keys unique across tracks. Mirrors the ElZero
+ * convention (`elzero-${videoId}`).
+ */
+export function saveEnglishProgress(courseId: string, videoId: string, done: boolean) {
+  const map = loadProgress();
+  if (done) {
+    map[`eng-${courseId}-${videoId}`] = true;
+    recordActivityDay();
+  } else {
+    delete map[`eng-${courseId}-${videoId}`];
+  }
+  saveProgress(map);
+}
+
+export function isEnglishDone(courseId: string, videoId: string): boolean {
+  return Boolean(loadProgress()[`eng-${courseId}-${videoId}`]);
+}
+
+export function englishVideoCompletion(
+  map: ProgressMap,
+  courseId: string,
+  total: number
+) {
+  const done = Object.keys(map).filter((k) => k.startsWith(`eng-${courseId}-`)).length;
+  return {
+    done,
+    total,
+    percent: total === 0 ? 0 : Math.round((done / total) * 100),
+  };
+}

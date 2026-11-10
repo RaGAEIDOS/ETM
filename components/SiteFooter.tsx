@@ -39,6 +39,7 @@ export default function SiteFooter() {
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">Curriculum</Link></li>
               <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">ElZero Videos</Link></li>
+              <li><Link href="/english" className="hover:text-cyan-300 transition-colors">English Track</Link></li>
               <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">C++ Playground</Link></li>
               <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">Projects</Link></li>
               <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">Glossary</Link></li>

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { stages } from "@/lib/data";
+import { englishCourses } from "@/lib/english-videos";
 
 const BASE_URL = "https://etm.vercel.app";
 
@@ -11,6 +12,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/glossary`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/projects`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/sources`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/books`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${BASE_URL}/english`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE_URL}/books`, changeFrequency: "monthly", priority: 0.6 },
   ];
 
@@ -33,6 +36,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: 0.5,
         });
       });
+    });
+  });
+
+  // English track
+  englishCourses.forEach((course) => {
+    entries.push({
+      url: `${BASE_URL}/english/${course.id}`,
+      changeFrequency: "weekly",
+      priority: 0.8,
     });
   });
 

@@ -9,14 +9,15 @@ import Pomodoro from "@/components/Pomodoro";
 export const metadata: Metadata = {
   metadataBase: new URL("https://etm-learning.vercel.app"),
   title: {
-    default: "ETM — Learn C++ from Zero to Expert",
+    default: "ETM — Learn programming from Zero to Expert",
     template: "%s | ETM",
   },
   description:
-    "ETM (Education Technology Miku) is a free Arabic platform for learning C++ from absolute zero to building an operating system and a game engine. A complete OSSU-based curriculum, interactive playground, projects, and an AI study buddy.",
+    "ETM (Education Technology Miku) is a free Arabic platform for learning modern programming from absolute zero: C++, computer-science fundamentals, and English for developers. A curriculum, playground, projects, and Miku as your study buddy.",
   keywords: [
     "learn programming",
     "learn C++",
+    "learn English",
     "C++ tutorial",
     "OSSU",
     "programming from scratch",
@@ -24,15 +25,15 @@ export const metadata: Metadata = {
     "operating system",
     "ETM",
     "Miku",
-    "C++ mastery",
+    "mastery",
   ],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "ETM — Education Technology Miku | Learn C++ from Zero to Expert",
+    title: "ETM — Education Technology Miku | Learn programming from Zero to Expert",
     description:
-      "A free Arabic platform for learning C++ from zero to building an operating system and a game engine — full OSSU curriculum, interactive playground, real projects, and Miku as your study buddy.",
+      "A free Arabic platform for learning programming from zero — full curriculum, interactive playground, real projects, and Miku as your study buddy.",
     type: "website",
     locale: "ar_EG",
     images: [{ url: "/og.svg", width: 1200, height: 630 }],
