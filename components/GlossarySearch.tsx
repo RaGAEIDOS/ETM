@@ -75,13 +75,13 @@ export default function GlossarySearch() {
                 <span className="font-mono font-bold text-cyan-300" dir="ltr">
                   {t.en}
                 </span>
-                <span className="mr-2 text-lg font-bold text-white">{t.ar}</span>
+                <span className="mr-2 text-lg font-bold text-white" dir="rtl">{t.ar}</span>
               </div>
               <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-500">
                 {t.category}
               </span>
             </div>
-            <p className="mt-2 text-sm text-slate-400 leading-6">{t.description}</p>
+            <p className="mt-2 text-sm text-slate-400 leading-6" dir="rtl">{t.description}</p>
           </div>
         ))}
       </div>

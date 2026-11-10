@@ -45,8 +45,8 @@ export default function ElzeroVideoPage({
     idx >= 0 && idx < elzeroVideos.length - 1 ? elzeroVideos[idx + 1] : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
-      <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6">
+    <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10" dir="rtl">
+      <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6" dir="ltr">
         <Link href="/elzero" className="hover:text-cyan-300 transition-colors">
           ElZero Videos
         </Link>

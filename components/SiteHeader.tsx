@@ -20,6 +20,8 @@ export default function SiteHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const { user, ready } = useAuth();
+  // Guest-only marketing landing: no app navigation tabs at all
+  const bare = pathname === "/landing";
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
@@ -37,27 +39,29 @@ export default function SiteHeader() {
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1">
-            {NAV.map((item) => {
-              const active =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                    active
-                      ? "text-cyan-300 bg-cyan-500/10"
-                      : "text-slate-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          {!bare && (
+            <nav className="hidden lg:flex items-center gap-1">
+              {NAV.map((item) => {
+                const active =
+                  item.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                      active
+                        ? "text-cyan-300 bg-cyan-500/10"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
 
           <div className="flex items-center gap-2">
             {ready && user ? (
@@ -89,26 +93,30 @@ export default function SiteHeader() {
                 <span className="whitespace-nowrap">Sign in</span>
               </Link>
             )}
-            <Link
-              href="/curriculum"
-              className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
-            >
-              <Flame className="h-4 w-4 shrink-0" />
-              <span className="whitespace-nowrap">Start</span>
-            </Link>
-            <button
-              onClick={() => setOpen(!open)}
-              className="lg:hidden p-2.5 rounded-lg text-slate-300 hover:bg-white/5 min-h-[44px] min-w-[44px] flex items-center justify-center"
-              aria-label="Menu"
-              aria-expanded={open}
-            >
-              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+            {!bare && (
+              <Link
+                href="/curriculum"
+                className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
+              >
+                <Flame className="h-4 w-4 shrink-0" />
+                <span className="whitespace-nowrap">Start</span>
+              </Link>
+            )}
+            {!bare && (
+              <button
+                onClick={() => setOpen(!open)}
+                className="lg:hidden p-2.5 rounded-lg text-slate-300 hover:bg-white/5 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Menu"
+                aria-expanded={open}
+              >
+                {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {open && (
+      {open && !bare && (
         <nav className="lg:hidden border-t border-white/5 bg-ink-900/95 px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
           {NAV.map((item) => {
             const active =

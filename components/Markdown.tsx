@@ -6,7 +6,7 @@ import CodeBlock from "./CodeBlock";
 
 export default function Markdown({ content }: { content: string }) {
   return (
-    <div className="markdown">
+    <div className="markdown" dir="rtl">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

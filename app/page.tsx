@@ -1,4 +1,9 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth";
 import {
   BookOpen,
   Code2,
@@ -150,6 +155,24 @@ const FAQS = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+  const { user, ready } = useAuth();
+
+  // Landing page for logged-in users only — guests are redirected to /landing
+  useEffect(() => {
+    if (ready && !user) router.replace("/landing");
+  }, [ready, user, router]);
+
+  if (!ready) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-slate-400">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
   const lessonCount = totalLessons();
   const courseCount = totalCourses();
 

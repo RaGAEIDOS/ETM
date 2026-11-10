@@ -69,7 +69,7 @@ export default function LessonView({
           />
         </div>
 
-        <article className="min-w-0 order-1 lg:order-2">
+        <article className="min-w-0 order-1 lg:order-2" dir="rtl">
           {/* Header */}
           <header>
             <div className="flex flex-wrap items-center gap-2">

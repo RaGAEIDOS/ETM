@@ -38,6 +38,10 @@ export const ONBOARDING_STEPS: MikuTip[] = [
 ];
 
 export const PAGE_TIPS: Record<string, MikuTip> = {
+  "/landing": {
+    title: "Welcome to ETM! 🎉",
+    body: "This is the main landing of the platform — the big idea: learn C++ from zero to building an operating system and a game engine, with Miku as your study buddy.",
+  },
   "/": {
     title: "أهلاً بيك في ETM 👋",
     body: "دي الصفحة الرئيسية. لو عايز تبدأ بسرعة اضغط Start، أو روح الـ Dashboard تشوف وصلت فين.",
@@ -108,6 +112,7 @@ export const ENCOURAGEMENTS = [
 ];
 
 export function tipForPath(pathname: string): MikuTip {
+  if (pathname.startsWith("/landing")) return PAGE_TIPS["/landing"];
   if (pathname.startsWith("/learn")) return PAGE_TIPS["/learn"];
   if (pathname.startsWith("/playground")) return PAGE_TIPS["/playground"];
   if (pathname.startsWith("/elzero")) return PAGE_TIPS["/elzero"];

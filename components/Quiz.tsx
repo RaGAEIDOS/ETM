@@ -20,7 +20,7 @@ export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
   const reset = () => setAnswers({});
 
   return (
-    <div className="my-8">
+    <div className="my-8" dir="rtl">
       <div className="flex items-center justify-between mb-5">
         <h3 className="flex items-center gap-2 text-xl font-bold text-white">
           <HelpCircle className="h-5 w-5 text-cyan-400" />
@@ -52,7 +52,7 @@ export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
               className="rounded-xl border border-white/10 bg-white/[0.03] p-5"
             >
               <p className="font-semibold text-white mb-4 leading-7">
-                <span className="text-cyan-400 font-mono ml-1">{qi + 1}.</span>
+                <span className="text-cyan-400 font-mono ms-1">{qi + 1}.</span>
                 {q.question}
               </p>
               <div className="space-y-2.5">

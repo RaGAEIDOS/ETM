@@ -85,6 +85,8 @@ input, textarea, select, button {
 /* ---------- Markdown / Lesson content ---------- */
 .markdown {
   @apply text-slate-300 leading-8 text-[1.05rem];
+  direction: rtl;
+  text-align: start;
 }
 
 .markdown p {
