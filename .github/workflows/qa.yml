@@ -1,0 +1,56 @@
+name: QA
+
+on:
+  pull_request:
+  push:
+    branches: [main, fix/qa-pass]
+
+concurrency:
+  group: qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    name: Lint, types, content and E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      # Node 22 is required: test:content uses --experimental-strip-types (Node >= 22.6).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Content validation
+        run: npm run test:content
+
+      - name: Build
+        run: npm run build
+
+      - name: Install E2E browser
+        run: npx playwright install --with-deps chromium
+
+      # Chromium desktop is the CI gate. The WebKit/Safari project is kept local
+      # (see docs/QA_REPORT.md) because of runner flakiness; artifact is uploaded
+      # for debugging when a failure occurs.
+      - name: E2E (chromium-desktop)
+        run: npx playwright test --project=chromium-desktop
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
