@@ -85,7 +85,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 <h2 className="text-lg font-black text-white" dir="rtl">
                   {ONBOARDING_STEPS[step].title}
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-300">
                   Miku · step {step + 1} of {ONBOARDING_STEPS.length}
                 </p>
               </div>

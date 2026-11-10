@@ -122,7 +122,7 @@ export default function CodeBlock({
         </div>
       </div>
 
-      <div className="code-scroll overflow-x-auto p-3 sm:p-4 text-[12.5px] sm:text-sm leading-6">
+      <div tabIndex={0} role="region" aria-label="Code snippet" className="code-scroll overflow-x-auto p-3 sm:p-4 text-[12.5px] sm:text-sm leading-6">
         {isHighlighted ? (
           <SyntaxHighlighter
             language={lang}
@@ -132,6 +132,7 @@ export default function CodeBlock({
               background: "transparent",
               margin: 0,
               padding: 0,
+              overflow: "visible",
               fontFamily: "Fira Code, JetBrains Mono, Consolas, monospace",
               fontSize: "0.875rem",
             }}
