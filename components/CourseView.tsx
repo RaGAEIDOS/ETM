@@ -44,9 +44,9 @@ export default function CourseView({
             {course.lessons.reduce((sum, l) => sum + (parseInt(l.duration) || 0), 0)} min of learning
           </span>
         </div>
-        <h1 className="mt-4 text-3xl sm:text-4xl font-black text-white">{course.title}</h1>
+        <h1 className="mt-4 text-3xl sm:text-4xl font-black text-white" dir="rtl">{course.title}</h1>
         <p className="mt-1 text-sm font-mono text-slate-500" dir="ltr">{course.titleEn}</p>
-        <p className="mt-4 text-lg text-slate-300 leading-8 max-w-3xl">{course.description}</p>
+        <p className="mt-4 text-lg text-slate-300 leading-8 max-w-3xl" dir="rtl">{course.description}</p>
 
         <div className="mt-6 flex items-center gap-4">
           <div className="h-2 flex-1 max-w-xs rounded-full bg-white/10 overflow-hidden">
@@ -99,10 +99,10 @@ export default function CourseView({
                 {completed ? <CheckCircle2 className="h-5 w-5" /> : i + 1}
               </span>
               <span className="flex-1 min-w-0">
-                <span className="block font-bold text-white group-hover:text-cyan-300 transition-colors">
+                <span className="block font-bold text-white group-hover:text-cyan-300 transition-colors" dir="rtl">
                   {lesson.title}
                 </span>
-                <span className="mt-0.5 block text-sm text-slate-500 leading-6 line-clamp-1">
+                <span className="mt-0.5 block text-sm text-slate-500 leading-6 line-clamp-1" dir="rtl">
                   {lesson.description}
                 </span>
               </span>

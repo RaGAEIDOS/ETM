@@ -82,7 +82,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-3">
               <MikuAvatar size={56} />
               <div className="flex-1">
-                <h2 className="text-lg font-black text-white">
+                <h2 className="text-lg font-black text-white" dir="rtl">
                   {ONBOARDING_STEPS[step].title}
                 </h2>
                 <p className="text-xs text-slate-500">
@@ -90,7 +90,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 </p>
               </div>
             </div>
-            <p className="mt-4 min-h-[84px] text-slate-300 leading-7">
+            <p className="mt-4 min-h-[84px] text-slate-300 leading-7" dir="rtl">
               {ONBOARDING_STEPS[step].body}
             </p>
             <div className="mt-5 flex items-center justify-between gap-3">
@@ -147,7 +147,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
             <div className="max-w-[270px] rounded-2xl rounded-bl-sm border border-cyan-500/30 bg-ink-900/95 px-4 py-3 text-sm text-white shadow-xl shadow-cyan-500/10">
               <div className="flex items-start gap-2">
                 <MikuAvatar size={22} className="mt-0.5 shrink-0" />
-                <p className="leading-6">{message}</p>
+                <p className="leading-6" dir="rtl">{message}</p>
               </div>
             </div>
           )}
@@ -170,10 +170,10 @@ export function MikuProvider({ children }: { children: ReactNode }) {
               </div>
 
               <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                <div className="text-xs font-bold text-cyan-400 mb-1">
+                <div className="text-xs font-bold text-cyan-400 mb-1" dir="auto">
                   {tip.title}
                 </div>
-                <p className="text-sm text-slate-300 leading-6">{tip.body}</p>
+                <p className="text-sm text-slate-300 leading-6" dir="auto">{tip.body}</p>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">

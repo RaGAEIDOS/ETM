@@ -67,20 +67,22 @@ export default function ProjectsGrid() {
                   <div>
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full bg-gradient-to-l ${LEVEL_COLORS[p.level]} px-3 py-1 text-xs font-bold text-ink-950`}
+                      dir="rtl"
                     >
                       <RocketIcon className="h-3.5 w-3.5" />
                       {p.levelName}
                     </span>
-                    <h3 className="mt-3 text-xl font-black text-white">{p.title}</h3>
+                    <h3 className="mt-3 text-xl font-black text-white" dir="rtl">{p.title}</h3>
                     <p className="mt-0.5 text-xs text-slate-500 font-mono">{p.titleEn}</p>
                   </div>
                 </div>
-                <p className="mt-4 text-sm text-slate-400 leading-7">{p.description}</p>
+                <p className="mt-4 text-sm text-slate-400 leading-7" dir="rtl">{p.description}</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {p.skills.map((s) => (
                     <span
                       key={s}
                       className="rounded-full bg-white/5 border border-white/10 px-2.5 py-1 text-xs text-slate-400"
+                      dir="rtl"
                     >
                       {s}
                     </span>
@@ -107,7 +109,7 @@ export default function ProjectsGrid() {
                     </h4>
                     <ol className="space-y-2.5">
                       {p.steps.map((s, i) => (
-                        <li key={i} className="flex gap-3 text-sm text-slate-300 leading-6">
+                        <li key={i} className="flex gap-3 text-sm text-slate-300 leading-6" dir="rtl">
                           <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-500/15 text-xs font-bold text-cyan-300">
                             {i + 1}
                           </span>
@@ -123,7 +125,7 @@ export default function ProjectsGrid() {
                     </h4>
                     <ul className="space-y-2">
                       {p.stretchGoals.map((g, i) => (
-                        <li key={i} className="flex gap-2 text-sm text-slate-400 leading-6">
+                        <li key={i} className="flex gap-2 text-sm text-slate-400 leading-6" dir="rtl">
                           <CheckCircle2 className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
                           {g}
                         </li>

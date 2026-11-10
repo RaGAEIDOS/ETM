@@ -59,7 +59,7 @@ export default function GlossarySearch() {
                 : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
             }`}
           >
-            {c}
+            <span dir="rtl">{c}</span>
           </button>
         ))}
       </div>
@@ -78,7 +78,7 @@ export default function GlossarySearch() {
                 <span className="mr-2 text-lg font-bold text-white" dir="rtl">{t.ar}</span>
               </div>
               <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-500">
-                {t.category}
+                <span dir="rtl">{t.category}</span>
               </span>
             </div>
             <p className="mt-2 text-sm text-slate-400 leading-6" dir="rtl">{t.description}</p>

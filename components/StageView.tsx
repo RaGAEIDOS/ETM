@@ -28,10 +28,10 @@ export default function StageView({ stage }: { stage: Stage }) {
             <h1 className="text-3xl sm:text-4xl font-black text-white">
               Level {stage.level}: {stage.nameEn}
             </h1>
-            <p className="mt-1 text-lg font-semibold text-cyan-300">{stage.tagline}</p>
+            <p className="mt-1 text-lg font-semibold text-cyan-300" dir="rtl">{stage.tagline}</p>
           </div>
         </div>
-        <p className="mt-5 text-slate-300 leading-8 max-w-3xl">{stage.description}</p>
+        <p className="mt-5 text-slate-300 leading-8 max-w-3xl" dir="rtl">{stage.description}</p>
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1.5 text-sm text-slate-300">
             {stage.courses.length} courses
@@ -58,7 +58,7 @@ export default function StageView({ stage }: { stage: Stage }) {
             >
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-xl font-black text-white">{course.title}</h2>
+                  <h2 className="text-xl font-black text-white" dir="rtl">{course.title}</h2>
                   <p className="mt-0.5 text-xs font-mono text-slate-500" dir="ltr">
                     {course.titleEn}
                   </p>
@@ -67,7 +67,7 @@ export default function StageView({ stage }: { stage: Stage }) {
                   {course.lessons.length} lessons
                 </span>
               </div>
-              <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-3">
+              <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-3" dir="rtl">
                 {course.description}
               </p>
               <div className="mt-4 flex items-center gap-3">

@@ -159,7 +159,7 @@ export default function ProgressDashboard() {
                   <Icon className="h-5 w-5" />
                 </span>
                 <div className="flex-1">
-                  <h3 className="font-bold text-white">{stage.name}</h3>
+                  <h3 className="font-bold text-white" dir="rtl">{stage.name}</h3>
                   <p className="text-xs text-slate-500">
                     {comp.done} of {comp.total} lessons
                   </p>

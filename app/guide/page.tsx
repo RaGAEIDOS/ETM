@@ -157,7 +157,7 @@ export default function GuidePage() {
             <p className="mt-2 text-sm text-slate-400 leading-7">{s.body}</p>
             <div className="mt-4 flex items-start gap-2 rounded-xl border border-cyan-500/15 bg-cyan-500/[0.06] p-3">
               <MikuAvatar size={26} className="mt-0.5 shrink-0" />
-              <p className="text-sm text-cyan-100 leading-6">{s.miku}</p>
+              <p className="text-sm text-cyan-100 leading-6" dir="rtl">{s.miku}</p>
             </div>
           </div>
         ))}

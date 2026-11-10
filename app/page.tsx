@@ -369,10 +369,10 @@ export default function HomePage() {
                     <h3 className="mt-4 text-xl font-black text-white">
                       {stage.nameEn}
                     </h3>
-                    <p className="mt-1 text-sm font-semibold text-cyan-300">
+                    <p className="mt-1 text-sm font-semibold text-cyan-300" dir="rtl">
                       {stage.name}
                     </p>
-                    <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-3">
+                    <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-3" dir="rtl">
                       {stage.tagline}
                     </p>
                     <div className="mt-5 flex items-center justify-between text-sm">

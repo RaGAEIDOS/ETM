@@ -72,7 +72,7 @@ export default function ElzeroPage() {
             <section key={sec.en} id={`sec-${sec.en.replace(/\s+/g, "-")}`}>
               <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
                 <div>
-                  <h2 className="text-2xl font-black text-white">
+                  <h2 className="text-2xl font-black text-white" dir="rtl">
                     {sec.ar}{" "}
                     <span className="text-sm font-medium text-slate-500 font-mono">
                       {sec.range}
@@ -101,13 +101,13 @@ export default function ElzeroPage() {
                         <PlayCircle className="h-5 w-5" />
                       </span>
                     </div>
-                    <h3 className="mt-3 font-black text-white leading-7 group-hover:text-cyan-300 transition-colors">
+                    <h3 className="mt-3 font-black text-white leading-7 group-hover:text-cyan-300 transition-colors" dir="rtl">
                       {v.title}
                     </h3>
                     <p className="text-xs text-slate-500 font-mono" dir="ltr">
                       {v.titleEn}
                     </p>
-                    <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-2">
+                    <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-2" dir="rtl">
                       {v.summary}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2 text-xs">

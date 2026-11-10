@@ -24,7 +24,7 @@ export default function LessonSidebar({
     <aside className="lg:sticky lg:top-24">
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
         <div className="border-b border-white/5 px-5 py-4">
-          <h3 className="font-bold text-white text-sm">{course.title}</h3>
+          <h3 className="font-bold text-white text-sm" dir="rtl">{course.title}</h3>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-1.5 flex-1 rounded-full bg-white/10 overflow-hidden">
               <div
@@ -65,7 +65,7 @@ export default function LessonSidebar({
                 >
                   {completed ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
                 </span>
-                <span className="flex-1 leading-6">{lesson.title}</span>
+                <span className="flex-1 leading-6" dir="rtl">{lesson.title}</span>
                 <span className="flex items-center gap-1 text-xs text-slate-600 shrink-0 mt-1">
                   <Clock className="h-3 w-3" />
                   {lesson.duration}
