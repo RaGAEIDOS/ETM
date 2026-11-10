@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/glossary`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/projects`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE_URL}/sources`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${BASE_URL}/books`, changeFrequency: "monthly", priority: 0.6 },
   ];
 
   stages.forEach((stage) => {

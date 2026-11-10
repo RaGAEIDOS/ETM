@@ -45,7 +45,7 @@ Zero errors required. There is no ESLint config — treat TypeScript and the bro
 
 Start `npm run dev` (if not already on port 3000), then visit every route and read the console for errors:
 
-`/`, `/landing`, `/login`, `/curriculum`, `/guide`, `/glossary`, `/sources`, `/elzero`, `/elzero/001`, `/elzero/078`,
+`/`, `/landing`, `/login`, `/curriculum`, `/guide`, `/glossary`, `/sources`, `/books`, `/elzero`, `/elzero/001`, `/elzero/078`,
 `/learn/stage-1`, `/learn/stage-1/cpp-basics`, `/learn/stage-1/cpp-basics/hello-world`,
 `/learn/stage-1/git-github/git-why`,
 `/dashboard`, `/playground`, `/projects`, `/progress`, `/profile`, and a bogus route like `/definitely-not-a-page` (expect the styled 404).

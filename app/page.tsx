@@ -574,6 +574,13 @@ export default function HomePage() {
                   <Github className="h-5 w-5" />
                   Browse the sources
                 </Link>
+                <Link
+                  href="/books"
+                  className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-8 py-4 font-bold text-cyan-200 hover:bg-cyan-500/20 transition-colors"
+                >
+                  <BookOpen className="h-5 w-5" />
+                  Free books
+                </Link>
               </div>
               <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-slate-500">
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1">

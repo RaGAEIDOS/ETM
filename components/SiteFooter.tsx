@@ -42,6 +42,7 @@ export default function SiteFooter() {
               <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">C++ Playground</Link></li>
               <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">Projects</Link></li>
               <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">Glossary</Link></li>
+              <li><Link href="/books" className="hover:text-cyan-300 transition-colors">Free Books</Link></li>
               <li><Link href="/dashboard" className="hover:text-cyan-300 transition-colors">Dashboard</Link></li>
             </ul>
           </div>
