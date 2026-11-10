@@ -15,7 +15,7 @@ export async function generateMetadata({
   params: { stage: string; course: string };
 }): Promise<Metadata> {
   const course = findCourse(params.stage, params.course);
-  if (!course) return { title: "كورس غير موجود" };
+  if (!course) return { title: "Course not found" };
   return { title: course.title, description: course.description };
 }
 

@@ -4,9 +4,9 @@ import { PlayCircle, BookMarked, ListChecks, GraduationCap } from "lucide-react"
 import { elzeroVideos, sectionsList } from "@/lib/elzero-videos";
 
 export const metadata: Metadata = {
-  title: "فيديوهات الزيرو",
+  title: "ElZero Videos",
   description:
-    "مسار Fundamentals Of Programming With C++ للزيرو: 78 فيديو، لكل فيديو ملخص وأهم المصطلحات وامتحان سريع — من المقدمة حتى المؤشرات.",
+    "The Fundamentals of Programming with C++ ElZero playlist: 78 videos, each with a summary, key terms and a quick quiz — from the intro to pointers.",
 };
 
 export default function ElzeroPage() {
@@ -15,19 +15,19 @@ export default function ElzeroPage() {
       <div className="max-w-3xl mx-auto text-center mb-10">
         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-bold text-cyan-300">
           <GraduationCap className="h-4 w-4" />
-          مسار الزيرو — Fundamentals Of Programming With C++
+          The ElZero path — Fundamentals Of Programming With C++
         </span>
         <h1 className="mt-5 text-3xl sm:text-5xl font-black text-white leading-tight">
-          فيديوهات أسامة الزيرو{" "}
-          <span className="gradient-text">فيديو فيديو</span>
+          ElZero <span className="gradient-text">Videos</span>
         </h1>
         <p className="mt-4 text-slate-400 leading-8 text-base sm:text-lg">
-          كل فيديو من الـ 78 له{" "}
-          <strong className="text-white">ملخص سريع</strong> +{" "}
-          <strong className="text-white">أهم المصطلحات</strong> +{" "}
-          <strong className="text-white">امتحان سريع</strong>. ادخل الفيديو
-          الأصلي على اليوتيوب، ارجع هنا للمراجعة والامتحان — وخلص كل فيديو قبل
-          اللي بعده.
+          Every video from the{" "}
+          <strong className="text-white">78-episode playlist</strong> has a{" "}
+          <strong className="text-white">quick summary</strong> +{" "}
+          <strong className="text-white">key terms</strong> +{" "}
+          <strong className="text-white">a quick quiz</strong>. Watch the original
+          on YouTube, come back here for the review and quiz — and finish each
+          video before moving to the next one.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm">
           <a
@@ -37,13 +37,13 @@ export default function ElzeroPage() {
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-3 font-bold text-ink-950 hover:opacity-90"
           >
             <PlayCircle className="h-5 w-5" />
-            افتح الـ Playlist في يوتيوب
+            Open the YouTube playlist
           </a>
           <Link
             href="/learn/stage-1/elzero-fundamentals/zero-intro"
             className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-bold text-white hover:bg-white/10"
           >
-            ابدأ من الدرس الأول
+            Start from the first lesson
           </Link>
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function ElzeroPage() {
                   </p>
                 </div>
                 <span className="text-sm text-slate-400">
-                  {vids.length} فيديو
+                  {vids.length} videos
                 </span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -113,11 +113,11 @@ export default function ElzeroPage() {
                     <div className="mt-4 flex flex-wrap gap-2 text-xs">
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 px-3 py-1 text-violet-300">
                         <BookMarked className="h-3 w-3" />
-                        {v.terms.length} مصطلحات
+                        {v.terms.length} terms
                       </span>
                       <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 px-3 py-1 text-cyan-300">
                         <ListChecks className="h-3 w-3" />
-                        {v.quiz.length} أسئلة
+                        {v.quiz.length} questions
                       </span>
                     </div>
                   </Link>

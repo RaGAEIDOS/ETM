@@ -23,11 +23,11 @@ type Mode = "focus" | "short" | "long";
 
 const MODE_META: Record<
   Mode,
-  { label: string; ar: string; duration: number; icon: typeof Brain }
+  { label: string; duration: number; icon: typeof Brain }
 > = {
-  focus: { label: "Focus", ar: "تركيز", duration: 25 * 60, icon: Brain },
-  short: { label: "Short Break", ar: "راحة قصيرة", duration: 5 * 60, icon: Coffee },
-  long: { label: "Long Break", ar: "راحة طويلة", duration: 15 * 60, icon: Moon },
+  focus: { label: "Focus", duration: 25 * 60, icon: Brain },
+  short: { label: "Short Break", duration: 5 * 60, icon: Coffee },
+  long: { label: "Long Break", duration: 15 * 60, icon: Moon },
 };
 
 const STORAGE_KEY = "etm-pomodoro-v1";

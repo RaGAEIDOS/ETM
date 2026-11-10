@@ -17,7 +17,7 @@ export async function generateMetadata({
   params: { stage: string; course: string; lesson: string };
 }): Promise<Metadata> {
   const ctx = getLessonContext(params.stage, params.course, params.lesson);
-  if (!ctx) return { title: "درس غير موجود" };
+  if (!ctx) return { title: "Lesson not found" };
   return {
     title: ctx.lesson.title,
     description: ctx.lesson.description,

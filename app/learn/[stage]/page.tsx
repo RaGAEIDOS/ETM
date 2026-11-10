@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: { stage: string };
 }): Promise<Metadata> {
   const stage = findStage(params.stage);
-  if (!stage) return { title: "مرحلة غير موجودة" };
+  if (!stage) return { title: "Stage not found" };
   return { title: stage.name, description: stage.description };
 }
 

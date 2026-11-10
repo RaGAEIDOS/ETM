@@ -24,8 +24,7 @@ export const metadata: Metadata = {
     "operating system",
     "ETM",
     "Miku",
-    "تعلم البرمجة",
-    "تعلم C++",
+    "C++ mastery",
   ],
   icons: {
     icon: "/favicon.svg",
@@ -53,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="en" dir="ltr">
       <body>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

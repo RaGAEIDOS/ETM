@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { stages, totalLessons } from "@/lib/data";
-import { elzeroVideos } from "@/lib/elzero-videos";
+import ProfileClient from "@/components/ProfileClient";
 
 export const metadata: Metadata = {
-  title: "الملف الشخصي",
+  title: "Profile",
   description:
-    "ملفك في ETM: حسابك، آخر مزامنة، وروابط لتقدّمك وفيديوهات الزيرو.",
+    "Your ETM profile: your account, last sync, and links to your progress and ElZero videos.",
 };
 
 export default function ProfilePage() {
-  // يقرأ بيانات المستخدم من localStorage في العميل — الصفحة نفسها Static
-  return (
-    <ProfileClient />
-  );
+  // Reads user data from localStorage on the client — this page itself is static
+  return <ProfileClient />;
 }
-
-import ProfileClient from "@/components/ProfileClient";

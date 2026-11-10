@@ -5,83 +5,83 @@ import { stages } from "@/lib/data";
 import { OSSU } from "@/lib/stages";
 
 export const metadata: Metadata = {
-  title: "المصادر",
+  title: "Sources",
   description:
-    "كل المصادر والمراجع اللي بُني عليها منهج ETM — OSSU وCS50 وMIT وStanford وNand2Tetris وغيرهم.",
+    "All the sources and references ETM curriculum is built on — OSSU, CS50, MIT, Stanford, Nand2Tetris, and more.",
 };
 
 const MAIN_SOURCES = [
   {
     name: "OSSU — Open Source Society University",
-    desc: "المنهج الأساسي. تعليم جامعي كامل في علوم الكمبيوتر من مصادر مجانية معتمدة.",
+    desc: "The core curriculum. A complete university education in computer science from accredited, free sources.",
     url: OSSU,
-    badge: "أساسي",
+    badge: "Core",
   },
   {
     name: "CS50 — Harvard",
-    desc: "أشهر كورس مقدمة لعلوم الكمبيوتر في العالم، مصدر إلهام المستوى الأول.",
+    desc: "The most famous introduction to computer science in the world, the source of inspiration for level one.",
     url: "https://cs50.harvard.edu/x/",
-    badge: "أساسي",
+    badge: "Core",
   },
   {
     name: "MIT OpenCourseWare",
-    desc: "دورات MIT المفتوحة: خوارزميات، رياضيات لعلوم الكمبيوتر، معمارية الحاسب.",
+    desc: "MIT's open courses: algorithms, math for CS, computer architecture.",
     url: "https://ocw.mit.edu/",
-    badge: "أساسي",
+    badge: "Core",
   },
   {
     name: "Nand2Tetris",
-    desc: "بناء كمبيوتر كامل من بوابة NAND لحد لعبة Tetris — أساس مرحلة المعمارية.",
+    desc: "Building a complete computer from a NAND gate to Tetris — the foundation of the architecture stage.",
     url: "https://www.nand2tetris.org/",
-    badge: "أساسي",
+    badge: "Core",
   },
   {
     name: "OSTEP — Operating Systems: Three Easy Pieces",
-    desc: "كتاب أنظمة التشغيل الأشهر في العالم، مجاني بالكامل.",
+    desc: "The most popular operating systems book in the world, free.",
     url: "https://pages.cs.wisc.edu/~remzi/OSTEP/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "Algorithms Illuminated — Tim Roughgarden",
-    desc: "السلسلة الأشهر في تحليل وتصميم الخوارزميات.",
+    desc: "The most famous series on algorithm analysis and design.",
     url: "https://www.algorithmsilluminated.org/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "Crafting Interpreters",
-    desc: "مرجع بناء المترجمات والمفسّرات — أساس كورس المترجمات.",
+    desc: "The reference for building interpreters and compilers — the basis of the compilers course.",
     url: "https://craftinginterpreters.com/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "OSDev Wiki",
-    desc: "الموسوعة الأشهر لبناء أنظمة التشغيل من الصفر.",
+    desc: "The most famous wiki for building operating systems from scratch.",
     url: "https://wiki.osdev.org/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "Learn C++",
-    desc: "مرجع شامل وعملي لتعلم لغة C++ من الصفر.",
+    desc: "A comprehensive and practical reference for learning C++ from zero.",
     url: "https://www.learncpp.com/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "Game Engine Architecture — Jason Gregory",
-    desc: "المرجع الأساسي لبرمجة محركات الألعاب الاحترافية.",
+    desc: "The reference for programming professional game engines.",
     url: "https://www.gameenginebook.com/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "Designing Data-Intensive Applications",
-    desc: "المرجع الأساسي للأنظمة الموزعة وقواعد البيانات.",
+    desc: "The reference for distributed systems and databases.",
     url: "https://dataintensive.net/",
-    badge: "مرجع",
+    badge: "Reference",
   },
   {
     name: "The Missing Semester — MIT",
-    desc: "أدوات المبرمج: سطر الأوامر، Git، ومحررات الأكواد.",
+    desc: "Developer tools: the command line, Git, and code editors.",
     url: "https://missing.csail.mit.edu/",
-    badge: "مرجع",
+    badge: "Reference",
   },
 ];
 
@@ -89,12 +89,12 @@ export default function SourcesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-12">
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <span className="text-sm font-bold text-cyan-400">مصادر المنهج</span>
+        <span className="text-sm font-bold text-cyan-400">Curriculum sources</span>
         <h1 className="mt-3 text-4xl sm:text-5xl font-black text-white">
-          مبني على <span className="gradient-text">أقوى مصادر العالم</span>
+          Built on <span className="gradient-text">the strongest sources</span>
         </h1>
         <p className="mt-4 text-lg text-slate-400 leading-8">
-          منهج ETM متجذر في منهج{" "}
+          The ETM curriculum is rooted in the{" "}
           <a
             href={OSSU}
             target="_blank"
@@ -103,8 +103,8 @@ export default function SourcesPage() {
           >
             OSSU
           </a>{" "}
-          المعتمد، ومدعوم بمصادر من Harvard وMIT وStanford — مع إعادة صياغة
-          كاملة بالعربي وتطبيقات C++.
+          curriculum, supported by sources from Harvard, MIT and Stanford — with
+          a full Arabic rewrite and C++ applications.
         </p>
       </div>
 
@@ -134,7 +134,7 @@ export default function SourcesPage() {
       <div className="mt-16">
         <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-2">
           <BookOpen className="h-6 w-6 text-cyan-400" />
-          مصادر كل مرحلة
+          Sources per stage
         </h2>
         <div className="space-y-8">
           {stages.map((stage) => (
@@ -143,7 +143,7 @@ export default function SourcesPage() {
                 <span
                   className={`inline-block h-2 w-2 rounded-full bg-gradient-to-l ${stage.color}`}
                 />
-                المستوى {stage.level}: {stage.name}
+                Level {stage.level}: {stage.nameEn}
               </h3>
               <div className="grid gap-3 sm:grid-cols-2">
                 {stage.courses.map((course) => (
@@ -176,11 +176,13 @@ export default function SourcesPage() {
 
       <div className="mt-16 rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center">
         <Heart className="h-8 w-8 text-rose-400 mx-auto mb-4" />
-        <h2 className="text-2xl font-black text-white">إخلاء مسؤولية</h2>
+        <h2 className="text-2xl font-black text-white">Disclaimer</h2>
         <p className="mt-3 text-slate-400 leading-8 max-w-2xl mx-auto">
-          محتوى ETM التعليمي مكتوب أصالةً بالعربية، لكن الهيكل والمنهجية
-          مستوحاة من المصادر المفتوحة أعلاه والمذكورة بأسماء أصحابها. كل مصدر
-          مرتبط بصفحته الرسمية، ونحترم حقوق الملكية الفكرية لكل جهة.
+          The ETM educational content is originally written in Arabic, but the
+          structure and methodology are inspired by the open sources above and
+          mentioned by their authors&apos; names. Every source is linked to its
+          official page, and we respect the intellectual property rights of each
+          party.
         </p>
         <a
           href="https://github.com/ossu/computer-science/blob/master/LICENSE"
@@ -189,7 +191,7 @@ export default function SourcesPage() {
           className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-cyan-400 hover:underline"
         >
           <Github className="h-4 w-4" />
-          ترخيص OSSU (MIT)
+          OSSU license (MIT)
         </a>
       </div>
     </div>

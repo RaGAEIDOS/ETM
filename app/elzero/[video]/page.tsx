@@ -25,9 +25,9 @@ export async function generateMetadata({
   params: { video: string };
 }): Promise<Metadata> {
   const v = findVideo(params.video);
-  if (!v) return { title: "فيديو غير موجود" };
+  if (!v) return { title: "Video not found" };
   return {
-    title: `فيديو #${v.id}: ${v.title}`,
+    title: `Video #${v.id}: ${v.title}`,
     description: v.summary,
   };
 }
@@ -48,12 +48,10 @@ export default function ElzeroVideoPage({
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
       <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6">
         <Link href="/elzero" className="hover:text-cyan-300 transition-colors">
-          فيديوهات الزيرو
+          ElZero Videos
         </Link>
         <ChevronLeft className="h-4 w-4" />
-        <span className="text-slate-300">
-          فيديو #{v.id}
-        </span>
+        <span className="text-slate-300">Video #{v.id}</span>
       </nav>
 
       <header>
@@ -62,11 +60,11 @@ export default function ElzeroVideoPage({
             {v.section}
           </span>
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400 font-mono">
-            فيديو #{v.id} من 078
+            Video #{v.id} of 78
           </span>
           <span className="flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400">
             <Clock className="h-3 w-3" />
-            امتحان + ملخص + مصطلحات
+            Quiz + summary + terms
           </span>
         </div>
         <h1 className="mt-4 text-3xl sm:text-4xl font-black text-white leading-tight">
@@ -82,23 +80,23 @@ export default function ElzeroVideoPage({
           className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-3 font-bold text-ink-950 hover:opacity-90"
         >
           <PlayCircle className="h-5 w-5" />
-          شاهد الفيديو في يوتيوب
+          Watch on YouTube
         </a>
       </header>
 
-      <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-8" dir="rtl">
+      <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-8">
         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/15 text-sm font-black text-cyan-300">
             1
           </span>
-          ملخص الفيديو
+          Video summary
         </h2>
         <p className="text-slate-300 leading-8">{v.summary}</p>
         <p className="mt-4 text-sm text-slate-500 leading-7">
-          للفهم الكامل، شاهد الفيديو الأصلي على قناة أسامة الزيرو من الرابط
-          العلوي ثم ارجع للامتحان. المحتوى هنا ملخص أصلي من ETM ولا ينسخ نص
-          الفيديو — الصياغة والشروح كلها لنا، والتعبئة بترتيب الفيديوهات
-          الرسمي على GitHub.
+          For the full understanding, watch the original video on Osama ElZero&apos;s
+          channel from the link above, then come back for the quiz. The content here
+          is an original ETM summary — we do not copy the video text. All phrasing and
+          explanations are ours, assembled in the official ElZero order on GitHub.
         </p>
       </section>
 
@@ -106,7 +104,7 @@ export default function ElzeroVideoPage({
         <div className="mt-6">
           <h2 className="flex items-center gap-2 text-xl font-bold text-white mb-4">
             <ListChecks className="h-5 w-5 text-cyan-400" />
-            مثال كود للفيديو
+            Code example
           </h2>
           <CodeBlock code={v.example.code} language="cpp" title={v.example.title} />
           <Link
@@ -114,15 +112,15 @@ export default function ElzeroVideoPage({
             className="inline-flex items-center gap-2 rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"
           >
             <Lightbulb className="h-4 w-4" />
-            جرّب المثال في الملعب
+            Try it in the playground
           </Link>
         </div>
       )}
 
-      <section className="mt-8 rounded-2xl border border-violet-500/20 bg-violet-500/[0.05] p-6" dir="rtl">
+      <section className="mt-8 rounded-2xl border border-violet-500/20 bg-violet-500/[0.05] p-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-violet-300">
           <BookMarked className="h-5 w-5" />
-          أهم المصطلحات في الفيديو
+          Key terms in this video
         </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {v.terms.map((t) => (
@@ -136,15 +134,15 @@ export default function ElzeroVideoPage({
         </div>
       </section>
 
-      <section className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6" dir="rtl">
+      <section className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
         <h2 className="flex items-center gap-2 text-lg font-bold text-amber-300">
           <PenLine className="h-5 w-5" />
-          تمرين سريع
+          Quick exercise
         </h2>
         <p className="mt-3 text-slate-200 leading-8">
-          اكتب الكود من المثال في الملعب، غيّر قيمة واحدة جرّب بنفسك، ثم جاوب
-          على الامتحان. لو أجبت صح في أول مرة، انتقل للفيديو التالي —
-          التكرار المتدرج أسرع من إعادة المشاهدة مرة ثانية.
+          Write the code from the example in the playground, change one value and
+          try it yourself, then answer the quiz. If you got it right on the first
+          try, move to the next video — gradual repetition is faster than rewatching.
         </p>
       </section>
 
@@ -158,7 +156,7 @@ export default function ElzeroVideoPage({
             href={`/elzero/${prev.id}`}
             className="group rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/25 transition-colors"
           >
-            <span className="text-xs text-slate-400">الفيديو السابق</span>
+            <span className="text-xs text-slate-400">Previous video</span>
             <span className="mt-1 block font-bold text-white">
               #{prev.id} — {prev.title}
             </span>
@@ -173,7 +171,7 @@ export default function ElzeroVideoPage({
           >
             <span className="text-xs text-cyan-400 flex items-center gap-1">
               <CheckCircle2 className="h-3 w-3" />
-              الفيديو التالي
+              Next video
             </span>
             <span className="mt-1 block font-bold text-white">
               #{next.id} — {next.title}
@@ -184,9 +182,9 @@ export default function ElzeroVideoPage({
             href="/elzero"
             className="group rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/25 transition-colors"
           >
-            <span className="text-xs text-slate-400">انتهت السلسلة</span>
+            <span className="text-xs text-slate-400">Series ended</span>
             <span className="mt-1 block font-bold text-white">
-              ارجع لقائمة الفيديوهات
+              Back to the video list
             </span>
           </Link>
         )}

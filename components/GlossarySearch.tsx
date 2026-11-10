@@ -29,7 +29,7 @@ export default function GlossarySearch() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by English or Arabic term... e.g. pointer, مؤشر"
+            placeholder="Search by English or Arabic term... e.g. pointer, variable"
             className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pr-12 pl-4 text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
           />
         </div>
