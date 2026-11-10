@@ -39,14 +39,14 @@ export default function LessonView({
       {/* Breadcrumb */}
       <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6">
         <Link href="/curriculum" className="hover:text-cyan-300 transition-colors">
-          المنهج
+          Curriculum
         </Link>
         <ChevronLeft className="h-4 w-4" />
         <Link
           href={`/learn/${stage.id}`}
           className="hover:text-cyan-300 transition-colors"
         >
-          {stage.name}
+          {stage.nameEn}
         </Link>
         <ChevronLeft className="h-4 w-4" />
         <Link
@@ -76,10 +76,10 @@ export default function LessonView({
               <span
                 className={`rounded-full bg-gradient-to-l ${stage.color} px-3 py-1 text-xs font-bold text-ink-950`}
               >
-                {stage.name}
+                {stage.nameEn}
               </span>
               <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400">
-                الدرس {index + 1} من {course.lessons.length}
+                Lesson {index + 1} of {course.lessons.length}
               </span>
               <span className="flex items-center gap-1 rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400">
                 <Clock className="h-3 w-3" />
@@ -122,7 +122,7 @@ export default function LessonView({
             <div className="mt-8 space-y-4">
               <h2 className="flex items-center gap-2 text-xl font-bold text-white">
                 <ListChecks className="h-5 w-5 text-cyan-400" />
-                أمثلة كود
+                Code examples
               </h2>
               {lesson.code.map((c, i) => (
                 <CodeBlock
@@ -140,7 +140,7 @@ export default function LessonView({
             <div className="mt-8 rounded-2xl border border-violet-500/20 bg-violet-500/[0.05] p-6">
               <h2 className="flex items-center gap-2 text-lg font-bold text-violet-300">
                 <BookMarked className="h-5 w-5" />
-                مصطلحات الدرس
+                Lesson terms
               </h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {lesson.terms.map((t) => (
@@ -165,7 +165,7 @@ export default function LessonView({
             <div className="mt-8 rounded-2xl border border-amber-500/20 bg-amber-500/[0.05] p-6">
               <h2 className="flex items-center gap-2 text-lg font-bold text-amber-300">
                 <PenLine className="h-5 w-5" />
-                تمرين تطبيقي
+                Practice exercise
               </h2>
               <p className="mt-3 text-slate-200 leading-8">{lesson.exercise}</p>
               <Link
@@ -173,7 +173,7 @@ export default function LessonView({
                 className="mt-4 inline-flex items-center gap-2 rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"
               >
                 <Lightbulb className="h-4 w-4" />
-                جرّب التمرين في الملعب
+                Try the exercise in the playground
               </Link>
             </div>
           )}

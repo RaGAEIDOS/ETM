@@ -12,9 +12,9 @@ export default function StageView({ stage }: { stage: Stage }) {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-10">
       <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6">
-        <Link href="/curriculum" className="hover:text-cyan-300">المنهج</Link>
+        <Link href="/curriculum" className="hover:text-cyan-300">Curriculum</Link>
         <span className="text-slate-700">‹</span>
-        <span className="text-slate-300">{stage.name}</span>
+        <span className="text-slate-300">{stage.nameEn}</span>
       </nav>
 
       <header className="rounded-2xl border border-white/10 bg-white/[0.02] p-8">
@@ -26,7 +26,7 @@ export default function StageView({ stage }: { stage: Stage }) {
           </span>
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl sm:text-4xl font-black text-white">
-              المستوى {stage.level}: {stage.name}
+              Level {stage.level}: {stage.nameEn}
             </h1>
             <p className="mt-1 text-lg font-semibold text-cyan-300">{stage.tagline}</p>
           </div>
@@ -34,13 +34,13 @@ export default function StageView({ stage }: { stage: Stage }) {
         <p className="mt-5 text-slate-300 leading-8 max-w-3xl">{stage.description}</p>
         <div className="mt-6 flex flex-wrap items-center gap-4">
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1.5 text-sm text-slate-300">
-            {stage.courses.length} كورسات
+            {stage.courses.length} courses
           </span>
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1.5 text-sm text-slate-300">
-            {comp.total} درس
+            {comp.total} lessons
           </span>
           <span className="rounded-full bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 text-sm font-bold text-cyan-300">
-            {comp.percent}% مكتمل
+            {comp.percent}% complete
           </span>
         </div>
       </header>
@@ -64,7 +64,7 @@ export default function StageView({ stage }: { stage: Stage }) {
                   </p>
                 </div>
                 <span className="shrink-0 rounded-full bg-white/5 border border-white/10 px-2.5 py-1 text-xs text-slate-400">
-                  {course.lessons.length} درس
+                  {course.lessons.length} lessons
                 </span>
               </div>
               <p className="mt-3 text-sm text-slate-400 leading-6 line-clamp-3">
@@ -86,7 +86,7 @@ export default function StageView({ stage }: { stage: Stage }) {
                 className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm font-bold text-white hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-300 transition-colors"
               >
                 <BookOpen className="h-4 w-4" />
-                عرض الكورس
+                View course
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>

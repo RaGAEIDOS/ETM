@@ -6,9 +6,9 @@ import { Terminal } from "lucide-react";
 const LINES: { type: "cmd" | "out"; text: string }[] = [
   { type: "cmd", text: "g++ -std=c++17 main.cpp -o main" },
   { type: "cmd", text: "./main" },
-  { type: "out", text: "مرحباً بالعالم! أنا مبرمج C++ جديد" },
-  { type: "out", text: "مجموع 1 + 2 = 3" },
-  { type: "out", text: "تم التنفيذ بنجاح ✓" },
+  { type: "out", text: "Hello World! I am a new C++ programmer" },
+  { type: "out", text: "Sum of 1 + 2 = 3" },
+  { type: "out", text: "Executed successfully ✓" },
 ];
 
 export default function HeroTerminal() {

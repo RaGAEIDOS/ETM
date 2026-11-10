@@ -3,9 +3,9 @@ import { BookMarked } from "lucide-react";
 import GlossarySearch from "@/components/GlossarySearch";
 
 export const metadata: Metadata = {
-  title: "قاموس المصطلحات",
+  title: "Glossary",
   description:
-    "قاموس شامل لكل مصطلحات البرمجة وعلوم الكمبيوتر بالإنجليزي والعربي — شرح مبسط لكل مصطلح.",
+    "A comprehensive glossary of programming and computer science terms in English and Arabic — a simple explanation for every term.",
 };
 
 export default function GlossaryPage() {
@@ -16,11 +16,11 @@ export default function GlossaryPage() {
           <BookMarked className="h-7 w-7" />
         </span>
         <h1 className="text-4xl sm:text-5xl font-black text-white">
-          قاموس <span className="gradient-text">المصطلحات</span>
+          <span className="gradient-text">Glossary</span>
         </h1>
         <p className="mt-4 text-lg text-slate-400 leading-8">
-          كل مصطلح إنجليزي في البرمجة وعلوم الكمبيوتر، متشرح بالعربي — عشان
-          مفيش حاجز لغوي قدامك.
+          Every English term in programming and computer science, explained in
+          Arabic — so there is no language barrier in your way.
         </p>
       </div>
 

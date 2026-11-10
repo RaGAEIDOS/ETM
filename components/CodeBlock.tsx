@@ -54,7 +54,7 @@ const LANG_LABEL: Record<string, string> = {
   javascript: "JavaScript",
   js: "JavaScript",
   json: "JSON",
-  text: "نص",
+  text: "Text",
 };
 
 export default function CodeBlock({
@@ -102,22 +102,22 @@ export default function CodeBlock({
           <button
             onClick={handleCopy}
             className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors min-h-[44px] min-w-[44px] justify-center"
-            aria-label="نسخ الكود"
+            aria-label="Copy code"
           >
             {copied ? (
               <Check className="h-4 w-4 text-emerald-400" />
             ) : (
               <Copy className="h-4 w-4" />
             )}
-            <span className="hidden sm:inline">{copied ? "تم النسخ" : "نسخ"}</span>
+            <span className="hidden sm:inline">{copied ? "Copied" : "Copy"}</span>
           </button>
           <Link
             href={`/playground?code=${encodeURIComponent(code)}`}
             className="flex items-center gap-1.5 rounded-lg bg-cyan-500/10 px-3 py-2 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 transition-colors min-h-[44px] min-w-[44px] justify-center"
-            aria-label="تشغيل في الملعب"
+            aria-label="Run in playground"
           >
             <Play className="h-4 w-4" />
-            <span className="hidden sm:inline">تشغيل</span>
+            <span className="hidden sm:inline">Run</span>
           </Link>
         </div>
       </div>

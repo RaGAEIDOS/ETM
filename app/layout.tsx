@@ -3,32 +3,37 @@ import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import { AuthProvider } from "@/lib/auth";
+import { MikuProvider } from "@/components/Miku";
+import Pomodoro from "@/components/Pomodoro";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://etm-learning.vercel.app"),
   title: {
-    default: "ETM | تعلّم البرمجة من الصفر إلى الاحتراف بلغة C++",
+    default: "ETM — Learn C++ from Zero to Expert",
     template: "%s | ETM",
   },
   description:
-    "منصة ETM العربية لتعلّم البرمجة بلغة C++ من الصفر إلى منتهى الصعوبة: منهج كامل مبني على OSSU، أمثلة تفاعلية، ملعب C++، قاموس مصطلحات، ومشاريع حقيقية — من أول برنامج حتى بناء نظام تشغيل ومحرك ألعاب.",
+    "ETM (Education Technology Miku) is a free Arabic platform for learning C++ from absolute zero to building an operating system and a game engine. A complete OSSU-based curriculum, interactive playground, projects, and an AI study buddy.",
   keywords: [
+    "learn programming",
+    "learn C++",
+    "C++ tutorial",
+    "OSSU",
+    "programming from scratch",
+    "game engine",
+    "operating system",
+    "ETM",
+    "Miku",
     "تعلم البرمجة",
     "تعلم C++",
-    "منهج برمجة عربي",
-    "OSSU",
-    "برمجة من الصفر",
-    "محرك ألعاب",
-    "نظام تشغيل",
-    "ETM",
   ],
   icons: {
     icon: "/favicon.svg",
   },
   openGraph: {
-    title: "ETM | تعلّم البرمجة من الصفر إلى الاحتراف بلغة C++",
+    title: "ETM — Education Technology Miku | Learn C++ from Zero to Expert",
     description:
-      "منصة عربية مجانية لتعلّم لغة C++ من الصفر إلى منتهى الصعوبة — منهج OSSU كامل، أمثلة تفاعلية، ملعب C++، ومشاريع حقيقية.",
+      "A free Arabic platform for learning C++ from zero to building an operating system and a game engine — full OSSU curriculum, interactive playground, real projects, and Miku as your study buddy.",
     type: "website",
     locale: "ar_EG",
     images: [{ url: "/og.svg", width: 1200, height: 630 }],
@@ -60,11 +65,14 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
-        <AuthProvider>
-          <SiteHeader />
-          <main className="min-h-screen">{children}</main>
-          <SiteFooter />
-        </AuthProvider>
+        <MikuProvider>
+          <AuthProvider>
+            <SiteHeader />
+            <main className="min-h-screen">{children}</main>
+            <SiteFooter />
+            <Pomodoro />
+          </AuthProvider>
+        </MikuProvider>
       </body>
     </html>
   );

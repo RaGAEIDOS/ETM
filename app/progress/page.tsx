@@ -3,9 +3,9 @@ import { BarChart3 } from "lucide-react";
 import ProgressDashboard from "@/components/ProgressDashboard";
 
 export const metadata: Metadata = {
-  title: "تقدّمك",
+  title: "Your Progress",
   description:
-    "تابع تقدمك في منهج ETM: كام درس خلصت، نسبة إكمال كل مرحلة، والدروس اللي أنهيتها.",
+    "Track your progress in the ETM curriculum: how many lessons you completed, completion percentage for every stage, and the lessons you finished.",
 };
 
 export default function ProgressPage() {
@@ -16,11 +16,11 @@ export default function ProgressPage() {
           <BarChart3 className="h-7 w-7" />
         </span>
         <h1 className="text-4xl sm:text-5xl font-black text-white">
-          تقدّمك <span className="gradient-text">في الرحلة</span>
+          Your progress <span className="gradient-text">in the journey</span>
         </h1>
         <p className="mt-4 text-lg text-slate-400 leading-8">
-          بياناتك محفوظة على جهازك بس — من غير حسابات أو تسجيل. اعرف وصلت فين
-          وإيه اللي ناقص.
+          Your data is saved on your device — no accounts, no sign-up. See exactly
+          where you are and what is left.
         </p>
       </div>
 

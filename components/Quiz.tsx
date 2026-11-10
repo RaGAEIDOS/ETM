@@ -24,19 +24,19 @@ export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
       <div className="flex items-center justify-between mb-5">
         <h3 className="flex items-center gap-2 text-xl font-bold text-white">
           <HelpCircle className="h-5 w-5 text-cyan-400" />
-          اختبر فهمك
+          Test your understanding
         </h3>
         {answeredCount > 0 && (
           <div className="flex items-center gap-3">
             <span className="text-sm text-slate-400">
-              {correctCount} / {answeredCount} صحيحة
+              {correctCount} / {answeredCount} correct
             </span>
             <button
               onClick={reset}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs text-slate-400 hover:bg-white/5 transition-colors"
             >
               <RotateCcw className="h-3.5 w-3.5" />
-              إعادة
+              Retry
             </button>
           </div>
         )}
@@ -104,13 +104,13 @@ export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
           <Trophy className="h-8 w-8 text-amber-400 mx-auto mb-3" />
           <p className="text-lg font-bold text-white">
             {correctCount === questions.length
-              ? "ممتاز! إجابات صحيحة كلها"
-              : `أجبت على ${correctCount} من ${questions.length} بشكل صحيح`}
+              ? "Excellent! All answers correct"
+              : `You answered ${correctCount} of ${questions.length} correctly`}
           </p>
           <p className="text-sm text-slate-400 mt-1">
             {correctCount === questions.length
-              ? "إنت جاهز للدرس الجاي"
-              : "راجع الدرس وجرّب تاني — التكرار هو سر الإتقان"}
+              ? "You are ready for the next lesson"
+              : "Review the lesson and try again — repetition is the secret to mastery"}
           </p>
         </div>
       )}

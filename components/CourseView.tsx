@@ -21,10 +21,10 @@ export default function CourseView({
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10">
       <nav className="flex flex-wrap items-center gap-1.5 text-sm text-slate-500 mb-6">
-        <Link href="/curriculum" className="hover:text-cyan-300">المنهج</Link>
+        <Link href="/curriculum" className="hover:text-cyan-300">Curriculum</Link>
         <span className="text-slate-700">‹</span>
         <Link href={`/learn/${stage.id}`} className="hover:text-cyan-300">
-          {stage.name}
+          {stage.nameEn}
         </Link>
         <span className="text-slate-700">‹</span>
         <span className="text-slate-300">{course.title}</span>
@@ -35,13 +35,13 @@ export default function CourseView({
           <span
             className={`rounded-full bg-gradient-to-l ${stage.color} px-3 py-1 text-xs font-bold text-ink-950`}
           >
-            {stage.name}
+            {stage.nameEn}
           </span>
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400">
-            {course.lessons.length} درس
+            {course.lessons.length} lessons
           </span>
           <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs text-slate-400">
-            {course.lessons.reduce((sum, l) => sum + (parseInt(l.duration) || 0), 0)} دقيقة تعليمية
+            {course.lessons.reduce((sum, l) => sum + (parseInt(l.duration) || 0), 0)} min of learning
           </span>
         </div>
         <h1 className="mt-4 text-3xl sm:text-4xl font-black text-white">{course.title}</h1>
@@ -56,12 +56,12 @@ export default function CourseView({
             />
           </div>
           <span className="text-sm font-bold text-cyan-300 tabular-nums">{percent}%</span>
-          <span className="text-sm text-slate-400">مكتمل</span>
+          <span className="text-sm text-slate-400">complete</span>
         </div>
 
         {course.sources.length > 0 && (
           <div className="mt-6">
-            <h3 className="text-sm font-bold text-slate-400 mb-2">المصادر الخارجية</h3>
+            <h3 className="text-sm font-bold text-slate-400 mb-2">External sources</h3>
             <div className="flex flex-wrap gap-2">
               {course.sources.map((s) => (
                 <a

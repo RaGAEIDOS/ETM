@@ -37,7 +37,7 @@ export default function LessonNav({
         ) : (
           <Circle className="h-5 w-5" />
         )}
-        {done ? "درس مكتمل — اضغط لإلغاء التحديد" : "إكمال الدرس والانتقال للتالي"}
+        {done ? "Completed — click to undo" : "Mark lesson complete"}
       </button>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -48,7 +48,7 @@ export default function LessonNav({
           >
             <span className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-cyan-400 transition-colors">
               <ArrowRight className="h-4 w-4" />
-              الدرس السابق
+              Previous lesson
             </span>
             <span className="mt-1.5 block font-bold text-white text-sm leading-6">
               {prev.title}
@@ -63,7 +63,7 @@ export default function LessonNav({
             className="group rounded-xl border border-cyan-500/30 bg-cyan-500/[0.07] p-4 hover:bg-cyan-500/[0.12] transition-colors sm:text-left text-right"
           >
             <span className="flex items-center gap-1.5 text-xs text-cyan-400">
-              الدرس التالي
+              Next lesson
               <ArrowLeft className="h-4 w-4" />
             </span>
             <span className="mt-1.5 block font-bold text-white text-sm leading-6">
@@ -76,11 +76,11 @@ export default function LessonNav({
             className="group rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/25 transition-colors"
           >
             <span className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-cyan-400 transition-colors">
-              انتهى الكورس — تصفح المنهج
+              Course finished — browse the curriculum
               <ArrowLeft className="h-4 w-4" />
             </span>
             <span className="mt-1.5 block font-bold text-white text-sm leading-6">
-              المنهج الكامل
+              Full curriculum
             </span>
           </Link>
         )}

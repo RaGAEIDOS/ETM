@@ -37,7 +37,7 @@ export default function LessonSidebar({
             </span>
           </div>
           <p className="mt-1.5 text-xs text-slate-500">
-            {done} من {course.lessons.length} درس مكتمل
+            {done} of {course.lessons.length} lessons completed
           </p>
         </div>
         <nav className="max-h-[40vh] lg:max-h-[60vh] overflow-y-auto p-2">

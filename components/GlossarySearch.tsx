@@ -29,12 +29,12 @@ export default function GlossarySearch() {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="ابحث بمصطلح إنجليزي أو عربي... مثال: pointer، مؤشر"
+            placeholder="Search by English or Arabic term... e.g. pointer, مؤشر"
             className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pr-12 pl-4 text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
           />
         </div>
         <span className="text-sm text-slate-500 shrink-0">
-          {filtered.length} مصطلح
+          {filtered.length} terms
         </span>
       </div>
 
@@ -47,7 +47,7 @@ export default function GlossarySearch() {
               : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
           }`}
         >
-          الكل
+          All
         </button>
         {GLOSSARY_CATEGORIES.map((c) => (
           <button
@@ -90,7 +90,7 @@ export default function GlossarySearch() {
         <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] py-16 text-center">
           <BookMarked className="h-10 w-10 text-slate-600" />
           <p className="text-slate-400">
-            مفيش نتائج مطابقة — جرّب كلمة تانية
+            No matching results — try another word
           </p>
         </div>
       )}

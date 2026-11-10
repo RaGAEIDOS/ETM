@@ -11,11 +11,16 @@ export default function SiteFooter() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950">
                 <Terminal className="h-5 w-5" strokeWidth={2.5} />
               </span>
-              <span className="text-xl font-black text-white">ETM</span>
+              <span className="text-xl font-black text-white">
+                ETM
+                <span className="text-sm font-medium text-slate-400 ms-2">
+                  Education Technology Miku
+                </span>
+              </span>
             </div>
             <p className="text-slate-400 leading-7 max-w-md">
-              منصة عربية مجانية لتعلّم البرمجة بلغة C++ من الصفر حتى بناء نظام
-              تشغيل ومحرك ألعاب. مبنية على منهج{" "}
+              A free Arabic platform for learning <b className="text-white">C++</b> from
+              zero to building an operating system and a game engine. Based on the{" "}
               <a
                 href="https://github.com/ossu/computer-science"
                 target="_blank"
@@ -24,23 +29,25 @@ export default function SiteFooter() {
               >
                 OSSU
               </a>{" "}
-              العالمي، ومُعدّلة بعناية لتناسب سوق العمل في مصر والعالم العربي.
+              curriculum, rewritten in Arabic with interactive examples and real
+              projects.
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">المنصة</h4>
+            <h4 className="text-white font-bold mb-4">Platform</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">المنهج الكامل</Link></li>
-              <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">ملعب C++</Link></li>
-              <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">المشاريع</Link></li>
-              <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">قاموس المصطلحات</Link></li>
-              <li><Link href="/progress" className="hover:text-cyan-300 transition-colors">تتبع التقدم</Link></li>
+              <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">Curriculum</Link></li>
+              <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">ElZero Videos</Link></li>
+              <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">C++ Playground</Link></li>
+              <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">Projects</Link></li>
+              <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">Glossary</Link></li>
+              <li><Link href="/dashboard" className="hover:text-cyan-300 transition-colors">Dashboard</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">مصادر مفتوحة</h4>
+            <h4 className="text-white font-bold mb-4">Open Sources</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li>
                 <a href="https://github.com/ossu/computer-science" target="_blank" rel="noreferrer" className="hover:text-cyan-300 transition-colors">
@@ -68,16 +75,17 @@ export default function SiteFooter() {
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-slate-500">
           <p className="flex items-center gap-1.5">
-            صُنع بـ <Heart className="h-4 w-4 text-rose-400 fill-rose-400" /> للمجتمع العربي — معرفة مجانية للجميع
+            Made with <Heart className="h-4 w-4 text-rose-400 fill-rose-400" /> for the
+            Arabic community — free knowledge for everyone.
           </p>
           <a
-            href="https://github.com"
+            href="https://github.com/RaGAEIDOS/ETM"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
           >
             <Github className="h-4 w-4" />
-            مفتوح المصدر على GitHub
+            Open source on GitHub
           </a>
         </div>
       </div>

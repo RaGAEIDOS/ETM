@@ -3,9 +3,9 @@ import { Target } from "lucide-react";
 import ProjectsGrid from "@/components/ProjectsGrid";
 
 export const metadata: Metadata = {
-  title: "المشاريع",
+  title: "Projects",
   description:
-    "مشاريع برمجية حقيقية بمستويات متدرجة — من آلة حاسبة بسيطة لحد لعبة Snake بمحرك خاص ونواة نظام تشغيل.",
+    "Real programming projects at graduated levels — from a simple calculator to a Snake game with your own engine and an operating system kernel.",
 };
 
 export default function ProjectsPage() {
@@ -16,11 +16,12 @@ export default function ProjectsPage() {
           <Target className="h-7 w-7" />
         </span>
         <h1 className="text-4xl sm:text-5xl font-black text-white">
-          مشاريع <span className="gradient-text">حقيقية</span>
+          Real <span className="gradient-text">projects</span>
         </h1>
         <p className="mt-4 text-lg text-slate-400 leading-8">
-          التعلم الحقيقي بيحصل لما تبني. كل مشروع بيجمع المفاهيم اللي اتعلمتها
-          ويضعها في منتج ملموس تقدر تفخر بيه.
+          Real learning happens when you build. Every project brings together the
+          concepts you learned and turns them into something tangible you can be
+          proud of.
         </p>
       </div>
 

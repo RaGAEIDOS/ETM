@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Lesson, Stage } from "./types";
+import { recordActivityDay } from "./stats";
 
 const STORAGE_KEY = "etm-progress-v1";
 const SESSION_KEY = "etm-auth-session-v1";
@@ -77,8 +78,12 @@ export function saveProgress(map: ProgressMap) {
 
 export function saveElzeroProgress(videoId: string, done: boolean) {
   const map = loadProgress();
-  if (done) map[`elzero-${videoId}`] = true;
-  else delete map[`elzero-${videoId}`];
+  if (done) {
+    map[`elzero-${videoId}`] = true;
+    recordActivityDay();
+  } else {
+    delete map[`elzero-${videoId}`];
+  }
   saveProgress(map);
 }
 
@@ -107,6 +112,13 @@ export function useProgress() {
   useEffect(() => {
     setMap(loadProgress());
     setReady(true);
+    const reload = () => setMap(loadProgress());
+    window.addEventListener("etm-auth-change", reload);
+    window.addEventListener("storage", reload);
+    return () => {
+      window.removeEventListener("etm-auth-change", reload);
+      window.removeEventListener("storage", reload);
+    };
   }, []);
 
   const toggle = useCallback((lessonId: string) => {
@@ -114,6 +126,7 @@ export function useProgress() {
       const next = { ...prev, [lessonId]: !prev[lessonId] };
       if (!next[lessonId]) delete next[lessonId];
       saveProgress(next);
+      if (next[lessonId]) recordActivityDay();
       return next;
     });
   }, []);

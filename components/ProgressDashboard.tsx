@@ -62,7 +62,7 @@ export default function ProgressDashboard() {
 
   if (!ready) {
     return (
-      <div className="py-20 text-center text-slate-400">جارٍ تحميل تقدمك...</div>
+      <div className="py-20 text-center text-slate-400">Loading your progress...</div>
     );
   }
 
@@ -106,14 +106,14 @@ export default function ProgressDashboard() {
               </span>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-white">تقدمك الكلي</h2>
+              <h2 className="text-2xl font-black text-white">Your overall progress</h2>
               <p className="mt-1 text-slate-400">
-                أنهيت {overall.done} من {overall.total} درس
+                You finished {overall.done} of {overall.total} lessons
               </p>
               {overall.done > 0 && (
                 <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-amber-300">
                   <Flame className="h-4 w-4" />
-                  استمر! كل درس بيقربك من الاحتراف
+                  Keep going! Every lesson brings you closer to mastery
                 </p>
               )}
             </div>
@@ -124,18 +124,18 @@ export default function ProgressDashboard() {
                 href="/curriculum"
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-6 py-3 font-bold text-ink-950"
               >
-                ابدأ أول درس
+                Start the first lesson
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             ) : (
               <button
                 onClick={() => {
-                  if (window.confirm("هل أنت متأكد من رغبتك في تصفير تقدمك؟")) reset();
+                  if (window.confirm("Are you sure you want to reset your progress?")) reset();
                 }}
                 className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 transition-colors"
               >
                 <RotateCcw className="h-4 w-4" />
-                تصفير التقدم
+                Reset progress
               </button>
             )}
           </div>
@@ -161,7 +161,7 @@ export default function ProgressDashboard() {
                 <div className="flex-1">
                   <h3 className="font-bold text-white">{stage.name}</h3>
                   <p className="text-xs text-slate-500">
-                    {comp.done} من {comp.total} درس
+                    {comp.done} of {comp.total} lessons
                   </p>
                 </div>
                 <span className="text-lg font-black text-cyan-300 tabular-nums">
@@ -178,7 +178,7 @@ export default function ProgressDashboard() {
                 href={`/learn/${stage.id}`}
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300"
               >
-                متابعة التعلم
+                Continue learning
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </div>
@@ -190,15 +190,15 @@ export default function ProgressDashboard() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <h3 className="flex items-center gap-2 text-lg font-bold text-white">
           <Trophy className="h-5 w-5 text-amber-400" />
-          الدروس المكتملة ({completedLessons.length})
+          Completed lessons ({completedLessons.length})
         </h3>
         {completedLessons.length === 0 ? (
           <p className="mt-4 text-slate-400 leading-7">
-            لسه ما أكملت أي درس. ابدأ من{" "}
+            You have not finished any lesson yet. Start from the{" "}
             <Link href="/curriculum" className="text-cyan-400 hover:underline">
-              المنهج
+              curriculum
             </Link>{" "}
-            وأول درس هيبان هنا.
+            and your first finished lesson will appear here.
           </p>
         ) : (
           <div className="mt-4 grid gap-2 sm:grid-cols-2">

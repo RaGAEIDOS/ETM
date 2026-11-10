@@ -40,7 +40,7 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
                 <span className="flex items-center gap-3">
                   <span className="text-lg font-black text-white">{stage.name}</span>
                   <span className="text-xs font-semibold text-slate-500 bg-white/5 rounded-full px-2.5 py-0.5">
-                    {stage.courses.length} كورسات · {comp.total} درس
+                    {stage.courses.length} courses · {comp.total} lessons
                   </span>
                 </span>
                 <span className="mt-1 block text-sm text-slate-400 truncate">
@@ -90,7 +90,7 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
                           href={`/learn/${stage.id}/${course.id}/${course.lessons[0]?.id ?? ""}`}
                           className="rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-4 py-2 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-colors"
                         >
-                          ابدأ الكورس
+                          Start course
                         </Link>
                       </div>
                       <p className="mt-3 text-sm text-slate-400 leading-6">

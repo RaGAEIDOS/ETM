@@ -1,147 +1,143 @@
-# ETM — منصة تعليم البرمجة بلغة C++
+# ETM — Education Technology Miku
 
-<div dir="rtl">
+A free Arabic platform for learning **C++** from absolute zero to building an
+operating system and a game engine. The curriculum is based on the
+[OSSU](https://github.com/ossu/computer-science) degree, rewritten in Arabic
+with interactive examples, real projects, and **Miku** — your study buddy.
 
-منصة **ETM** هي منصة تعليمية تفاعلية باللغة العربية لتعلّم البرمجة بلغة **C++** من الصفر المطلق حتى منتهى الصعوبة (بناء محرك ألعاب ونظام تشغيل ومترجم). المنهج مبني على منهج [OSSU](https://github.com/ossu/computer-science) العالمي، مع إعادة صياغة كاملة بالعربية، وأمثلة تفاعلية، ومشاريع حقيقية.
+## ✨ Features
 
-</div>
+- **4 difficulty levels**: Very Easy → Medium → Hard → Extreme
+- **17 courses, 100+ interactive lessons** with clear explanations
+- **Real C++ playground** in the browser (compile & run, no installs)
+- **Glossary** of 100+ English/Arabic terms
+- **Real projects**: calculator, Snake game with a custom engine, OS kernel in QEMU
+- **Progress tracking** saved on your device
+- **Miku**, an interactive guide that explains every part of the platform
+- **Dashboard** with lessons, ElZero videos, focus time, streaks and what's left
+- **Pomodoro focus timer** with lofi study music and Miku reminders
+- **ElZero videos**: 78 videos, each with a summary, quiz and key terminology
+- **GitHub sign-in** — your real profile picture and identity
 
-## ✨ المميزات
+## 🛠 Tech Stack
 
-- **4 مستويات صعوبة**: سهل جداً → متوسط → صعب → منتهى الصعوبة
-- **17 كورس، أكثر من 100 درس تفاعلي** بشرح عربي مبسّط
-- **ملعب C++ حقيقي** في المتصفح (ترجمة وتشغيل من غير تثبيت أي برامج)
-- **قاموس مصطلحات** إنجليزي/عربي لأكثر من 100 مصطلح
-- **مشاريع حقيقية** متدرجة: آلة حاسبة، لعبة Snake بمحرك خاص، نواة نظام تشغيل
-- **تتبع التقدم** محفوظ محلياً على جهازك
-- **كويزات تفاعلية** بعد كل درس
-- **دعم كامل للغة العربية** (RTL) مع شرح المصطلحات الأجنبية
-- **مبني على منهج OSSU** العالمي المعتمد
-
-## 🛠 التقنيات
-
-| التقنية | الاستخدام |
+| Technology | Purpose |
 | --- | --- |
-| [Next.js 14](https://nextjs.org/) | إطار العمل الرئيسي (App Router) |
-| [TypeScript](https://www.typescriptlang.org/) | لغة البرمجة |
-| [Tailwind CSS](https://tailwindcss.com/) | التصميم |
-| [React Markdown](https://github.com/remarkjs/react-markdown) | عرض محتوى الدروس |
-| [react-simple-code-editor](https://github.com/satya164/react-simple-code-editor) + [Prism](https://prismjs.com/) | محرر الكود في الملعب |
-| [react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) | تلوين الكود في الدروس |
-| [Lucide](https://lucide.dev/) | الأيقونات |
-| [Wandbox API](https://wandbox.org/) | ترجمة وتشغيل C++ في المتصفح |
+| [Next.js 14](https://nextjs.org/) | Main framework (App Router) |
+| [TypeScript](https://www.typescriptlang.org/) | Language |
+| [Tailwind CSS](https://tailwindcss.com/) | Styling |
+| [react-markdown](https://github.com/remarkjs/react-markdown) | Lesson content |
+| [react-simple-code-editor](https://github.com/satya164/react-simple-code-editor) + [Prism](https://prismjs.com/) | Playground editor |
+| [react-syntax-highlighter](https://github.com/react-syntax-highlighter/react-syntax-highlighter) | Code highlighting in lessons |
+| [Lucide](https://lucide.dev/) | Icons |
+| [Wandbox API](https://wandbox.org/) | C++ compilation in the browser |
 
-## 🚀 التشغيل محلياً
+## 🚀 Getting Started
 
-### المتطلبات
+### Requirements
 
-- [Node.js](https://nodejs.org/) الإصدار 18.17 أو أحدث (يفضّل 20+)
+- [Node.js](https://nodejs.org/) 18.17 or newer (20+ recommended)
 
-### خطوات التشغيل
+### Run locally
 
 ```bash
-# 1. استنسخ المشروع
-git clone https://github.com/YOUR_USERNAME/etm.git
-cd etm
-
-# 2. ثبّت الحزم
+git clone https://github.com/RaGAEIDOS/ETM.git
+cd ETM
 npm install
-
-# 3. شغّل خادم التطوير
 npm run dev
 ```
 
-بعدها افتح المتصفح على [http://localhost:3000](http://localhost:3000) 🚀
+Then open [http://localhost:3000](http://localhost:3000).
 
-### الأوامر المتاحة
+### Commands
 
-| الأمر | الوصف |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | تشغيل خادم التطوير على localhost:3000 |
-| `npm run build` | بناء نسخة الإنتاج |
-| `npm run start` | تشغيل نسخة الإنتاج بعد البناء |
+| `npm run dev` | Start the dev server on localhost:3000 |
+| `npm run build` | Build the production bundle |
+| `npm run start` | Run the production build |
 
-## 📁 هيكل المشروع
+## 🔑 GitHub Sign In
+
+The platform signs you in with your GitHub account. For this to work in
+production, the deployment needs to reach `https://api.github.com`.
+
+- In development and on Vercel, the server verifies the token directly.
+- If the server cannot reach GitHub, the site automatically falls back to
+  verifying the token from your browser.
+
+Optionally set a session secret:
 
 ```
-etm/
-├── app/                    # صفحات Next.js (App Router)
-│   ├── page.tsx            # الصفحة الرئيسية
-│   ├── curriculum/         # صفحة المنهج
-│   ├── learn/              # صفحات الدروس (ديناميكية)
-│   ├── playground/         # ملعب C++
-│   ├── glossary/           # قاموس المصطلحات
-│   ├── projects/           # المشاريع
-│   ├── progress/           # تتبع التقدم
-│   └── sources/            # المصادر
-├── components/             # مكونات React القابلة لإعادة الاستخدام
+AUTH_SECRET=your-random-secret
+```
+
+See [.env.example](.env.example).
+
+## 📁 Project Structure
+
+```
+ETM/
+├── app/                    # Next.js pages (App Router)
+│   ├── page.tsx            # Landing page
+│   ├── curriculum/         # Full curriculum
+│   ├── learn/              # Dynamic lesson pages
+│   ├── playground/         # C++ playground
+│   ├── dashboard/          # Progress dashboard
+│   ├── guide/              # Miku's tutorials
+│   ├── elzero/             # ElZero video pages
+│   ├── glossary/           # Glossary
+│   ├── projects/           # Projects
+│   ├── progress/           # Detailed progress
+│   ├── login/              # GitHub sign in
+│   └── api/auth/           # Auth routes (GitHub, session, logout)
+├── components/             # Reusable React components
+│   ├── Miku.tsx            # Miku assistant + onboarding
+│   ├── MikuAvatar.tsx      # Miku SVG mascot
+│   ├── Pomodoro.tsx        # Focus timer + lofi music
+│   └── DashboardClient.tsx # Dashboard
 ├── lib/
-│   ├── content/            # محتوى الدروس (ملف لكل كورس)
-│   ├── data.ts             # تجميع المنهج
-│   ├── stages.ts           # بيانات المراحل والكورسات
-│   ├── glossary.ts         # قاموس المصطلحات
-│   ├── projects.ts         # المشاريع
-│   ├── progress.ts         # إدارة التقدم (localStorage)
-│   └── types.ts            # تعريفات TypeScript
-├── public/                 # الملفات الثابتة
-└── package.json
+│   ├── content/            # Lesson content (one file per course)
+│   ├── data.ts             # Curriculum aggregation
+│   ├── stages.ts           # Stage and course metadata
+│   ├── elzero-videos.ts    # 78 ElZero videos: summary, quiz, terms
+│   ├── auth.tsx            # Client auth context
+│   ├── session.ts          # Server session signing
+│   ├── progress.ts         # Progress storage (localStorage)
+│   ├── stats.ts            # Streaks, focus time, next lessons
+│   ├── miku.ts             # Miku persona and messages
+│   └── types.ts            # TypeScript types
+├── public/                 # Static files
+└── vercel.json             # Vercel deployment config
 ```
 
-## 🌍 النشر على Vercel
+## 🌍 Deploy on Vercel
 
-### الطريقة الأولى: من لوحة Vercel (الأسهل)
+1. Push this repository to GitHub.
+2. Go to [vercel.com](https://vercel.com/) and sign in with GitHub.
+3. Click **Add New Project**, select the ETM repository and press **Import**.
+4. Press **Deploy** — Vercel detects Next.js and `vercel.json` automatically.
 
-1. ارفع المشروع على GitHub (انظر القسم التالي).
-2. روح [vercel.com](https://vercel.com/) وسجّل دخولك بحساب GitHub.
-3. اضغط **Add New Project**.
-4. اختار مستودع ETM واضغط **Import**.
-5. اضغط **Deploy** — خلاص! Vercel بيكتشف Next.js تلقائياً.
+## 📚 Curriculum Structure
 
-### الطريقة الثانية: من سطر الأوامر
-
-```bash
-npm i -g vercel
-vercel login
-vercel --prod
-```
-
-## ☁️ الرفع على GitHub
-
-```bash
-# من داخل مجلد المشروع
-git init
-git add .
-git commit -m "ETM — منصة تعليم البرمجة بلغة C++"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/etm.git
-git push -u origin main
-```
-
-## 📚 هيكل المنهج
-
-| المستوى | الاسم | عدد الكورسات | الهدف |
+| Level | Name | Courses | Goal |
 | --- | --- | --- | --- |
-| 1 | سهل جداً | 3 | أساسيات C++، التفكير الحوسبي، الأدوات |
-| 2 | متوسط | 4 | OOP، المؤشرات، هياكل البيانات، العودية |
-| 3 | صعب | 5 | الخوارزميات، الرياضيات، المعمارية، الأنظمة، الشبكات |
-| 4 | منتهى الصعوبة | 5 | المترجمات، محركات الألعاب، بناء نظام تشغيل، الأنظمة الموزعة، الأمن |
+| 1 | Very Easy | 4 | C++ basics, computational thinking, tools, ElZero track |
+| 2 | Medium | 4 | OOP, pointers, data structures, recursion |
+| 3 | Hard | 5 | Algorithms, math, architecture, OS, networking |
+| 4 | Extreme | 5 | Compilers, game engines, OS development, distributed systems, security |
 
-## 🤝 المساهمة
+## 🤝 Contributing
 
-المشروع مفتوح المصدر ومرحّب بالمساهمات:
+The project is open source and contributions are welcome: content
+improvements, new terminology, bug fixes, and performance enhancements.
 
-- إضافة دروس أو تحسين المحتوى
-- ترجمة مصطلحات جديدة
-- إصلاح الأخطاء أو تحسين الأداء
+## 📄 License
 
-## 📄 الرخصة
-
-هذا المشروع مرخّص برخصة [MIT](LICENSE). محتوى المنهج مستوحى من مصادر مفتوحة (OSSU, CS50, MIT OCW) مع احترام حقوق أصحابها.
+Licensed under the [MIT](LICENSE) license. The curriculum content is
+originally written in Arabic, inspired by open sources (OSSU, CS50, MIT OCW)
+with respect for their authors' rights.
 
 ---
 
-<div dir="rtl">
-
-صُنع بـ ❤️ للمجتمع العربي — معرفة مجانية للجميع.
-
-</div>
+Made with ❤️ for the Arabic community — free knowledge for everyone.

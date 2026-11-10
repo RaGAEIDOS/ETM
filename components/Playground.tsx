@@ -15,7 +15,6 @@ import {
   Terminal,
   AlertTriangle,
   Loader2,
-  Code2,
   Info,
 } from "lucide-react";
 
@@ -23,38 +22,38 @@ const DEFAULT_CODE = `#include <iostream>
 using namespace std;
 
 int main() {
-    cout << "مرحباً بالعالم! أنا مبرمج C++ جديد" << endl;
+    cout << "Hello World! I am a new C++ programmer" << endl;
     return 0;
 }`;
 
 const EXAMPLES: { name: string; code: string }[] = [
-  { name: "مرحباً بالعالم", code: DEFAULT_CODE },
+  { name: "Hello World", code: DEFAULT_CODE },
   {
-    name: "مجموع رقمين",
+    name: "Sum of two numbers",
     code: `#include <iostream>
 using namespace std;
 
 int main() {
     int a = 10, b = 25;
     int sum = a + b;
-    cout << "المجموع = " << sum << endl;
+    cout << "Sum = " << sum << endl;
     return 0;
 }`,
   },
   {
-    name: "حلقة for",
+    name: "For loop",
     code: `#include <iostream>
 using namespace std;
 
 int main() {
     for (int i = 1; i <= 5; i++) {
-        cout << "السطر رقم " << i << endl;
+        cout << "Line number " << i << endl;
     }
     return 0;
 }`,
   },
   {
-    name: "دوال",
+    name: "Functions",
     code: `#include <iostream>
 using namespace std;
 
@@ -68,7 +67,7 @@ int main() {
 }`,
   },
   {
-    name: "مصفوفات",
+    name: "Arrays",
     code: `#include <iostream>
 using namespace std;
 
@@ -82,7 +81,7 @@ int main() {
         }
     }
 
-    cout << "أكبر رقم هو: " << maxVal << endl;
+    cout << "Max value is: " << maxVal << endl;
     return 0;
 }`,
   },
@@ -123,7 +122,7 @@ export default function Playground() {
           save: false,
         }),
       });
-      if (!res.ok) throw new Error("فشل الاتصال بالخادم");
+      if (!res.ok) throw new Error("Could not reach the server");
       const data = await res.json();
       const programOut = data.program_output || data.output || "";
       const programErr = data.program_error || "";
@@ -136,14 +135,14 @@ export default function Playground() {
         .trim();
 
       if (data.status !== "0" && !programOut) {
-        setError(compilerErr || programErr || "حدث خطأ أثناء الترجمة");
+        setError(compilerErr || programErr || "An error occurred while compiling");
       } else {
-        setOutput(combinedOut || "(تم التشغيل بنجاح — لا توجد مخرجات)");
+        setOutput(combinedOut || "(Ran successfully — no output)");
         if (programErr) setError(programErr);
       }
     } catch {
       setError(
-        "تعذّر الاتصال بخدمة الترجمة. تأكد من اتصالك بالإنترنت ثم حاول مرة أخرى."
+        "Could not reach the compilation service. Check your internet connection and try again."
       );
     } finally {
       setCompiling(false);
@@ -181,11 +180,11 @@ export default function Playground() {
               }}
               className="rounded-lg bg-white/5 border border-white/10 px-2 py-1.5 text-xs text-slate-300 outline-none"
               defaultValue=""
-              dir="rtl"
-              aria-label="أمثلة جاهزة"
+              dir="ltr"
+              aria-label="Ready examples"
             >
               <option value="" disabled>
-                أمثلة جاهزة
+                Ready examples
               </option>
               {EXAMPLES.map((ex, i) => (
                 <option key={ex.name} value={i}>
@@ -234,14 +233,12 @@ export default function Playground() {
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-white/5 bg-white/[0.03] px-4 py-3">
-          <span className="text-xs text-slate-500" dir="rtl">
-            {code.split("\n").length} <bdi>سطر</bdi> · {code.length}{" "}
-            <bdi>حرف</bdi>
+          <span className="text-xs text-slate-500" dir="ltr">
+            {code.split("\n").length} lines · {code.length} chars
           </span>
           <button
             onClick={run}
             disabled={compiling}
-            dir="rtl"
             className="flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-3 sm:py-2.5 text-sm font-bold text-ink-950 hover:opacity-90 disabled:opacity-50 transition-opacity min-h-[48px]"
           >
             {compiling ? (
@@ -249,7 +246,7 @@ export default function Playground() {
             ) : (
               <Play className="h-4 w-4" />
             )}
-            {compiling ? "جارٍ الترجمة..." : "تشغيل"}
+            {compiling ? "Compiling..." : "Run"}
           </button>
         </div>
       </div>
@@ -259,14 +256,11 @@ export default function Playground() {
         <div className="flex-1 rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
           <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
             <Terminal className="h-4 w-4 text-emerald-400" />
-            <span className="text-xs text-slate-400">المخرجات</span>
+            <span className="text-xs text-slate-400">Output</span>
           </div>
           <div className="p-4 font-mono text-sm leading-7 min-h-[200px] max-h-[360px] overflow-auto">
             {error ? (
-              <div
-                className="flex items-start gap-2 text-rose-300"
-                dir="auto"
-              >
+              <div className="flex items-start gap-2 text-rose-300" dir="auto">
                 <AlertTriangle className="h-4 w-4 mt-1 shrink-0" />
                 <pre className="whitespace-pre-wrap output-pre break-words">
                   {error}
@@ -280,8 +274,8 @@ export default function Playground() {
                 {output}
               </pre>
             ) : (
-              <span className="text-slate-600" dir="rtl">
-                اضغط &quot;تشغيل&quot; لرؤية ناتج البرنامج هنا...
+              <span className="text-slate-600" dir="ltr">
+                Press &quot;Run&quot; to see the program output here...
               </span>
             )}
           </div>
@@ -290,24 +284,33 @@ export default function Playground() {
         <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.05] p-5">
           <h4 className="flex items-center gap-2 font-bold text-cyan-300">
             <Info className="h-4 w-4" />
-            معلومات عن الملعب
+            About the playground
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-slate-300 leading-6">
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              بيترجم ويشغّل كود C++ حقيقي عبر خدمة Wandbox المجانية.
+              Compiles and runs real C++ through the free Wandbox service.
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              استخدم <kbd className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs" dir="ltr">Ctrl + Enter</kbd> للتشغيل السريع.
+              Use{" "}
+              <kbd
+                className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs"
+                dir="ltr"
+              >
+                Ctrl + Enter
+              </kbd>{" "}
+              to run quickly.
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              الكود بيترسل للخدمة للترجمة — مفيش حاجة بتتخزّن على جهازك.
+              Your code is sent to the service for compilation — nothing is
+              stored on your device.
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              لبرامج بتحتاج إدخال من المستخدم، استخدم الخيار الجاية قريبًا — أو جرّب أمثلة من غير stdin.
+              For programs that need user input, use stdin — coming soon. For
+              now, try examples that do not read input.
             </li>
           </ul>
         </div>

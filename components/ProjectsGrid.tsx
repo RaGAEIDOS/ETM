@@ -15,11 +15,11 @@ import {
 import { projects } from "@/lib/projects";
 
 const LEVELS = [
-  { level: 0, name: "كل المستويات", icon: Layers },
-  { level: 1, name: "سهل جداً", icon: Sparkles },
-  { level: 2, name: "متوسط", icon: Layers },
-  { level: 3, name: "صعب", icon: Cpu },
-  { level: 4, name: "منتهى الصعوبة", icon: Rocket },
+  { level: 0, name: "All levels", icon: Layers },
+  { level: 1, name: "Very Easy", icon: Sparkles },
+  { level: 2, name: "Medium", icon: Layers },
+  { level: 3, name: "Hard", icon: Cpu },
+  { level: 4, name: "Extreme", icon: Rocket },
 ];
 
 const LEVEL_COLORS: Record<number, string> = {
@@ -92,7 +92,7 @@ export default function ProjectsGrid() {
                 onClick={() => setOpenId(open ? null : p.id)}
                 className="flex w-full items-center justify-between gap-3 border-t border-white/5 bg-white/[0.02] px-6 py-4 text-sm font-bold text-slate-300 hover:text-cyan-300 hover:bg-white/[0.04] transition-colors"
               >
-                {open ? "إخفاء خطوات التنفيذ" : "خطوات التنفيذ والأهداف الإضافية"}
+                {open ? "Hide implementation steps" : "Implementation steps & stretch goals"}
                 <ChevronDown
                   className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`}
                 />
@@ -103,7 +103,7 @@ export default function ProjectsGrid() {
                   <div>
                     <h4 className="flex items-center gap-2 text-sm font-bold text-cyan-300 mb-3">
                       <Target className="h-4 w-4" />
-                      خطوات التنفيذ
+                      Implementation steps
                     </h4>
                     <ol className="space-y-2.5">
                       {p.steps.map((s, i) => (
@@ -119,7 +119,7 @@ export default function ProjectsGrid() {
                   <div>
                     <h4 className="flex items-center gap-2 text-sm font-bold text-amber-300 mb-3">
                       <StretchHorizontal className="h-4 w-4" />
-                      أهداف إضافية (Stretch Goals)
+                      Stretch goals
                     </h4>
                     <ul className="space-y-2">
                       {p.stretchGoals.map((g, i) => (
