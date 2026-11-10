@@ -55,7 +55,7 @@ const SECTIONS = [
     icon: Timer,
     color: "from-amber-400 to-orange-500",
     title: "5. Pomodoro Focus",
-    body: "Press the timer button in the bottom-right corner. A Focus session runs for 25 minutes, then a 5-minute break. After 4 focus sessions you earn a long break. Turn on Lofi study music to stay in the zone.",
+    body: "Press the timer button in the bottom-right corner. A Focus session runs for 25 minutes, then a 5-minute break. After 4 focus sessions you earn a long break. Turn on Study Radio — pick from 8 free live SomaFM stations — to stay in the zone.",
     miku: "25 دقيقة Focus وبعدها 5 دقايق Break. أنا هذكرك لو سهات عني! 🎵",
   },
   {

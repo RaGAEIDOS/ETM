@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Copy,
   Check,
+  Download,
   Terminal,
   AlertTriangle,
   Loader2,
@@ -159,6 +160,18 @@ export default function Playground() {
     }
   };
 
+  const download = () => {
+    const blob = new Blob([code], { type: "text/x-c++src;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "main.cpp";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Editor */}
@@ -195,12 +208,22 @@ export default function Playground() {
             <button
               onClick={copy}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
+              title="Copy code"
+              aria-label="Copy code"
             >
               {copied ? (
                 <Check className="h-3.5 w-3.5 text-emerald-400" />
               ) : (
                 <Copy className="h-3.5 w-3.5" />
               )}
+            </button>
+            <button
+              onClick={download}
+              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
+              title="Download main.cpp"
+              aria-label="Download main.cpp"
+            >
+              <Download className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => {

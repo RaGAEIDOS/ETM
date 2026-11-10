@@ -7,7 +7,7 @@ import {
   Pause,
   RotateCcw,
   SkipForward,
-  Music,
+  Radio,
   X,
   Brain,
   Coffee,
@@ -31,114 +31,67 @@ const MODE_META: Record<
 };
 
 const STORAGE_KEY = "etm-pomodoro-v1";
-const LOFI_KEY = "etm-lofi";
+const RADIO_KEY = "etm-radio-v1";
 const FOCUS_PRESETS = [15, 25, 50];
 
-interface LofiEngine {
-  start(): void;
-  stop(): void;
-  setVolume(v: number): void;
-  dispose(): void;
+interface RadioStation {
+  id: string;
+  name: string;
+  desc: string;
+  url: string;
 }
 
-function createLofiEngine(): LofiEngine {
-  const Ctor =
-    window.AudioContext ||
-    (window as unknown as { webkitAudioContext: typeof AudioContext })
-      .webkitAudioContext;
-  const ctx = new Ctor();
-  const master = ctx.createGain();
-  master.gain.value = 0;
-  master.connect(ctx.destination);
-
-  // --- Warm pad ---
-  const padFilter = ctx.createBiquadFilter();
-  padFilter.type = "lowpass";
-  padFilter.frequency.value = 820;
-  padFilter.Q.value = 0.6;
-  const padGain = ctx.createGain();
-  padGain.gain.value = 0.55;
-  padGain.connect(padFilter);
-  padFilter.connect(master);
-
-  const chords = [
-    [130.81, 164.81, 196.0, 246.94], // Cmaj7
-    [110.0, 130.81, 164.81, 196.0], // Am7
-    [87.31, 130.81, 174.61, 220.0], // Fmaj7
-    [98.0, 146.83, 196.0, 246.94], // G
-  ];
-  let chordIdx = 0;
-  const oscs: OscillatorNode[] = [];
-  chords[0].forEach((f, i) => {
-    const o = ctx.createOscillator();
-    o.type = i % 2 === 0 ? "sine" : "triangle";
-    o.frequency.value = f;
-    const g = ctx.createGain();
-    g.gain.value = 0.16;
-    o.connect(g);
-    g.connect(padGain);
-    o.start();
-    oscs.push(o);
-  });
-
-  const chordTimer = setInterval(() => {
-    chordIdx = (chordIdx + 1) % chords.length;
-    chords[chordIdx].forEach((f, i) => {
-      try {
-        oscs[i].frequency.setTargetAtTime(f, ctx.currentTime, 1.6);
-      } catch {}
-    });
-  }, 9000);
-
-  // --- Slow breathing LFO ---
-  const lfo = ctx.createOscillator();
-  lfo.frequency.value = 0.07;
-  const lfoGain = ctx.createGain();
-  lfoGain.gain.value = 0.16;
-  lfo.connect(lfoGain);
-  lfoGain.connect(padGain.gain);
-  lfo.start();
-
-  // --- Rain / brown noise ---
-  const len = 2 * ctx.sampleRate;
-  const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-  const data = buf.getChannelData(0);
-  let last = 0;
-  for (let i = 0; i < len; i++) {
-    const white = Math.random() * 2 - 1;
-    last = (last + 0.02 * white) / 1.02;
-    data[i] = last * 3.2;
-  }
-  const noise = ctx.createBufferSource();
-  noise.buffer = buf;
-  noise.loop = true;
-  const noiseFilter = ctx.createBiquadFilter();
-  noiseFilter.type = "lowpass";
-  noiseFilter.frequency.value = 1300;
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.value = 0.05;
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(master);
-  noise.start();
-
-  return {
-    start() {
-      if (ctx.state === "suspended") ctx.resume().catch(() => {});
-      master.gain.setTargetAtTime(0.42, ctx.currentTime, 1.2);
-    },
-    stop() {
-      master.gain.setTargetAtTime(0, ctx.currentTime, 0.5);
-    },
-    setVolume(v: number) {
-      master.gain.setTargetAtTime(v * 0.5, ctx.currentTime, 0.3);
-    },
-    dispose() {
-      clearInterval(chordTimer);
-      ctx.close().catch(() => {});
-    },
-  };
-}
+// Free, listener-supported internet radio — SomaFM. Listen responsibly.
+const RADIOS: RadioStation[] = [
+  {
+    id: "groove-salad",
+    name: "Groove Salad",
+    desc: "Chill ambient beats — the classic study radio",
+    url: "https://stream.somafm.com/groovesalad-128-mp3",
+  },
+  {
+    id: "beat-blender",
+    name: "Beat Blender",
+    desc: "Downtempo and chill electronica",
+    url: "https://stream.somafm.com/beatblender-128-mp3",
+  },
+  {
+    id: "deep-space-one",
+    name: "Deep Space One",
+    desc: "Deep ambient and space music",
+    url: "https://stream.somafm.com/deepspaceone-128-mp3",
+  },
+  {
+    id: "space-station",
+    name: "Space Station Soma",
+    desc: "Spaced-out ambient, NASA style",
+    url: "https://stream.somafm.com/spacestation-128-mp3",
+  },
+  {
+    id: "drone-zone",
+    name: "Drone Zone",
+    desc: "Mellow drone-based ambient",
+    url: "https://stream.somafm.com/dronezone-128-mp3",
+  },
+  {
+    id: "mission-control",
+    name: "Mission Control",
+    desc: "Ambience inspired by NASA missions",
+    url: "https://stream.somafm.com/missioncontrol-128-mp3",
+  },
+  {
+    id: "cliqhop",
+    name: "Cliqhop IDM",
+    desc: "Intelligent dance music — rhythmic focus",
+    url: "https://stream.somafm.com/cliqhop-128-mp3",
+  },
+  {
+    id: "secret-agent",
+    name: "Secret Agent",
+    desc: "Spy lounge and exotica",
+    url: "https://stream.somafm.com/secretagent-128-mp3",
+  },
+];
 
 function chime() {
   try {
@@ -182,11 +135,12 @@ export default function Pomodoro() {
   const [running, setRunning] = useState(false);
   const [endAt, setEndAt] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
-  const [lofiOn, setLofiOn] = useState(false);
-  const [lofiVol, setLofiVol] = useState(0.5);
+  const [radioOn, setRadioOn] = useState(false);
+  const [radioVol, setRadioVol] = useState(0.5);
+  const [radioId, setRadioId] = useState(RADIOS[0].id);
   const [mounted, setMounted] = useState(false);
 
-  const engineRef = useRef<LofiEngine | null>(null);
+  const radioRef = useRef<HTMLAudioElement | null>(null);
   const modeRef = useRef<Mode>("focus");
   const focusLenRef = useRef(25);
   const hiddenAtRef = useRef<number | null>(null);
@@ -226,8 +180,20 @@ export default function Pomodoro() {
         runningRef.current = s.running;
         setEndAt(s.endAt);
       }
-      const lofi = localStorage.getItem(LOFI_KEY);
-      if (lofi) setLofiOn(lofi === "on");
+      try {
+        const saved = localStorage.getItem(RADIO_KEY);
+        if (saved) {
+          const s = JSON.parse(saved) as {
+            on?: boolean;
+            id?: string;
+            vol?: number;
+          };
+          if (s.id && RADIOS.some((r) => r.id === s.id)) setRadioId(s.id);
+          if (typeof s.vol === "number")
+            setRadioVol(Math.min(1, Math.max(0, s.vol)));
+          if (s.on) setRadioOn(true);
+        }
+      } catch {}
     } catch {}
   }, []);
 
@@ -241,6 +207,16 @@ export default function Pomodoro() {
       );
     } catch {}
   }, [mounted, mode, focusLen, secondsLeft, running, endAt]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      localStorage.setItem(
+        RADIO_KEY,
+        JSON.stringify({ on: radioOn, id: radioId, vol: radioVol })
+      );
+    } catch {}
+  }, [mounted, radioOn, radioId, radioVol]);
 
   const duration =
     mode === "focus" ? focusLen * 60 : MODE_META[mode].duration;
@@ -313,31 +289,39 @@ export default function Pomodoro() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [say]);
 
-  // ---- lofi engine lifecycle ----
+  // ---- radio engine ----
   useEffect(() => {
     if (!mounted) return;
-    if (lofiOn) {
-      if (!engineRef.current) {
-        try {
-          engineRef.current = createLofiEngine();
-        } catch {
-          return;
-        }
+    if (radioOn) {
+      if (!radioRef.current) {
+        const audio = new Audio();
+        audio.preload = "none";
+        audio.loop = true;
+        radioRef.current = audio;
       }
-      engineRef.current.start();
-      engineRef.current.setVolume(lofiVol);
+      const station = RADIOS.find((r) => r.id === radioId) ?? RADIOS[0];
+      if (radioRef.current.src !== station.url) {
+        radioRef.current.src = station.url;
+      }
+      radioRef.current.volume = radioVol;
+      radioRef.current.play().catch(() => {
+        // Autoplay or network issue — user can tap the toggle again
+      });
     } else {
-      engineRef.current?.stop();
+      radioRef.current?.pause();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted, lofiOn]);
+  }, [mounted, radioOn, radioId]);
 
   useEffect(() => {
-    if (engineRef.current) engineRef.current.setVolume(lofiVol);
-  }, [lofiVol]);
+    if (radioRef.current) radioRef.current.volume = radioVol;
+  }, [radioVol]);
 
   useEffect(() => {
-    return () => engineRef.current?.dispose();
+    return () => {
+      radioRef.current?.pause();
+      radioRef.current = null;
+    };
   }, []);
 
   function toggle() {
@@ -526,46 +510,84 @@ export default function Pomodoro() {
             </div>
           </div>
 
-          {/* lofi */}
+          {/* study radio */}
           <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-sm font-bold text-white">
-                <Music className="h-4 w-4 text-cyan-400" />
-                Lofi study music
+                <Radio className="h-4 w-4 text-cyan-400" />
+                Study Radio
               </div>
               <button
-                onClick={() => {
-                  const next = !lofiOn;
-                  setLofiOn(next);
-                  try {
-                    localStorage.setItem(LOFI_KEY, next ? "on" : "off");
-                  } catch {}
-                }}
-                className={`relative h-6 w-11 rounded-full transition-colors ${
-                  lofiOn ? "bg-cyan-500" : "bg-white/15"
+                onClick={() => setRadioOn((v) => !v)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+                  radioOn ? "bg-cyan-500" : "bg-white/15"
                 }`}
-                aria-label="Toggle lofi music"
+                aria-label="Toggle study radio"
+                aria-pressed={radioOn}
               >
                 <span
                   className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
-                    lofiOn ? "start-5" : "start-0.5"
+                    radioOn ? "start-5" : "start-0.5"
                   }`}
                 />
               </button>
             </div>
-            {lofiOn && (
-              <div className="mt-3 flex items-center gap-3">
-                <span className="text-xs text-slate-500">Volume</span>
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={lofiVol}
-                  onChange={(e) => setLofiVol(Number(e.target.value))}
-                  className="flex-1 accent-cyan-400"
-                  dir="ltr"
-                />
+            {radioOn && (
+              <div className="mt-3">
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pe-0.5">
+                  {RADIOS.map((r) => {
+                    const active = radioId === r.id;
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => setRadioId(r.id)}
+                        className={`rounded-lg border px-2.5 py-2 text-start transition-colors ${
+                          active
+                            ? "border-cyan-500/40 bg-cyan-500/10"
+                            : "border-white/10 bg-white/5 hover:bg-white/10"
+                        }`}
+                        aria-pressed={active}
+                      >
+                        <span className="block text-[11px] font-bold leading-4 text-white">
+                          {active && (
+                            <span className="me-1 text-cyan-400">●</span>
+                          )}
+                          {r.name}
+                        </span>
+                        <span className="mt-1 block text-[10px] font-normal leading-3 text-slate-500">
+                          {r.desc}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <span className="text-xs text-slate-500">Volume</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.05}
+                    value={radioVol}
+                    onChange={(e) => setRadioVol(Number(e.target.value))}
+                    className="flex-1 accent-cyan-400"
+                    dir="ltr"
+                    aria-label="Radio volume"
+                  />
+                </div>
+                <p className="mt-2 text-[10px] leading-4 text-slate-600">
+                  Live streams by{" "}
+                  <a
+                    href="https://somafm.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline hover:text-slate-400"
+                  >
+                    SomaFM
+                  </a>{" "}
+                  — free, listener-supported radio. Pick the one that gets you
+                  in the zone.
+                </p>
               </div>
             )}
           </div>

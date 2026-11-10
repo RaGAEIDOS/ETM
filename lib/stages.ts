@@ -69,6 +69,18 @@ export const stageMetas: StageMeta[] = [
         ],
       },
       {
+        id: "git-github",
+        title: "كورس مكثف: Git و GitHub",
+        titleEn: "Git & GitHub Crash Course",
+        description:
+          "كل اللي المبرمج المحترف محتاجه من Git: فكرة إدارة الإصدارات، التثبيت والإعداد، الدورة اليومية (status/add/commit)، الفروع والدمج، GitHub والـ Pull Requests، وأدوات باحترافية زي stash و revert و tags.",
+        sources: [
+          { name: "Git Official Docs", url: "https://git-scm.com/doc" },
+          { name: "Pro Git Book — مجاني", url: "https://git-scm.com/book/en/v2" },
+          { name: "GitHub Skills", url: "https://skills.github.com/" },
+        ],
+      },
+      {
         id: "elzero-fundamentals",
         title: "أساسيات البرمجة مع C++ — مسار الزيرو",
         titleEn: "Fundamentals Of Programming With C++ — ElZero Track",

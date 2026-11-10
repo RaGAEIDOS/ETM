@@ -4,6 +4,7 @@ import { stageMetas } from "./stages";
 import { lessons as cppBasics } from "./content/cpp-basics";
 import { lessons as thinkingComputer } from "./content/thinking-computer";
 import { lessons as tools } from "./content/tools";
+import { lessons as gitGithub } from "./content/git-github";
 import { lessons as elzeroFundamentals } from "./content/elzero-fundamentals";
 
 import { lessons as oop } from "./content/oop";
@@ -27,6 +28,7 @@ const contentMap: Record<string, Lesson[]> = {
   "cpp-basics": cppBasics,
   "thinking-computer": thinkingComputer,
   tools: tools,
+  "git-github": gitGithub,
   "elzero-fundamentals": elzeroFundamentals,
 
   oop: oop,
