@@ -18,6 +18,7 @@ import {
   Loader2,
   Info,
 } from "lucide-react";
+import { compileCpp } from "@/lib/wandbox";
 
 const DEFAULT_CODE = `#include <iostream>
 using namespace std;
@@ -95,6 +96,7 @@ export default function Playground() {
   const [error, setError] = useState("");
   const [compiling, setCompiling] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [stdin, setStdin] = useState("");
 
   useEffect(() => {
     const c = params.get("code");
@@ -111,35 +113,12 @@ export default function Playground() {
     setOutput("");
     setError("");
     try {
-      const res = await fetch("https://wandbox.org/api/compile.json", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code,
-          compiler: "gcc-head",
-          options: "warning,gnu++2a",
-          "compiler-option-raw": "-std=c++2a",
-          stdin: "",
-          save: false,
-        }),
-      });
-      if (!res.ok) throw new Error("Could not reach the server");
-      const data = await res.json();
-      const programOut = data.program_output || data.output || "";
-      const programErr = data.program_error || "";
-      const compilerErr = data.compiler_error || "";
-      const compilerOut = data.compiler_output || "";
-
-      const combinedOut = [programOut, compilerOut]
-        .filter(Boolean)
-        .join("\n")
-        .trim();
-
-      if (data.status !== "0" && !programOut) {
-        setError(compilerErr || programErr || "An error occurred while compiling");
+      const result = await compileCpp(code, stdin);
+      if (result.ok) {
+        setOutput(result.stdout.trim() ? result.stdout : "(Ran successfully — no output)");
+        if (result.programError) setError(result.programError);
       } else {
-        setOutput(combinedOut || "(Ran successfully — no output)");
-        if (programErr) setError(programErr);
+        setError(result.error ?? "An error occurred while compiling");
       }
     } catch {
       setError(
@@ -173,7 +152,15 @@ export default function Playground() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div
+      className="grid gap-6 lg:grid-cols-2"
+      onKeyDown={(e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          run();
+        }
+      }}
+    >
       {/* Editor */}
       <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden" dir="ltr">
         <div className="flex items-center justify-between gap-3 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
@@ -255,6 +242,21 @@ export default function Playground() {
           />
         </div>
 
+        <div className="border-t border-white/5 bg-[#0d1117] px-4 py-2" dir="ltr">
+          <label htmlFor="pg-stdin" className="text-[11px] font-semibold text-slate-500" dir="auto">
+            stdin — for programs using cin
+          </label>
+          <textarea
+            id="pg-stdin"
+            value={stdin}
+            onChange={(e) => setStdin(e.target.value)}
+            rows={2}
+            spellCheck={false}
+            placeholder={"Input for the program — e.g.\n10\n20"}
+            className="mt-1 block w-full bg-transparent font-mono text-xs text-slate-200 outline-none resize-y placeholder:text-slate-600 leading-6"
+          />
+        </div>
+
         <div className="flex items-center justify-between gap-3 border-t border-white/5 bg-white/[0.03] px-4 py-3">
           <span className="text-xs text-slate-500" dir="ltr">
             {code.split("\n").length} lines · {code.length} chars
@@ -332,8 +334,14 @@ export default function Playground() {
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              For programs that need user input, use stdin — coming soon. For
-              now, try examples that do not read input.
+              Programs that read input now work — type it in the{" "}
+              <kbd
+                className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs"
+                dir="ltr"
+              >
+                stdin
+              </kbd>{" "}
+              box above Run.
             </li>
           </ul>
         </div>

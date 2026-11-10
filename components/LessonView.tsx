@@ -33,6 +33,14 @@ export default function LessonView({
   index: number;
 }) {
   const { isDone, toggle } = useProgress();
+  // Playground wiring for in-lesson code blocks (fenced markdown code + code[])
+  const playgroundCtx = {
+    scope: "learn" as const,
+    id: lesson.id,
+    practiceLessonId: lesson.id,
+    lessonTitle: lesson.title,
+    exercise: lesson.exercise,
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -112,7 +120,7 @@ export default function LessonView({
                     {section.heading}
                   </h2>
                 )}
-                <Markdown content={section.body} />
+                <Markdown content={section.body} playground={playgroundCtx} />
               </section>
             ))}
           </div>
@@ -130,6 +138,7 @@ export default function LessonView({
                   code={c.code}
                   language={c.language}
                   title={c.title}
+                  playground={playgroundCtx}
                 />
               ))}
             </div>

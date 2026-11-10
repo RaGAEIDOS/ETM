@@ -12,6 +12,8 @@ import python from "react-syntax-highlighter/dist/cjs/languages/prism/python";
 import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
 import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
 import { Copy, Check, Play, Code2 } from "lucide-react";
+import LessonPlayground from "./LessonPlayground";
+import { hash32 } from "@/lib/lesson-playground";
 
 SyntaxHighlighter.registerLanguage("cpp", cpp);
 SyntaxHighlighter.registerLanguage("c", c);
@@ -57,14 +59,30 @@ const LANG_LABEL: Record<string, string> = {
   text: "Text",
 };
 
+export interface PlaygroundContext {
+  scope: "elzero" | "learn" | "glossary";
+  id: string; // lesson or video id
+  number?: number; // ElZero: video number, used for rollout gating
+  practiceLessonId?: string; // /learn: marks this progress key on success
+  lessonTitle?: string;
+  exercise?: string;
+  stdinDefault?: string;
+  expectedOutput?: string;
+  hints?: string[];
+  solution?: string;
+  title?: string;
+}
+
 export default function CodeBlock({
   code,
   language = "cpp",
   title,
+  playground,
 }: {
   code: string;
   language?: string;
   title?: string;
+  playground?: PlaygroundContext;
 }) {
   const [copied, setCopied] = useState(false);
   const lang = LANG_MAP[language.toLowerCase()] ?? "text";
@@ -147,6 +165,27 @@ export default function CodeBlock({
           </pre>
         )}
       </div>
+      {playground && (language === "cpp" || language === "c" || language === "h" || language === "hpp") && (
+        <div className="border-t border-white/5 bg-[#0d1117] px-4 py-3">
+          <LessonPlayground
+            starterCode={code}
+            stdinDefault={playground.stdinDefault}
+            expectedOutput={playground.expectedOutput}
+            hints={playground.hints}
+            solution={playground.solution}
+            exercise={playground.exercise}
+            title={playground.title || title}
+            lessonTitle={playground.lessonTitle}
+            storage={{
+              scope: playground.scope,
+              id: playground.id,
+              number: playground.number,
+              blockHash: hash32(code),
+              practiceLessonId: playground.practiceLessonId,
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }

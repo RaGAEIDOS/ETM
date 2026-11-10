@@ -106,7 +106,18 @@ export default function ElzeroVideoPage({
             <ListChecks className="h-5 w-5 text-cyan-400" />
             Code example
           </h2>
-          <CodeBlock code={v.example.code} language="cpp" title={v.example.title} />
+          <CodeBlock
+            code={v.example.code}
+            language="cpp"
+            title={v.example.title}
+            playground={{
+              scope: "elzero",
+              id: v.id,
+              number: v.number,
+              lessonTitle: v.title,
+              title: v.example.title,
+            }}
+          />
           <Link
             href={`/playground?code=${encodeURIComponent(v.example.code)}`}
             className="inline-flex items-center gap-2 rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-2 text-sm font-bold text-amber-300 hover:bg-amber-500/25 transition-colors"

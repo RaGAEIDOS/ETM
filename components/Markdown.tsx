@@ -2,9 +2,15 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import CodeBlock from "./CodeBlock";
+import CodeBlock, { type PlaygroundContext } from "./CodeBlock";
 
-export default function Markdown({ content }: { content: string }) {
+export default function Markdown({
+  content,
+  playground,
+}: {
+  content: string;
+  playground?: PlaygroundContext;
+}) {
   return (
     <div className="markdown" dir="rtl">
       <ReactMarkdown
@@ -18,7 +24,11 @@ export default function Markdown({ content }: { content: string }) {
             const codeString = String(children).replace(/\n$/, "");
             if (match) {
               return (
-                <CodeBlock code={codeString} language={match[1]} />
+                <CodeBlock
+                  code={codeString}
+                  language={match[1]}
+                  playground={playground}
+                />
               );
             }
             return <code>{children}</code>;
