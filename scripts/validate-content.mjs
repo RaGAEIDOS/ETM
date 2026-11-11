@@ -318,7 +318,11 @@ await importEachLesson(async (m, f) => {
 
   const routes = routePages.map((p) => {
     const rel = path.relative(path.join(cwd, 'app'), p);
-    return rel.split(path.sep).slice(0, -1);
+    const segs = rel.split(path.sep).slice(0, -1);
+    // Drop the [locale] segment: it matches both ar (unprefixed, the default
+    // locale) and /en/..., so routes stay in their pre-i18n shape.
+    if (segs[0] === '[locale]') segs.shift();
+    return segs;
   });
   const videoIds = new Set(elzeroVideos.map((v) => String(v.id)));
   const paramChecks = {
@@ -328,7 +332,10 @@ await importEachLesson(async (m, f) => {
     video: (v, segs) => videoIds.has(segs[1]),
   };
   const resolves = (pathname) => {
-    const segs = pathname.split('/').filter(Boolean);
+    let segs = pathname.split('/').filter(Boolean);
+    // Strip an explicit locale prefix: ar (default) also serves unprefixed
+    // URLs, and /en/... is the English variant of the same route.
+    if (segs[0] === 'en' || segs[0] === 'ar') segs = segs.slice(1);
     if (!segs.length) return true;
     for (const route of routes) {
       if (route.length !== segs.length) continue;
