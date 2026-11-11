@@ -3,7 +3,7 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-11 · **Branch**: `feat/phase-1-content-review` (base: `feat/phase-0-recon` @ `862562d`, which is based on `fix/qa-pass` @ `840be10`)
+**Updated**: 2026-11-11 · **Branch**: `feat/phase-2-bilingual` (base: `feat/phase-1-content-review` @ `dd34720`, based on `feat/phase-0-recon` @ `862562d`, based on `fix/qa-pass` @ `840be10`)
 
 ## Phase status
 
@@ -11,7 +11,7 @@ Update after every task. If a session is interrupted, resume from here.
 |---|---|---|
 | 0 — Recon & baseline | **done** | `docs/RECON.md`, 39 baseline screenshots, all baseline checks run |
 | 1 — Curriculum & content review | **done** | `docs/CURRICULUM_REVIEW.md`; all 78 ElZero videos now have 2 questions; all 75 glossary terms referenced; validator strict-clean. Structural suggestions awaiting user decision (§5.2 of the review). |
-| 2 — Bilingual site (ar + en) | todo | No i18n exists today; `<html lang="en">` hardcoded |
+| 2 — Bilingual site (ar + en) | **done** | `feat/phase-2-bilingual` pushed (6 commits); build 497 static pages, tsc/lint/test:content clean, E2E 181/181 chromium-desktop, bidi screenshots in docs/screenshots/ |
 | 3 — Progress & stats system | todo | Current: localStorage booleans + streak/focus logs; no unified event API |
 | 4 — Dedicated English section | todo | English scaffold exists on `feature/english-track` (unmerged, no video data). **CHECKPOINT 1** after first 20 videos of "English from zero" |
 | 5 — Lesson playground (C++) | todo | `feature/lesson-playground` has an unmerged embedded Try-it implementation |
@@ -31,6 +31,11 @@ Update after every task. If a session is interrupted, resume from here.
 - Phase 1 decision: 5 broken external book/source links were fixed and 3 book-author errors corrected; the 18 books themselves remain pending the Phase 6 replacement decision.
 - a11y gate = axe `critical` + `serious` only; `moderate` (`region`, `heading-order`) documented as advisory.
 - Playwright: chromium-desktop is the CI gate; mobile-chrome and webkit run locally (all three were 177/177 on 2026-11-11).
+- Phase 2 decision: i18n implemented without next-intl — all routes under `app/[locale]/`, root layout is a passthrough, middleware rewrites unprefixed→`/ar` and redirects `/ar/*`→unprefixed; English is only reachable at `/en/...`.
+- Phase 2 decision: `LanguageSwitcher` wraps `useSearchParams` in `<Suspense>` (otherwise every static page fails prerender).
+- Phase 2 decision: forward-CTA arrows use `ArrowLeft` + `ltr:rotate-180` (Arabic-first); back/previous arrows use `ArrowLeft`/`ChevronLeft` + `rtl:rotate-180`. Both conventions coexist intentionally.
+- Phase 2 decision: C++ lesson bodies, ElZero summaries, glossary explanations and book/project descriptions stay Arabic; only UI chrome + SEO metadata is translated.
+- Phase 2 decision: `/dev/bidi` is noindex and intentionally omitted from the sitemap.
 - Always navigate with `waitUntil: "domcontentloaded"` (Google Fonts unreachable here), and seed `etm-miku-onboarding-done=1` before clicking.
 - Do **not** run `npm audit fix --force` (would jump Next 14 → 16).
 
@@ -67,3 +72,4 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 - `fix/qa-pass` @ `840be10`: build, typecheck, lint, content validation pass; E2E 177/177 on chromium-desktop, mobile-chrome, webkit; CI workflow committed; QA report committed.
 - Phase 0 adds docs only (no app code changes): `docs/MASTER_PROMPT.md`, `docs/RECON.md`, `docs/PROGRESS.md`, `scripts/recon-screenshots.mjs`, `docs/recon/screenshots/`.
 - Phase 1 @ `feat/phase-1-content-review`: build 252 static pages, typecheck, lint, `test:content --strict` clean, E2E 177/177 on chromium-desktop; full findings in `docs/CURRICULUM_REVIEW.md`.
+- Phase 2 @ `feat/phase-2-bilingual`: ar (default, unprefixed) + en (`/en/...`) per `docs/I18N_GUIDE.md`; routes moved under `app/[locale]/`; all UI chrome translated; C++/ElZero/glossary/book content stays Arabic; `<html lang dir>` per locale; persisted language switcher (NEXT_LOCALE cookie); sitemap ar/en/x-default alternates; `/dev/bidi` + screenshot tests; build 497 static pages, typecheck/lint/`test:content --strict` clean, E2E 181/181 chromium-desktop (2026-11-11).
