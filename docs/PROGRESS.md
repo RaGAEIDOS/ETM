@@ -3,14 +3,14 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-11 · **Branch**: `feat/phase-0-recon` (base: `fix/qa-pass` @ `840be10`)
+**Updated**: 2026-11-11 · **Branch**: `feat/phase-1-content-review` (base: `feat/phase-0-recon` @ `862562d`, which is based on `fix/qa-pass` @ `840be10`)
 
 ## Phase status
 
 | Phase | Status | Notes |
 |---|---|---|
 | 0 — Recon & baseline | **done** | `docs/RECON.md`, 39 baseline screenshots, all baseline checks run |
-| 1 — Curriculum & content review | todo | Use `scripts/validate-content.mjs`; 76 ElZero <2Q + 15 glossary advisories are known |
+| 1 — Curriculum & content review | **done** | `docs/CURRICULUM_REVIEW.md`; all 78 ElZero videos now have 2 questions; all 75 glossary terms referenced; validator strict-clean. Structural suggestions awaiting user decision (§5.2 of the review). |
 | 2 — Bilingual site (ar + en) | todo | No i18n exists today; `<html lang="en">` hardcoded |
 | 3 — Progress & stats system | todo | Current: localStorage booleans + streak/focus logs; no unified event API |
 | 4 — Dedicated English section | todo | English scaffold exists on `feature/english-track` (unmerged, no video data). **CHECKPOINT 1** after first 20 videos of "English from zero" |
@@ -23,7 +23,12 @@ Update after every task. If a session is interrupted, resume from here.
 ## Decisions made
 
 - Phase branches are cut from `fix/qa-pass` for now because it carries the E2E suite + CI that later phases must keep green; merge order to `main` is a user decision (see below).
-- Content validator (`scripts/validate-content.mjs`): hard failures only for schema breakage, duplicate IDs, stray scripts, broken glossary schema. ElZero <2 questions and unreferenced glossary terms stay **advisories** (become failures with `--strict`); mass content changes need approval.
+- Content validator (`scripts/validate-content.mjs`): hard failures for schema breakage, duplicate IDs, stray scripts, U+FFFD, glued Arabic/Latin words, unresolvable literal internal links, and ElZero videos with <2 questions or no terms. Glossary-reference and ISBN advisories remain, but `--strict` is clean.
+- Phase 1 decision: all 78 ElZero videos hard-require ≥2 questions (supersedes the earlier "Stage-2 gated" advisory stance).
+- Phase 1 decision: legacy answer positions are **not** rotated; only the 76 newly added questions use balanced positions. Answer-position bias is documented as an unapplied suggestion.
+- Phase 1 decision: no lesson/course/video/glossary ID was renamed or removed; existing URLs and stored progress are intact.
+- Phase 1 decision: 16 missing glossary links were added to lessons; all 75 terms are now referenced.
+- Phase 1 decision: 5 broken external book/source links were fixed and 3 book-author errors corrected; the 18 books themselves remain pending the Phase 6 replacement decision.
 - a11y gate = axe `critical` + `serious` only; `moderate` (`region`, `heading-order`) documented as advisory.
 - Playwright: chromium-desktop is the CI gate; mobile-chrome and webkit run locally (all three were 177/177 on 2026-11-11).
 - Always navigate with `waitUntil: "domcontentloaded"` (Google Fonts unreachable here), and seed `etm-miku-onboarding-done=1` before clicking.
@@ -61,3 +66,4 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 
 - `fix/qa-pass` @ `840be10`: build, typecheck, lint, content validation pass; E2E 177/177 on chromium-desktop, mobile-chrome, webkit; CI workflow committed; QA report committed.
 - Phase 0 adds docs only (no app code changes): `docs/MASTER_PROMPT.md`, `docs/RECON.md`, `docs/PROGRESS.md`, `scripts/recon-screenshots.mjs`, `docs/recon/screenshots/`.
+- Phase 1 @ `feat/phase-1-content-review`: build 252 static pages, typecheck, lint, `test:content --strict` clean, E2E 177/177 on chromium-desktop; full findings in `docs/CURRICULUM_REVIEW.md`.
