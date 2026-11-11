@@ -7,6 +7,8 @@ const PAGES = [
   ["lesson", "/learn/stage-1/cpp-basics/hello-world"],
   ["elzero-index", "/elzero"],
   ["elzero-video", "/elzero/001"],
+  ["english-index", "/english"],
+  ["english-review", "/english/review"],
   ["playground", "/playground"],
   ["books", "/books"],
   ["dashboard", "/dashboard"],

@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { seedMikuDone } from "./helpers/ui";
 
 const V2_KEY = "etm-progress-v2";
+const ENGLISH_NOTES_KEY = "etm-english-notes-v1";
 
 test.describe("Progress persistence", () => {
   test("lesson marked complete stays complete after reload", async ({ page }) => {
@@ -139,6 +140,14 @@ test.describe("Progress persistence", () => {
     await expect(page.getByRole("button", { name: /Completed/i })).toBeVisible();
 
     page.once("dialog", (dialog) => dialog.accept());
+    await page.evaluate(
+      (key) =>
+        window.localStorage.setItem(
+          key,
+          JSON.stringify({ "001": { text: "secret note", updatedAt: new Date().toISOString() } })
+        ),
+      ENGLISH_NOTES_KEY
+    );
     await page.goto("/en/dashboard", { waitUntil: "domcontentloaded" });
     await page.getByRole("button", { name: /Delete my data/i }).click();
 
@@ -149,5 +158,7 @@ test.describe("Progress persistence", () => {
     expect(parsed.events ?? []).toEqual([]);
     const legacy = await page.evaluate(() => window.localStorage.getItem("etm-progress-v1"));
     expect(legacy).toBeNull();
+    const notes = await page.evaluate((key) => window.localStorage.getItem(key), ENGLISH_NOTES_KEY);
+    expect(notes).toBeNull();
   });
 });
