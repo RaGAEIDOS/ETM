@@ -8,7 +8,7 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import { loadProgress, saveProgress } from "./progress";
+import { loadProgressFile, PROGRESS_CHANGE_EVENT } from "./progress/store";
 
 export interface AuthUser {
   id: string;
@@ -81,8 +81,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const syncTs = new Date().toISOString();
       localStorage.setItem(LASTSYNC_PREFIX + u.id, syncTs);
       setLastSync(syncTs);
-      // Carry over any guest progress into the signed-in profile.
-      saveProgress(loadProgress());
+      // One-time migration of any guest/per-user legacy progress into the
+      // unified v2 store; new events are device-local today (no backend).
+      loadProgressFile();
+    } catch {}
+    try {
+      window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
     } catch {}
     window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
   }, []);
@@ -169,10 +173,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLastSync(now);
     try {
       localStorage.setItem(LASTSYNC_PREFIX + user.id, now);
-      localStorage.setItem(
-        `etm-progress-${user.id}`,
-        JSON.stringify(loadProgress())
-      );
+      // Ensure the v2 store exists/loads; with no backend configured the
+      // merge surface is this device. Dispatching refreshes open dashboards.
+      loadProgressFile();
+      window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
     } catch {}
   }, [user]);
 
