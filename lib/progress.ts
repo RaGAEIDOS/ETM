@@ -66,6 +66,8 @@ export function useProgress() {
   const toggle = useCallback((lessonId: string) => {
     if (lessonId.startsWith("elzero-")) {
       toggleCompletion("elzero", lessonId.slice("elzero-".length));
+    } else if (lessonId.startsWith("english-")) {
+      toggleCompletion("english", lessonId.slice("english-".length));
     } else {
       toggleCompletion("cpp", lessonId);
     }

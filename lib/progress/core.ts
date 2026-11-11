@@ -12,7 +12,7 @@
 // Schema
 // ---------------------------------------------------------------------------
 
-export type Track = "cpp" | "elzero" | "projects" | "playground" | "books";
+export type Track = "cpp" | "elzero" | "english" | "projects" | "playground" | "books";
 
 export type EventType =
   | "lesson_started"
@@ -270,7 +270,9 @@ export interface DerivedProgress {
   map: Record<string, true>;
   doneLessonIds: string[];
   doneVideoIds: string[];
-  /** cpp lessons + elzero videos completed. */
+  /** English (zAmericanEnglish) video ids completed, Phase 4 track. */
+  doneEnglishVideoIds: string[];
+  /** cpp lessons + elzero videos + english videos completed. */
   totalCompletions: number;
   minutesByDay: Record<string, number>;
   totalFocusMinutes: number;
@@ -299,7 +301,7 @@ export interface DerivedProgress {
   lastActivityAt: string | null;
 }
 
-const TRACKS: Track[] = ["cpp", "elzero", "projects", "playground", "books"];
+const TRACKS: Track[] = ["cpp", "elzero", "english", "projects", "playground", "books"];
 
 export interface DeriveOptions {
   /** Local day key for "today"; injectable for tests/timezones. */
@@ -314,6 +316,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
 
   const doneCpp = new Set<string>();
   const doneElzero = new Set<string>();
+  const doneEnglish = new Set<string>();
   const minutesByDay: Record<string, number> = {};
   const dayHadActivity: Record<string, boolean> = {};
   const perTopic: Record<string, TopicAccuracy> = {};
@@ -349,12 +352,14 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
       case "lesson_completed": {
         if (!e.itemId) break;
         if (e.track === "elzero") doneElzero.add(e.itemId);
+        else if (e.track === "english") doneEnglish.add(e.itemId);
         else doneCpp.add(e.itemId); // cpp + projects-style completions both count as lesson ids
         break;
       }
       case "lesson_uncompleted": {
         if (!e.itemId) break;
         if (e.track === "elzero") doneElzero.delete(e.itemId);
+        else if (e.track === "english") doneEnglish.delete(e.itemId);
         else doneCpp.delete(e.itemId);
         break;
       }
@@ -430,7 +435,8 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
     map,
     doneLessonIds: Array.from(doneCpp),
     doneVideoIds: Array.from(doneElzero),
-    totalCompletions: doneCpp.size + doneElzero.size,
+    doneEnglishVideoIds: Array.from(doneEnglish),
+    totalCompletions: doneCpp.size + doneElzero.size + doneEnglish.size,
     minutesByDay,
     totalFocusMinutes,
     minutesThisWeek,
