@@ -19,13 +19,13 @@ export const freeBooksByCategory: FreeBookCategory[] = [
     category: "C++ foundations",
     books: [
       {
-        title: "Think C++ Volume 1",
+        title: "Thinking in C++, Volume 1 (2nd Edition)",
         author: "Bruce Eckel",
-        url: "https://mindviewinc.github.io/ThinkCpp-Volume1/",
+        url: "https://cgvr.cs.uni-bremen.de/teaching/programming_literatur/thinking-in-c++/Vol1/Preface.html",
         format: "Online",
         level: 1,
         desc:
-          "Classic guide to C++ thinking and good practice, freely licensed (CC-BY-NC-SA). Perfect companion to Stage 1 lessons.",
+          "Classic guide to C++ thinking and good practice, available as a free HTML edition. Perfect companion to Stage 1 lessons.",
       },
       {
         title: "Learn C++",
@@ -66,7 +66,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       },
       {
         title: "Hello, Algo",
-        author: "Alan Ts & others",
+        author: "Yudong Jin (krahets) & contributors",
         url: "https://www.hello-algo.com/",
         format: "Online",
         level: 2,
@@ -81,7 +81,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       {
         title: "Mathematics for Computer Science",
         author: "Lehman, Leighton & Meyer",
-        url: "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/resources/mit6_042jf10_textbook/",
+        url: "https://ocw.mit.edu/courses/6-042j-mathematics-for-computer-science-fall-2010/pages/readings/",
         format: "PDF",
         level: 3,
         desc:
@@ -90,7 +90,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       {
         title: "Discrete Mathematics: An Open Introduction",
         author: "Oscar Levin",
-        url: "https://discrete.openmath.us/",
+        url: "https://discrete.openmathbooks.org/dmoi3.html",
         format: "PDF",
         level: 3,
         desc:
@@ -121,7 +121,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       },
       {
         title: "Crafting Interpreters",
-        author: "Rob Pike & Dave Beyer",
+        author: "Robert Nystrom",
         url: "https://craftinginterpreters.com/",
         format: "Online",
         level: 4,
@@ -196,7 +196,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       {
         title: "Structure and Interpretation of Computer Programs (SICP)",
         author: "Abelson & Sussman",
-        url: "https://mitpress.mit.edu/sicp/",
+        url: "https://mitpress.mit.edu/9780262510875/structure-and-interpretation-of-computer-programs/",
         format: "Online",
         level: 1,
         desc:
@@ -204,7 +204,7 @@ export const freeBooksByCategory: FreeBookCategory[] = [
       },
       {
         title: "How to Design Programs (HtDP)",
-        author: "MIT Press",
+        author: "Matthias Felleisen, Robert Bruce Findler, Matthew Flatt & Shriram Krishnamurthi",
         url: "https://htdp.org/",
         format: "Online",
         level: 1,

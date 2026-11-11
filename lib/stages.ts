@@ -51,7 +51,7 @@ export const stageMetas: StageMeta[] = [
         title: "كيف يفكر الكمبيوتر (الصفر والواحد)",
         titleEn: "How Computers Think",
         description:
-          "فهم النظام الثنائي والبوابات المنطقية والخوارزميات قبل ما تكتب كود معقّد، عشان تبقى مبرمج فاهم مش just كاتبع كود.",
+          "فهم النظام الثنائي والبوابات المنطقية والخوارزميات قبل ما تكتب كود معقّد، عشان تبقى مبرمج فاهم مش مجرد كاتب كود.",
         sources: [
           { name: "Nand2Tetris", url: "https://www.nand2tetris.org/" },
           { name: "Crash Course Computer Science", url: "https://www.youtube.com/playlist?list=PL8dPuLjbpukj8S7c/f4F6nWl5h5u2l5h5" },
@@ -118,7 +118,7 @@ export const stageMetas: StageMeta[] = [
           "الأصناف والكائنات، الوراثة، تعدد الأشكال، والتغليف — النمط اللي بيستخدمه كل محرك ألعاب ونظام تشغيل محترم.",
         sources: [
           { name: "OSSU Object-Oriented Design", url: OSSU },
-          { name: "learncpp.com — OOP", url: "https://www.learncpp.com/cpp-tutorial/object-oriented-programming/" },
+          { name: "learncpp.com — OOP", url: "https://www.learncpp.com/cpp-tutorial/introduction-to-object-oriented-programming/" },
         ],
       },
       {
