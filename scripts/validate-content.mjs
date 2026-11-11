@@ -8,16 +8,20 @@
 //  - every quiz: integer answer index inside options range, non-empty
 //    question, non-empty options, no duplicate options, no placeholder-only
 //    questions
-//  - ElZero videos: id matches zero-padded number, in 001..078, unique
+//  - ElZero videos: id matches zero-padded number, in 001..078, unique,
+//    and every video has at least 2 quiz questions and at least 1 key term
 //  - glossary entries: unique `en`, valid category, non-empty fields
 //  - free books: non-empty title/author/url, non-empty categories, level in 1..4
 //  - courses/stages/sources: non-empty name + url on every source
 //  - sitemap BASE_URL matches PASS_URL when PASS_URL is exported
 //  - elzero-video youtube links from the real watcher list decode to a valid id
+//  - no Arabic/Latin words glued together in runtime content strings
+//  - every literal internal href in app/ and components/ resolves to a real
+//    route (static page or a dynamic route with an existing stage/course/
+//    lesson/video id)
+//  - no Unicode replacement characters (U+FFFD) anywhere
 //
 // Advisory (never exit 1 by default; become failures with --strict):
-//  - ElZero videos with fewer than 2 questions (adding questions is a content
-//    decision gated on STAGE-2 approval)
 //  - glossary entries never referenced by any lesson term
 //  - book records with ISBN-13 whose checksum is invalid (only if isbn fields
 //    exist; none today)
@@ -88,6 +92,10 @@ function scanStray(dir) {
     for (let li = 0; li < lines.length; li++) {
       for (const ch of lines[li]) {
         const cp = ch.codePointAt(0);
+        if (cp === 0xfffd) {
+          fail(rel, li + 1, 'Unicode replacement character U+FFFD (garbled text)');
+          continue;
+        }
         for (const [lo, hi, name] of STRAY_RANGES) {
           if (cp >= lo && cp <= hi) {
             fail(rel, li + 1, `stray script char ${name} (U+${cp.toString(16).padStart(4, '0')}) "${ch}"`);
@@ -109,6 +117,12 @@ const importEachLesson = async (fn) => {
   }
 };
 const isPlaceholder = (s) => /^\s*(\.\.\.|…|todo|fixme|tbd)\s*$/i.test(String(s ?? ''));
+const MIXED_SCRIPT_RE = /[A-Za-z]{2,}[\u0621-\u064A]{2,}|[\u0621-\u064A]{2,}[A-Za-z]{2,}/;
+const checkMixed = (file, tag, value) => {
+  if (typeof value !== 'string') return;
+  const m = value.match(MIXED_SCRIPT_RE);
+  if (m) fail(file, -1, `${tag}: Arabic/Latin glued without a space: "${m[0]}"`);
+};
 
 // ---------- lessons: ids + quiz schema ----------
 const seenLessonIds = new Map();
@@ -117,9 +131,24 @@ await importEachLesson(async (m, f) => {
     if (!String(l?.id ?? '').trim()) fail(f, -1, 'lesson with missing/empty id');
     else if (seenLessonIds.has(l.id)) fail(f, -1, `duplicate lesson id "${l.id}" (also in ${seenLessonIds.get(l.id)})`);
     else seenLessonIds.set(l.id, f);
+    checkMixed(f, `lesson "${l.id}" title`, l.title);
+    checkMixed(f, `lesson "${l.id}" description`, l.description);
+    checkMixed(f, `lesson "${l.id}" exercise`, l.exercise);
+    for (const [si, s] of (l.sections ?? []).entries()) {
+      checkMixed(f, `lesson "${l.id}" section ${si} heading`, s.heading);
+      checkMixed(f, `lesson "${l.id}" section ${si} body`, s.body);
+    }
+    for (const [ci, c] of (l.code ?? []).entries()) {
+      checkMixed(f, `lesson "${l.id}" code ${ci} title`, c.title);
+      checkMixed(f, `lesson "${l.id}" code ${ci}`, c.code);
+    }
+    for (const [ti, t] of (l.terms ?? []).entries()) checkMixed(f, `lesson "${l.id}" term ${ti}`, t.ar);
     if (!Array.isArray(l?.quiz) || l.quiz.length === 0) { fail(f, -1, `lesson "${l?.id}": missing/empty quiz`); continue; }
     l.quiz.forEach((q, qi) => {
       const tag = `lesson "${l.id}" q${qi}`;
+      checkMixed(f, `${tag} question`, q.question);
+      checkMixed(f, `${tag} explanation`, q.explanation);
+      (q.options ?? []).forEach((o, oi) => checkMixed(f, `${tag} option ${oi}`, o));
       if (!String(q.question ?? '').trim()) fail(f, -1, `${tag}: empty question`);
       if (isPlaceholder(q.question)) fail(f, -1, `${tag}: placeholder question`);
       if (!Number.isInteger(q.answer)) return fail(f, -1, `${tag}: answer "${q.answer}" not an integer`);
@@ -144,14 +173,19 @@ await importEachLesson(async (m, f) => {
     if (seenNums.has(v.number)) fail('lib/elzero-videos.ts', -1, `duplicate video number ${v.number}`);
     seenNums.add(v.number);
     if (!String(v.title ?? '').trim() || !String(v.summary ?? '').trim()) fail('lib/elzero-videos.ts', -1, `video #${vid}: empty title/summary`);
+    checkMixed('lib/elzero-videos.ts', `video #${vid} summary`, v.summary);
     if (!Array.isArray(v.terms) || v.terms.length === 0) {
       fail('lib/elzero-videos.ts', -1, `video #${vid}: zero terms`);
     } else if (v.terms.some((t) => !String(t?.en ?? '').trim() || !String(t?.ar ?? '').trim())) {
       fail('lib/elzero-videos.ts', -1, `video #${vid}: term with empty en or ar`);
     }
-    if (!Array.isArray(v.quiz) || v.quiz.length < 2) warn('lib/elzero-videos.ts', -1, `video #${vid}: only ${v.quiz?.length ?? 0} question(s) (need >= 2; STAGE-2 gated)`);
+    for (const [ti, t] of (v.terms ?? []).entries()) checkMixed('lib/elzero-videos.ts', `video #${vid} term ${ti}`, t.ar);
+    if (!Array.isArray(v.quiz) || v.quiz.length < 2) fail('lib/elzero-videos.ts', -1, `video #${vid}: only ${v.quiz?.length ?? 0} question(s) (need >= 2)`);
     v.quiz?.forEach((q, qi) => {
       const tag = `video #${vid} q${qi}`;
+      checkMixed('lib/elzero-videos.ts', `${tag} question`, q.question);
+      checkMixed('lib/elzero-videos.ts', `${tag} explanation`, q.explanation);
+      (q.options ?? []).forEach((o, oi) => checkMixed('lib/elzero-videos.ts', `${tag} option ${oi}`, o));
       if (!Number.isInteger(q.answer) || q.answer < 0 || q.answer >= (q.options?.length ?? 0)) fail('lib/elzero-videos.ts', -1, `${tag}: invalid answer key ${q.answer}`);
       if (!String(q?.question ?? '').trim()) fail('lib/elzero-videos.ts', -1, `${tag}: empty question`);
       if (isPlaceholder(q.question)) fail('lib/elzero-videos.ts', -1, `${tag}: placeholder question`);
@@ -194,6 +228,8 @@ await importEachLesson(async (m, f) => {
     if (!String(t?.ar ?? '').trim() || !String(t?.description ?? '').trim() || !String(t?.category ?? '').trim()) fail('lib/glossary.ts', -1, `glossary "${t?.en}": empty ar/description/category`);
     if (t?.category && !categories.has(t.category)) fail('lib/glossary.ts', -1, `glossary "${t?.en}": category "${t.category}" not in GLOSSARY_CATEGORIES`);
     if (isPlaceholder(t.en) || isPlaceholder(t.ar)) fail('lib/glossary.ts', -1, `glossary "${t?.en}": placeholder field`);
+    checkMixed('lib/glossary.ts', `glossary "${t?.en}" ar`, t.ar);
+    checkMixed('lib/glossary.ts', `glossary "${t?.en}" description`, t.description);
   }
   const referenced = new Set();
   await importEachLesson(async (m2) => {
@@ -233,12 +269,96 @@ await importEachLesson(async (m, f) => {
 // ---------- stages/courses/sources: schema ----------
 {
   const m = await importLib('lib/stages.ts');
-  for (const s of m.STAGES ?? []) {
+  for (const s of m.stageMetas ?? []) {
     if (!String(s.name ?? '').trim() || !String(s.tagline ?? '').trim()) fail('lib/stages.ts', -1, `stage "${s.id}": empty name/tagline`);
+    checkMixed('lib/stages.ts', `stage "${s.id}" name`, s.name);
+    checkMixed('lib/stages.ts', `stage "${s.id}" tagline`, s.tagline);
+    checkMixed('lib/stages.ts', `stage "${s.id}" description`, s.description);
     for (const c of s.courses ?? []) {
       if (!String(c.title ?? '').trim()) fail('lib/stages.ts', -1, `course "${c.id}": empty title`);
+      checkMixed('lib/stages.ts', `course "${c.id}" title`, c.title);
+      checkMixed('lib/stages.ts', `course "${c.id}" description`, c.description);
       for (const src of c.sources ?? []) {
         if (!String(src?.name ?? '').trim() || !/^https?:\/\//.test(String(src?.url ?? ''))) fail('lib/stages.ts', -1, `course "${c.id}": source with empty/invalid name or url: ${JSON.stringify(src)}`);
+      }
+    }
+  }
+}
+
+// ---------- internal links: app/ + components/ hrefs ----------
+{
+  const { stageMetas } = await importLib('lib/stages.ts');
+  const { elzeroVideos } = await importLib('lib/elzero-videos.ts');
+  const stageIds = new Set((stageMetas ?? []).map((s) => s.id));
+  const courseStage = new Map();
+  const courseIds = new Set();
+  for (const s of stageMetas ?? []) {
+    for (const c of s.courses ?? []) {
+      courseIds.add(c.id);
+      courseStage.set(c.id, s.id);
+    }
+  }
+  const lessonsByCourse = new Map();
+  await importEachLesson(async (m, f) => {
+    lessonsByCourse.set(f.replace(/\.ts$/, ''), new Set((m.lessons ?? []).map((l) => l.id)));
+  });
+  const routePages = [];
+  const linkFiles = [];
+  const walk = (dir, collectLinks) => {
+    for (const entry of fs.readdirSync(dir)) {
+      const p = path.join(dir, entry);
+      const st = fs.statSync(p);
+      if (st.isDirectory()) { walk(p, collectLinks); continue; }
+      if (entry === 'page.tsx') routePages.push(p);
+      if (collectLinks && p.endsWith('.tsx')) linkFiles.push(p);
+    }
+  };
+  walk(path.join(cwd, 'app'), true);
+  walk(path.join(cwd, 'components'), true);
+
+  const routes = routePages.map((p) => {
+    const rel = path.relative(path.join(cwd, 'app'), p);
+    return rel.split(path.sep).slice(0, -1);
+  });
+  const videoIds = new Set(elzeroVideos.map((v) => String(v.id)));
+  const paramChecks = {
+    stage: (v, segs) => stageIds.has(segs[1]),
+    course: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
+    lesson: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1] && Boolean(lessonsByCourse.get(segs[2])?.has(segs[3])),
+    video: (v, segs) => videoIds.has(segs[1]),
+  };
+  const resolves = (pathname) => {
+    const segs = pathname.split('/').filter(Boolean);
+    if (!segs.length) return true;
+    for (const route of routes) {
+      if (route.length !== segs.length) continue;
+      const params = {};
+      let matched = true;
+      for (let i = 0; i < segs.length; i++) {
+        const part = route[i];
+        if (part.startsWith('[') && part.endsWith(']')) params[part.slice(1, -1)] = segs[i];
+        else if (part !== segs[i]) { matched = false; break; }
+      }
+      if (!matched) continue;
+      if (Object.entries(params).every(([name, value]) => paramChecks[name]?.(value, segs))) return true;
+    }
+    return false;
+  };
+
+  const hrefRe = /href=["']([^"']+)["']/g;
+  for (const file of linkFiles) {
+    const rel = path.relative(cwd, file).replace(/\\/g, '/');
+    const src = fs.readFileSync(file, 'utf8');
+    const lines = src.split(/\r?\n/);
+    for (let li = 0; li < lines.length; li++) {
+      hrefRe.lastIndex = 0;
+      let m;
+      while ((m = hrefRe.exec(lines[li]))) {
+        let href = m[1];
+        if (/^(?:https?:|mailto:|#|\/\/)/.test(href) || href.includes('${')) continue;
+        href = href.split(/[?#]/)[0];
+        if (!href.startsWith('/')) continue;
+        if (!resolves(href)) fail(rel, li + 1, `internal link "${m[1]}" does not resolve to a known route`);
       }
     }
   }
