@@ -100,7 +100,7 @@ export default function SiteHeader() {
                 className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
               >
                 <Flame className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">Start</span>
+                <span className="whitespace-nowrap">Start learning</span>
               </Link>
             )}
             {!bare && (

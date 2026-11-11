@@ -232,6 +232,7 @@ export default function Playground() {
                 setError("");
               }}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
+              aria-label="Reset to default code"
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
@@ -239,7 +240,11 @@ export default function Playground() {
         </div>
 
         <div className="relative">
+          <label htmlFor="playground-code" className="sr-only">
+            C++ code editor
+          </label>
           <Editor
+            textareaId="playground-code"
             value={code}
             onValueChange={setCode}
             highlight={(c) => Prism.highlight(c, Prism.languages.cpp, "cpp")}
@@ -256,7 +261,7 @@ export default function Playground() {
         </div>
 
         <div className="flex items-center justify-between gap-3 border-t border-white/5 bg-white/[0.03] px-4 py-3">
-          <span className="text-xs text-slate-500" dir="ltr">
+          <span className="text-xs text-slate-400" dir="ltr">
             {code.split("\n").length} lines · {code.length} chars
           </span>
           <button
@@ -297,7 +302,7 @@ export default function Playground() {
                 {output}
               </pre>
             ) : (
-              <span className="text-slate-600" dir="ltr">
+              <span className="text-slate-400" dir="ltr">
                 Press &quot;Run&quot; to see the program output here...
               </span>
             )}

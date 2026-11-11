@@ -598,7 +598,7 @@ export default function Pomodoro() {
       <button
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 rounded-full border border-white/10 bg-ink-900/95 py-2 ps-2 pe-4 shadow-xl backdrop-blur hover:border-cyan-500/40 transition-colors"
-        aria-label="Pomodoro timer"
+        aria-label={`${fmt(secondsLeft)} · Pomodoro timer`}
       >
         <span
           className={`flex h-9 w-9 items-center justify-center rounded-full ${
