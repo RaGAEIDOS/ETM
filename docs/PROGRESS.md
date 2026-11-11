@@ -3,7 +3,7 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-11 · **Branch**: `feat/phase-3-progress` (base: `feat/phase-2-bilingual` @ `1bd72de`, based on `feat/phase-1-content-review` @ `dd34720`, based on `feat/phase-0-recon` @ `862562d`, based on `fix/qa-pass` @ `840be10`)
+**Updated**: 2026-11-11 · **Branch**: `feat/phase-4-english-section` (base: `feat/phase-3-progress` @ `f387e9c`, based on `feat/phase-2-bilingual` @ `1bd72de`, based on `feat/phase-1-content-review` @ `dd34720`, based on `feat/phase-0-recon` @ `862562d`, based on `fix/qa-pass` @ `840be10`)
 
 ## Phase status
 
@@ -13,7 +13,7 @@ Update after every task. If a session is interrupted, resume from here.
 | 1 — Curriculum & content review | **done** | `docs/CURRICULUM_REVIEW.md`; all 78 ElZero videos now have 2 questions; all 75 glossary terms referenced; validator strict-clean. Structural suggestions awaiting user decision (§5.2 of the review). |
 | 2 — Bilingual site (ar + en) | **done** | `feat/phase-2-bilingual` pushed (6 commits); build 497 static pages, tsc/lint/test:content clean, E2E 181/181 chromium-desktop, bidi screenshots in docs/screenshots/ |
 | 3 — Progress & stats system | **done** | Event store `lib/progress/` (local-first, versioned v2); migration from v1/per-user keys non-lossy; dashboard rewritten; resume cards; E2E 186/186 |
-| 4 — Dedicated English section | todo | English scaffold exists on `feature/english-track` (unmerged, no video data). **CHECKPOINT 1** after first 20 videos of "English from zero" |
+| 4 — Dedicated English section | **in progress — infra done, content blocked (needs YouTube fetch + CHECKPOINT 1)** | Full implementation on `feat/phase-4-english-section`: `/english` hub (ar + `/en/english`), per-video pages, click-to-load YouTube facade (youtube-nocookie, IFrame API, resume), tabbed panel (Summary/Terms/Practice/Speaking/Notes), mixed-type practice engine, Leitner SRS review hub (`/english/review`) + dashboard due-card, credit on every English page, notes wiped by "Delete my data". `englishVideos` intentionally EMPTY — no YouTube access here; CHECKPOINT 1 unreachable until content lands |
 | 5 — Lesson playground (C++) | todo | `feature/lesson-playground` has an unmerged embedded Try-it implementation |
 | 6 — Books refresh | todo | `/books` exists with 18 free books added by a previous AI pass; master prompt requires replacing them with a verified 30–40 list |
 | 7 — Miku-chan mascot & tutor | todo | Miku today = canned tips, no AI endpoint; no image licensing work done |
@@ -46,6 +46,14 @@ Update after every task. If a session is interrupted, resume from here.
 - Phase 3 decision: focus/Pomodoro sessions are tracked as `track: "playground"`.
 - Phase 3 decision: unit tests run on the built-in `node:test` runner (`npm run test:unit`, `node --experimental-strip-types --test`) — zero new dependencies; `core.ts` stays import-free for that reason (`allowImportingTsExtensions` added to tsconfig).
 - Phase 3 decision: SSR of progress-dependent client components renders a placeholder (`ready=false`); text assertions on client-only content must wait for hydration — the `/en` home is signed-in-only, so its E2E mocks `**/api/auth/me`.
+- Phase 4 decision: **no fabricated content** — `englishVideos` ships empty; course/playlist metadata (ids from the channel's own descriptions) is real, but every title/summary/term/quiz item stays unfilled until `scripts/fetch-playlists.mjs` is run locally with a `YOUTUBE_API_KEY`. The hub renders a sync-pending notice meanwhile. CHECKPOINT 1 cannot be faked.
+- Phase 4 decision: videos embed **inside the platform** with a click-to-load facade (thumbnail → lazy youtube-nocookie iframe via the IFrame API, 10 s timeout degradation to plain embed); no autoplay before click; 16:9 responsive; `playsinline`; playback-rate buttons + keyboard `[` / `]` / `0`; resume position saved >10 s; watched % stored ~every 5 s as an upserted `video_progress` event (no log bloat).
+- Phase 4 decision: completion = watched ≥ 80 % AND practice ≥ 70 %, OR manual confirm — auto-applies once per mount (guarded against undoing a manual un-check); manual toggle always available.
+- Phase 4 decision: practice = discriminated union `EnglishPracticeItem` (mcq/fill/dictation/order/match), single correct answer, `normalizePracticeAnswer` (NFKD, diacritics/punctuation strip, single-space collapse), one-line explanation per item; match items score all-or-nothing with a miss counter.
+- Phase 4 decision: a full practice attempt emits ONE `quiz_attempt` (`track: "english"`, `itemId = videoId`, `topic = courseId`) so dashboard accuracy/weak-topics/reviewDue work unchanged.
+- Phase 4 decision: flashcards feed a Leitner SRS (`lib/english/srs.ts`, boxes 0–5, intervals 1/3/7/16/35/75 days indexed by the NEW box); terms enter the queue on first review; overdue counts as due; `localDayKey` day boundary; pure replay of event history (order-independent), unit-tested via `node:test`.
+- Phase 4 decision: notes live in `etm-english-notes-v1`, covered by export/import and wiped by "Delete my data"; speech input/synthesis is local-only (nothing recorded/uploaded); speaking tab degrades gracefully when `SpeechRecognition` is absent.
+- Phase 4 decision: English video pages SSG with `generateStaticParams` = current `englishVideos` (empty for now) + `dynamicParams` default; adding content = adding data, no code changes; sitemap gains `/english` (0.9) + per-video entries automatically.
 
 ## Decisions needed (ask the user)
 
@@ -53,14 +61,14 @@ Update after every task. If a session is interrupted, resume from here.
 2. **Existing unmerged branches**: `feature/english-track` (scaffold), `feature/lesson-playground`, `feature/books-refresh` — reuse, rebase, or discard? They predate the master plan.
 3. **Phase 3 backend**: no backend exists. Implemented local-first + JSON export/import (per prompt). Sync options if a backend is ever approved: (a) existing GitHub OAuth + a tiny `/api/progress` route persisting to a KV/file per user, (b) Supabase/Postgres with RLS, (c) Vercel Blob/KV. Demo/prototype only; none wired up.
 4. **Phase 6 books**: confirm removing all 18 current `/books` entries (all added by AI) before adding the verified 30–40 list.
-5. **Phase 4 YouTube access**: is a YouTube Data API v3 key available in env, or should content collection rely on `scripts/fetch-playlists.mjs` run locally?
+5. **Phase 4 YouTube access**: no key in this environment (all YouTube hosts unreachable; only www.googleapis.com answers). Needed: run `YOUTUBE_API_KEY=AIza… node scripts/fetch-playlists.mjs` locally and provide `out/english-courses.json` (or re-paste it here) so the first 20 "English from zero" videos can be transcribed → then CHECKPOINT 1 review. Blocking `docs/MASTER_PROMPT.md` CHECKPOINT 1 and everything after it in Phase 4.
 
 ## Unverified / environment limits
 
 - Wandbox compilation: endpoint returned HTTP 500 from this environment; Playground verified only on its friendly-error fallback.
 - GitHub sign-in: no test token; only the token-paste flow and signed-cookie code were inspected.
 - Live deployment: `etm-learning.vercel.app` is reachable but serves the pre-fix sitemap/robots (`etm.vercel.app`); repo fix `2ec0f4d` awaits deploy.
-- YouTube Data API / playlist metadata: not fetched yet (Phase 4).
+- YouTube Data API / playlist metadata: not fetched — unreachable from the development environment; `scripts/fetch-playlists.mjs` committed for local run (Phase 4 blocker, see "Decisions needed" #5).
 - WebKit + mobile Chrome are green locally but excluded from CI by decision.
 
 ## Commands
@@ -82,3 +90,4 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 - Phase 1 @ `feat/phase-1-content-review`: build 252 static pages, typecheck, lint, `test:content --strict` clean, E2E 177/177 on chromium-desktop; full findings in `docs/CURRICULUM_REVIEW.md`.
 - Phase 2 @ `feat/phase-2-bilingual`: ar (default, unprefixed) + en (`/en/...`) per `docs/I18N_GUIDE.md`; routes moved under `app/[locale]/`; all UI chrome translated; C++/ElZero/glossary/book content stays Arabic; `<html lang dir>` per locale; persisted language switcher (NEXT_LOCALE cookie); sitemap ar/en/x-default alternates; `/dev/bidi` + screenshot tests; build 497 static pages, typecheck/lint/`test:content --strict` clean, E2E 181/181 chromium-desktop (2026-11-11).
 - Phase 3 @ `feat/phase-3-progress`: `lib/progress/core.ts` (pure schema/derive/merge/migration) + `lib/progress/store.ts` (client store, `useProgressStore`), compat shim `lib/progress.ts`; events wired for quiz (`quiz_attempt` with score/per-question), lesson/video completion, playground `exercise_run`, Pomodoro `focus_session`; new dashboard (stat cards, 12-week heatmap, 8-week accuracy trend, per-track bars, weak topics, badges, daily-goal + export/import/delete); resume card on Home + Dashboard; ElZero videos got their first-ever completion tracking (`ElzeroCompleteButton`); build 497 static pages, typecheck/lint/`test:content --strict` clean, unit 28/28, E2E 186/186 chromium-desktop (2026-11-11).
+- Phase 4 (in progress) @ `feat/phase-4-english-section`: routes `/english` (hub), `/english/[video]`, `/english/review` (ar + /en); components under `components/english/` (facade, practice, terms, speaking, notes, completion bar, panel, course progress, due card, credit); top-level nav ("الإنجليزية"/English) + footer + Miku tips + sitemap + dashboard due-card; data layer `lib/english-videos.ts` with real playlist metadata, EMPTY video list; SRS `lib/english/srs.ts` + unit tests 39/39; content pending local YouTube fetch (see Decisions needed #5). Build green (SSG `/english` + `/english/review` both locales, `[video]` manifest empty), typecheck/lint/`test:content --strict` clean, unit 39/39, E2E 192/192 chromium-desktop (2026-11-11). CHECKPOINT 1 NOT reached — content blocker.

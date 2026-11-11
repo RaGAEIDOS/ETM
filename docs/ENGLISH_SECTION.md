@@ -58,14 +58,11 @@ available. Video entries therefore land ONLY from `out/english-courses.json`
 - **Playback**: official YouTube IFrame Player API on `youtube-nocookie.com`,
   click-to-load facade (no request to YouTube before the learner clicks),
   no autoplay, responsive 16:9, inline playback on iOS, playback-rate buttons
-  (0.75/1/1.25/1.5/2), keyboard-accessible controls.
+  (0.75/1/1.25/1.5/2), keyboard shortcuts `[` / `]` / `0` (slower / faster / reset).
 - **Resume**: the last position is saved as `video_progress` events (~every
   5 s while playing, track `english`, payload `{ seconds, percent, duration }`)
   and restored on next open via `seekTo`. No separate localStorage key.
-- **Completion**: a lesson is complete when watched ≥ 80 % (video_progress
-  `percent ≥ 80`) OR the learner taps "أنهيت هذا الدرس" (manual). Tapping again
-  un-completes. Completion rides on the unified store
-  (`toggleCompletion("english", videoId, courseId)`).
+- **Completion**: a lesson is complete when **watched ≥ 80 % AND practice ≥ 70 %** (auto-applies once, per mount) OR the learner confirms manually via the completion bar. Manual toggle always available — tapping undo un-completes. Completion rides on the unified store (`toggle("english", videoId, courseId)`).
 - **Practice** items feed `quiz_attempt` (score/total/perQuestion/topic =
   courseId) — so English accuracy appears in the dashboard stats for free.
   Passing bar for completion display: ≥ 70 %.
