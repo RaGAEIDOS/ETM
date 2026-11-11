@@ -204,7 +204,48 @@ export function trackEvent(
   return event;
 }
 
-/** Toggle a completion item. Returns true when the item is now complete. */
+/**
+ * Upsert the latest video_progress event for (track, itemId). Playback
+ * positions are saved every few seconds while watching; appending would
+ * bury the log in near-identical rows. The event keeps its id, so merge
+ * semantics stay "latest wins" and import/export remain idempotent.
+ */
+export function saveVideoProgress(
+  track: Track,
+  itemId: string,
+  topic: string | undefined,
+  payload: Record<string, unknown>,
+): void {
+  if (typeof window === "undefined") return;
+  const file = loadProgressFile();
+  let found: ProgressEvent | undefined;
+  for (let i = file.events.length - 1; i >= 0; i -= 1) {
+    const e = file.events[i];
+    if (e.track === track && e.type === "video_progress" && e.itemId === itemId) {
+      found = e;
+      break;
+    }
+  }
+  const at = new Date().toISOString();
+  if (found) {
+    found.payload = payload;
+    found.at = at;
+    if (found.topic === undefined && topic) found.topic = topic;
+  } else {
+    file.events.push({
+      id: newEventId(),
+      v: 2,
+      track,
+      type: "video_progress",
+      itemId,
+      ...(topic !== undefined ? { topic } : {}),
+      payload,
+      at,
+    });
+  }
+  saveProgressFile(file);
+}
+
 export function toggleCompletion(track: Track, itemId: string, topic?: string): boolean {
   if (typeof window === "undefined") return false;
   const file = loadProgressFile();
@@ -322,6 +363,8 @@ export interface ProgressStore {
   isDone: (track: Track, itemId: string) => boolean;
   toggle: (track: Track, itemId: string, topic?: string) => void;
   track: typeof trackEvent;
+  /** Upsert the latest video_progress row (see saveVideoProgress). */
+  saveVideoProgress: typeof saveVideoProgress;
   setDailyGoal: (minutes: number) => void;
   exportData: () => void;
   importData: (json: string) => { ok: boolean; error?: string };
@@ -402,6 +445,7 @@ export function useProgressStore(): ProgressStore {
     isDone,
     toggle,
     track: trackEvent,
+    saveVideoProgress,
     setDailyGoal,
     exportData,
     importData,
