@@ -37,6 +37,14 @@ export async function waitHydrated(page: Page, timeout = 15_000): Promise<void> 
   } catch {
     /* caller decides how to assert */
   }
+  // Fonts load over a <link> with display=swap; wait for the swap before any
+  // layout measurement (scrollWidth) so results are stable with and without
+  // network access to Google Fonts. Resolves immediately when offline.
+  try {
+    await page.evaluate(() => document.fonts?.ready);
+  } catch {
+    /* document.fonts unavailable — measurement happens anyway */
+  }
 }
 
 export function horizontallyScrollable(page: Page) {

@@ -41,7 +41,7 @@ export default function SiteHeader() {
           </Link>
 
           {!bare && (
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-0.5">
               {NAV.map((item) => {
                 const active =
                   item.href === "/"
@@ -51,7 +51,7 @@ export default function SiteHeader() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
                       active
                         ? "text-cyan-300 bg-cyan-500/10"
                         : "text-slate-400 hover:text-white hover:bg-white/5"
