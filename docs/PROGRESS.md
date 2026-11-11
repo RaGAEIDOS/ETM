@@ -69,6 +69,7 @@ Update after every task. If a session is interrupted, resume from here.
 - GitHub sign-in: no test token; only the token-paste flow and signed-cookie code were inspected.
 - Live deployment: `etm-learning.vercel.app` is reachable but serves the pre-fix sitemap/robots (`etm.vercel.app`); repo fix `2ec0f4d` awaits deploy.
 - YouTube Data API / playlist metadata: not fetched — unreachable from the development environment; `scripts/fetch-playlists.mjs` committed for local run (Phase 4 blocker, see "Decisions needed" #5).
+- **CI (`.github/workflows/qa.yml`)**: `fix/qa-pass` push run #1 passed (2m55s), but runs #2/#3/#4 (PR #1, main @ `65d982e`, PR #2) failed after ~11m48s with identical code — root cause not yet confirmed from logs; prime suspect is font-swap layout variance (runners reach Google Fonts; `display=swap` makes `scrollWidth` racy at measure time) flipping the borderline horizontal-overflow assertion on the 1280px header. Fix pushed on `fix/ci-green` @ `380b475` (header headroom + `waitHydrated` awaits `document.fonts.ready`); locally 177/177 with fonts reachable. **Awaiting user to open/merge the PR for main.** Also applied to `feat/phase-4-english-section` (`159ad48`). Recurring `ENOSPC` on local disk C: — keep build/test scratch worktrees on E:.
 - WebKit + mobile Chrome are green locally but excluded from CI by decision.
 
 ## Commands
