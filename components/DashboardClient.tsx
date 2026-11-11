@@ -6,6 +6,7 @@ import { formatNumber } from "@/lib/i18n/config";
 import { useAuth } from "@/lib/auth";
 import { stageCompletion } from "@/lib/progress";
 import { useProgressStore } from "@/lib/progress/store";
+import { deriveSrs } from "@/lib/english/srs";
 import { stages, totalLessons } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
 import { nextLessons } from "@/lib/stats";
@@ -29,6 +30,7 @@ import {
   Zap,
   Trophy,
   ClipboardList,
+  GraduationCap,
 } from "lucide-react";
 
 const COPY = {
@@ -75,6 +77,8 @@ const COPY = {
     reviewDue: "للمراجعة",
     reviewDueBody: "أسئلة من آخر محاولة خاطئة — راجعها ثم أعد المحاولة.",
     reviewCta: "راجع الآن",
+    enReviewDue: "مصطلحات الإنجليزية مستحقة",
+    enReviewBody: "تلخصها بطاقات المراجعة المتباعدة من قسم الإنجليزية.",
   },
   en: {
     loading: "Loading...",
@@ -119,6 +123,8 @@ const COPY = {
     reviewDue: "To review",
     reviewDueBody: "Questions missed in your latest attempt — review, then retry.",
     reviewCta: "Review now",
+    enReviewDue: "English terms due",
+    enReviewBody: "Spaced-repetition cards waiting in the English section.",
   },
 } as const;
 
@@ -127,7 +133,7 @@ export default function DashboardClient() {
   const locale = useLocale();
   const isAr = locale === "ar";
   const { user, ready: authReady } = useAuth();
-  const { ready, stats, grid, trend, todayKey } = useProgressStore();
+  const { ready, stats, grid, trend, todayKey, file } = useProgressStore();
 
   if (!ready || !authReady) {
     return <div className="p-10 text-center text-slate-400">{c.loading}</div>;
@@ -145,6 +151,7 @@ export default function DashboardClient() {
   const overall = total ? Math.round((done / total) * 100) : 0;
   const upcoming = nextLessons(map, stages, 6);
   const xpInLevel = stats.xp % 100;
+  const enTermsDue = ready ? deriveSrs(file.events).dueCount : 0;
 
   const cards = [
     {
@@ -306,6 +313,27 @@ export default function DashboardClient() {
           </span>
         </Link>
       </div>
+
+      {/* English spaced review — flat row linking to the English review hub */}
+      <Link
+        href="/english/review"
+        className="group mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-500/20 bg-gradient-to-l from-violet-500/[0.08] to-emerald-500/[0.06] px-5 py-4 transition-colors hover:border-violet-500/35"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+            <GraduationCap className="h-5 w-5" />
+          </span>
+          <div>
+            <span className="text-sm font-bold text-white">{c.enReviewDue}</span>
+            <span className="ms-2 font-black text-violet-200">{formatNumber(enTermsDue)}</span>
+            <p className="text-[11px] leading-5 text-slate-500">{c.enReviewBody}</p>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-violet-300 group-hover:text-violet-200">
+          {c.reviewCta}
+          <ArrowLeft className="h-3.5 w-3.5 ltr:rotate-180" />
+        </span>
+      </Link>
 
       {/* overall + weekly */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-ink-900/60 p-6">

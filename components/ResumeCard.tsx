@@ -2,21 +2,27 @@
 
 import Link from "@/lib/i18n/navigation";
 import { useCopy, useLocale } from "@/lib/i18n/context";
-import { ArrowLeft, BookOpen, CheckCircle2, PlayCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, PlayCircle, GraduationCap } from "lucide-react";
 import { useProgressStore } from "@/lib/progress/store";
 import { findNextLesson } from "@/lib/stats";
 import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
+import { englishCourses, englishVideos } from "@/lib/english-videos";
 
 const COPY = {
   ar: {
     label: "تابع من حيث توقفت",
     startCpp: "ابدأ رحلة C++",
     startElzero: "ابدأ رحلة ElZero",
+    startEnglish: "ابدأ مسار الإنجليزية",
     nextCpp: "الدرس التالي",
     nextElzero: "الفيديو التالي",
+    nextEnglish: "الفيديو التالي",
     cppDone: "أنهيت كل دروس C++! 🎉",
     elzeroDone: "أنهيت كل فيديوهات ElZero! 🎉",
+    englishDone: "أنهيت كل فيديوهات الإنجليزية المتاحة! 🎉",
+    englishSyncing: "فيديوهات الإنجليزية قيد المزامنة — ستظهر هنا قريبًا",
+    englishHubCta: "افتح قسم الإنجليزية",
     projectsCta: "تحدَّ نفسك بالمشاريع",
     curriculumCta: "راجع المنهج من البداية",
     lesson: "درس",
@@ -25,10 +31,15 @@ const COPY = {
     label: "Continue where you left off",
     startCpp: "Start the C++ track",
     startElzero: "Start the ElZero track",
+    startEnglish: "Start the English track",
     nextCpp: "Next lesson",
     nextElzero: "Next video",
+    nextEnglish: "Next video",
     cppDone: "You finished every C++ lesson! 🎉",
     elzeroDone: "You finished every ElZero video! 🎉",
+    englishDone: "You finished every available English video! 🎉",
+    englishSyncing: "The English videos are being synced — they will appear here soon",
+    englishHubCta: "Open the English section",
     projectsCta: "Challenge yourself with projects",
     curriculumCta: "Review the curriculum from the start",
     lesson: "Lesson",
@@ -37,14 +48,16 @@ const COPY = {
 
 /**
  * "Continue where you left off" card. `variant` picks which track to resume:
- *  - "cpp"    → next incomplete C++ lesson (or first lesson if none started)
- *  - "elzero" → next incomplete ElZero video
- *  - "auto"   → whichever track saw activity most recently (default)
+ *  - "cpp"     → next incomplete C++ lesson (or first lesson if none started)
+ *  - "elzero"  → next incomplete ElZero video
+ *  - "english" → next incomplete English (@ZAmericanEnglish) video, courses in
+ *                suggested order (English from zero first)
+ *  - "auto"    → whichever track saw activity most recently (default)
  */
 export default function ResumeCard({
   variant = "auto",
 }: {
-  variant?: "auto" | "cpp" | "elzero";
+  variant?: "auto" | "cpp" | "elzero" | "english";
 }) {
   const locale = useLocale();
   const c = useCopy(COPY);
@@ -56,17 +69,31 @@ export default function ResumeCard({
   const elzeroNext = ready
     ? elzeroVideos.find((v) => !doneVideoIds.has(v.id)) ?? null
     : null;
+  const doneEnglishIds = new Set(stats.doneEnglishVideoIds);
+  const englishNext = ready
+    ? englishCourses
+        .map((course) =>
+          englishVideos.filter((v) => v.courseId === course.id).sort((a, b) => a.number - b.number)
+        )
+        .flat()
+        .find((v) => !doneEnglishIds.has(v.id)) ?? null
+    : null;
 
-  let track: "cpp" | "elzero" = "cpp";
+  let track: "cpp" | "elzero" | "english" = "cpp";
   if (variant === "elzero") track = "elzero";
   else if (variant === "cpp") track = "cpp";
+  else if (variant === "english") track = "english";
   else {
-    const cppAt = stats.lastActivityByTrack.cpp ?? "";
-    const elzeroAt = stats.lastActivityByTrack.elzero ?? "";
-    track = elzeroAt > cppAt ? "elzero" : "cpp";
-    // If the preferred track is finished, resume the other one instead.
-    if (track === "cpp" && !cppNext && elzeroNext) track = "elzero";
-    else if (track === "elzero" && !elzeroNext && cppNext) track = "cpp";
+    const at = {
+      cpp: stats.lastActivityByTrack.cpp ?? "",
+      elzero: stats.lastActivityByTrack.elzero ?? "",
+      english: stats.lastActivityByTrack.english ?? "",
+    } as const;
+    const ordered = (Object.keys(at) as ("cpp" | "elzero" | "english")[]).sort(
+      (a, b) => at[b].localeCompare(at[a]),
+    );
+    const nextFor = { cpp: cppNext, elzero: elzeroNext, english: englishNext } as const;
+    track = ordered.find((candidate) => nextFor[candidate]) ?? "cpp";
   }
 
   if (!ready) {
@@ -122,6 +149,58 @@ export default function ResumeCard({
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
           >
             {c.nextCpp}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (track === "english") {
+    if (!englishNext) {
+      const empty = englishVideos.length === 0;
+      return (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+            <p className="font-bold text-white">
+              {empty ? c.englishSyncing : c.englishDone}
+            </p>
+          </div>
+          <Link
+            href="/english"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-sm font-bold text-emerald-300 hover:bg-emerald-500/30"
+          >
+            {c.englishHubCta}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      );
+    }
+    const title = isAr ? englishNext.title : englishNext.titleEn;
+    const section = isAr ? englishNext.section : englishNext.sectionEn;
+    return (
+      <div className="rounded-2xl border border-emerald-500/25 bg-gradient-to-l from-emerald-500/[0.08] to-cyan-500/[0.08] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
+              <GraduationCap className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-emerald-400">
+                {c.label} · {c.nextEnglish}
+              </p>
+              <h3 className="mt-1 font-black text-white leading-6" dir="auto">
+                #{englishNext.id} — {title}
+              </h3>
+              <p className="mt-1 text-xs text-slate-400">{section}</p>
+            </div>
+          </div>
+          <Link
+            href={`/english/${englishNext.id}`}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-emerald-400 to-cyan-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
+          >
+            {c.nextEnglish}
             <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
           </Link>
         </div>

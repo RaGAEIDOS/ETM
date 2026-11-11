@@ -135,6 +135,16 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
       body: "78 videos from the ElZero Fundamentals with C++ playlist. Each has a summary + quiz + key terminology.",
     },
   },
+  english: {
+    ar: {
+      title: "قسم الإنجليزية 🎧",
+      body: "دورات مجانية من قناة @ZAmericanEnglish: ملخص عربي، فلاش كارد للمصطلحات، تمارين ومحرك نطق — والموضع بيتحفظ تلقائيًا.",
+    },
+    en: {
+      title: "English section 🎧",
+      body: "Free courses from @ZAmericanEnglish: Arabic summaries, key-term flashcards, drills and a pronunciation tab — and your position is saved automatically.",
+    },
+  },
   dashboard: {
     ar: {
       title: "الداش بورد 📊",
@@ -253,6 +263,7 @@ export function tipForPath(pathname: string, locale: Locale): MikuTip {
   if (n.startsWith("/learn")) return PAGE_TIPS.learn[locale];
   if (n.startsWith("/playground")) return PAGE_TIPS.playground[locale];
   if (n.startsWith("/elzero")) return PAGE_TIPS.elzero[locale];
+  if (n.startsWith("/english")) return PAGE_TIPS.english[locale];
   if (n.startsWith("/dashboard")) return PAGE_TIPS.dashboard[locale];
   if (n.startsWith("/progress")) return PAGE_TIPS.progress[locale];
   if (n.startsWith("/projects")) return PAGE_TIPS.projects[locale];

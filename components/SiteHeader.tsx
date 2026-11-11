@@ -13,6 +13,7 @@ const NAV = [
   { href: "/", key: "home" },
   { href: "/curriculum", key: "curriculum" },
   { href: "/elzero", key: "elzero" },
+  { href: "/english", key: "english" },
   { href: "/playground", key: "playground" },
   { href: "/projects", key: "projects" },
   { href: "/glossary", key: "glossary" },
@@ -25,6 +26,7 @@ const COPY = {
     home: "الرئيسية",
     curriculum: "المنهج",
     elzero: "ElZero",
+    english: "الإنجليزية",
     playground: "المحرر",
     projects: "المشاريع",
     glossary: "المصطلحات",
@@ -40,6 +42,7 @@ const COPY = {
     home: "Home",
     curriculum: "Curriculum",
     elzero: "ElZero",
+    english: "English",
     playground: "Playground",
     projects: "Projects",
     glossary: "Glossary",
@@ -84,14 +87,14 @@ export default function SiteHeader() {
           </Link>
 
           {!bare && (
-            <nav className="hidden lg:flex items-center gap-1">
+            <nav className="hidden lg:flex items-center gap-0.5">
               {NAV.map((item) => {
                 const active = isActive(item.href);
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                    className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
                       active
                         ? "text-cyan-300 bg-cyan-500/10"
                         : "text-slate-400 hover:text-white hover:bg-white/5"
