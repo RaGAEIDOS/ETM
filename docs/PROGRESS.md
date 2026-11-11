@@ -3,7 +3,7 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-11 · **Branch**: `feat/phase-2-bilingual` (base: `feat/phase-1-content-review` @ `dd34720`, based on `feat/phase-0-recon` @ `862562d`, based on `fix/qa-pass` @ `840be10`)
+**Updated**: 2026-11-11 · **Branch**: `feat/phase-3-progress` (base: `feat/phase-2-bilingual` @ `1bd72de`, based on `feat/phase-1-content-review` @ `dd34720`, based on `feat/phase-0-recon` @ `862562d`, based on `fix/qa-pass` @ `840be10`)
 
 ## Phase status
 
@@ -12,7 +12,7 @@ Update after every task. If a session is interrupted, resume from here.
 | 0 — Recon & baseline | **done** | `docs/RECON.md`, 39 baseline screenshots, all baseline checks run |
 | 1 — Curriculum & content review | **done** | `docs/CURRICULUM_REVIEW.md`; all 78 ElZero videos now have 2 questions; all 75 glossary terms referenced; validator strict-clean. Structural suggestions awaiting user decision (§5.2 of the review). |
 | 2 — Bilingual site (ar + en) | **done** | `feat/phase-2-bilingual` pushed (6 commits); build 497 static pages, tsc/lint/test:content clean, E2E 181/181 chromium-desktop, bidi screenshots in docs/screenshots/ |
-| 3 — Progress & stats system | todo | Current: localStorage booleans + streak/focus logs; no unified event API |
+| 3 — Progress & stats system | **done** | Event store `lib/progress/` (local-first, versioned v2); migration from v1/per-user keys non-lossy; dashboard rewritten; resume cards; E2E 186/186 |
 | 4 — Dedicated English section | todo | English scaffold exists on `feature/english-track` (unmerged, no video data). **CHECKPOINT 1** after first 20 videos of "English from zero" |
 | 5 — Lesson playground (C++) | todo | `feature/lesson-playground` has an unmerged embedded Try-it implementation |
 | 6 — Books refresh | todo | `/books` exists with 18 free books added by a previous AI pass; master prompt requires replacing them with a verified 30–40 list |
@@ -38,12 +38,20 @@ Update after every task. If a session is interrupted, resume from here.
 - Phase 2 decision: `/dev/bidi` is noindex and intentionally omitted from the sitemap.
 - Always navigate with `waitUntil: "domcontentloaded"` (Google Fonts unreachable here), and seed `etm-miku-onboarding-done=1` before clicking.
 - Do **not** run `npm audit fix --force` (would jump Next 14 → 16).
+- Phase 3 decision: local-first + JSON export/import only — no backend exists, no network calls added; sync remains a user decision (§below).
+- Phase 3 decision: single store `etm-progress-v2` (`{version, events[], settings}`); legacy keys (`etm-progress-v1`, `etm-progress-<uid>`, `etm-activity-days`, `etm-focus-log`) are read ONCE at migration and never written/deleted again; corrupt payloads quarantined to `etm-progress-v2-corrupt-<ts>`; `etm-progress-v2-migrated` marks the one-time migration done.
+- Phase 3 decision: streak counts any local day with ≥1 event (preserves legacy users' streaks); day boundary uses `localDayKey` (local getFullYear/Month/Date), not UTC slicing; `dailyGoalMinutes` is configurable and feeds the focus-minutes UI only, not the streak.
+- Phase 3 decision: XP — lesson/video complete 10, quiz ≥60% +10 (+5 perfect), attempt 2, exercise pass 5, focus minute 1; level = floor(xp/100)+1.
+- Phase 3 decision: merge = union of events by id, replayed sorted by (at, id); "Delete my data" wipes learning keys and the store re-creates an EMPTY v2 skeleton on reload (E2E asserts empty events, not key absence).
+- Phase 3 decision: focus/Pomodoro sessions are tracked as `track: "playground"`.
+- Phase 3 decision: unit tests run on the built-in `node:test` runner (`npm run test:unit`, `node --experimental-strip-types --test`) — zero new dependencies; `core.ts` stays import-free for that reason (`allowImportingTsExtensions` added to tsconfig).
+- Phase 3 decision: SSR of progress-dependent client components renders a placeholder (`ready=false`); text assertions on client-only content must wait for hydration — the `/en` home is signed-in-only, so its E2E mocks `**/api/auth/me`.
 
 ## Decisions needed (ask the user)
 
 1. **Merge order**: merge `fix/qa-pass` (QA suite + CI + SEO canonical + a11y fixes) into `main` before starting Phase 1? Phase 0 branch is based on it.
 2. **Existing unmerged branches**: `feature/english-track` (scaffold), `feature/lesson-playground`, `feature/books-refresh` — reuse, rebase, or discard? They predate the master plan.
-3. **Phase 3 backend**: no backend exists. Default = local-first + JSON export/import (per prompt), sync only if a backend is approved.
+3. **Phase 3 backend**: no backend exists. Implemented local-first + JSON export/import (per prompt). Sync options if a backend is ever approved: (a) existing GitHub OAuth + a tiny `/api/progress` route persisting to a KV/file per user, (b) Supabase/Postgres with RLS, (c) Vercel Blob/KV. Demo/prototype only; none wired up.
 4. **Phase 6 books**: confirm removing all 18 current `/books` entries (all added by AI) before adding the verified 30–40 list.
 5. **Phase 4 YouTube access**: is a YouTube Data API v3 key available in env, or should content collection rely on `scripts/fetch-playlists.mjs` run locally?
 
@@ -73,3 +81,4 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 - Phase 0 adds docs only (no app code changes): `docs/MASTER_PROMPT.md`, `docs/RECON.md`, `docs/PROGRESS.md`, `scripts/recon-screenshots.mjs`, `docs/recon/screenshots/`.
 - Phase 1 @ `feat/phase-1-content-review`: build 252 static pages, typecheck, lint, `test:content --strict` clean, E2E 177/177 on chromium-desktop; full findings in `docs/CURRICULUM_REVIEW.md`.
 - Phase 2 @ `feat/phase-2-bilingual`: ar (default, unprefixed) + en (`/en/...`) per `docs/I18N_GUIDE.md`; routes moved under `app/[locale]/`; all UI chrome translated; C++/ElZero/glossary/book content stays Arabic; `<html lang dir>` per locale; persisted language switcher (NEXT_LOCALE cookie); sitemap ar/en/x-default alternates; `/dev/bidi` + screenshot tests; build 497 static pages, typecheck/lint/`test:content --strict` clean, E2E 181/181 chromium-desktop (2026-11-11).
+- Phase 3 @ `feat/phase-3-progress`: `lib/progress/core.ts` (pure schema/derive/merge/migration) + `lib/progress/store.ts` (client store, `useProgressStore`), compat shim `lib/progress.ts`; events wired for quiz (`quiz_attempt` with score/per-question), lesson/video completion, playground `exercise_run`, Pomodoro `focus_session`; new dashboard (stat cards, 12-week heatmap, 8-week accuracy trend, per-track bars, weak topics, badges, daily-goal + export/import/delete); resume card on Home + Dashboard; ElZero videos got their first-ever completion tracking (`ElzeroCompleteButton`); build 497 static pages, typecheck/lint/`test:content --strict` clean, unit 28/28, E2E 186/186 chromium-desktop (2026-11-11).
