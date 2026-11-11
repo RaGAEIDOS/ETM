@@ -27,7 +27,7 @@ test("menu/mikusu buttons satisfy the 44px minimum on touch screens", async ({ p
   await page.setViewportSize({ width: 360, height: 800 });
   await page.waitForLoadState("networkidle");
   const ok = await page.evaluate(() => {
-    const menus = Array.from(document.querySelectorAll('button[aria-label="Menu"], button[aria-label="Miku assistant"]'));
+    const menus = Array.from(document.querySelectorAll('button[aria-label="Menu"], button[aria-label="Miku assistant"], button[aria-label="القائمة"], button[aria-label="مساعدة Miku"]'));
     return menus.every(
       (b) => b.getBoundingClientRect().width >= 44 && b.getBoundingClientRect().height >= 44
     );

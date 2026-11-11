@@ -2,10 +2,10 @@ import { test, expect } from "@playwright/test";
 
 test.describe("SEO and sharing", () => {
   const PAGES = [
-    ["/", "ETM"],
-    ["/books", "Free Books"],
-    ["/elzero", "ElZero"],
-    ["/glossary", "Glossary"],
+    ["/en", "ETM"],
+    ["/en/books", "Free Books"],
+    ["/en/elzero", "ElZero"],
+    ["/en/glossary", "Glossary"],
   ] as const;
 
   for (const [route, needle] of PAGES) {
