@@ -32,7 +32,7 @@ test.describe("Link integrity", () => {
 
     const failures: string[] = [];
     // Only the site's top-level load-bearing pages on first paint.
-    for (const href of internal) {
+    for (const href of Array.from(internal)) {
       if (href.startsWith("/#")) continue;
       const res = await request.get(href, { timeout: 30_000, maxRedirects: 10 });
       const status = res.status();
