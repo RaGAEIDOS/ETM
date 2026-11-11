@@ -16,7 +16,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useMiku } from "./Miku";
-import { addFocusSession } from "@/lib/stats";
+import { trackEvent } from "@/lib/progress/store";
 import { POMODORO_MESSAGES } from "@/lib/miku";
 import { useLocale, useCopy } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
@@ -320,7 +320,9 @@ export default function Pomodoro() {
   );
 
   const handleFocusComplete = useCallback(() => {
-    addFocusSession(focusLenRef.current);
+    trackEvent("playground", "focus_session", {
+      payload: { minutes: focusLenRef.current },
+    });
     focusCountRef.current += 1;
     chime();
     say(messages.focusDone);

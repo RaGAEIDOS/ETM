@@ -14,6 +14,7 @@ import {
 import { elzeroVideos, findVideo, videoIndex } from "@/lib/elzero-videos";
 import Quiz from "@/components/Quiz";
 import CodeBlock from "@/components/CodeBlock";
+import ElzeroCompleteButton from "@/components/ElzeroCompleteButton";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 
@@ -158,6 +159,9 @@ export default function ElzeroVideoPage({
           <PlayCircle className="h-5 w-5" />
           {c.watch}
         </a>
+        <div>
+          <ElzeroCompleteButton videoId={v.id} section={v.section} />
+        </div>
       </header>
 
       <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-8">
@@ -228,7 +232,7 @@ export default function ElzeroVideoPage({
       </section>
 
       <div className="mt-8">
-        <Quiz questions={v.quiz} />
+        <Quiz questions={v.quiz} track="elzero" itemId={v.id} topic={v.section} />
       </div>
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">

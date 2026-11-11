@@ -9,6 +9,7 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 import { useCopy, useLocale } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
+import { trackEvent } from "@/lib/progress/store";
 import type { Locale } from "@/lib/i18n/config";
 import {
   Play,
@@ -190,12 +191,15 @@ export default function Playground() {
 
       if (data.status !== "0" && !programOut) {
         setError(compilerErr || programErr || c.genericCompileError);
+        trackEvent("playground", "exercise_run", { payload: { success: false } });
       } else {
         setOutput(combinedOut || c.ranNoOutput);
         if (programErr) setError(programErr);
+        trackEvent("playground", "exercise_run", { payload: { success: true } });
       }
     } catch {
       setError(c.networkError);
+      trackEvent("playground", "exercise_run", { payload: { success: false } });
     } finally {
       setCompiling(false);
     }

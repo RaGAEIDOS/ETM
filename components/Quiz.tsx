@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCopy } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
+import { trackEvent } from "@/lib/progress/store";
+import type { Track } from "@/lib/progress/core";
 import { CheckCircle2, XCircle, HelpCircle, RotateCcw, Trophy } from "lucide-react";
 import type { QuizQuestion } from "@/lib/types";
 
@@ -29,7 +31,17 @@ const COPY = {
   },
 } as const;
 
-export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
+interface QuizProps {
+  questions: QuizQuestion[];
+  /** Progress tracking: which track this quiz belongs to (omit to skip tracking). */
+  track?: Track;
+  /** Item id (lesson id / video id) for per-item "review due" stats. */
+  itemId?: string;
+  /** Coarse topic for per-topic accuracy (course id for C++, section id for ElZero). */
+  topic?: string;
+}
+
+export default function Quiz({ questions, track, itemId, topic }: QuizProps) {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const c = useCopy(COPY);
   const answeredCount = Object.keys(answers).length;
@@ -37,6 +49,23 @@ export default function Quiz({ questions }: { questions: QuizQuestion[] }) {
     (q, i) => answers[i] === q.answer
   ).length;
   const allAnswered = answeredCount === questions.length;
+  const emittedRef = useRef(false);
+
+  useEffect(() => {
+    if (allAnswered && !emittedRef.current && track) {
+      emittedRef.current = true;
+      trackEvent(track, "quiz_attempt", {
+        itemId,
+        topic,
+        payload: {
+          score: correctCount,
+          total: questions.length,
+          perQuestion: questions.map((q, i) => answers[i] === q.answer),
+        },
+      });
+    }
+    if (!allAnswered) emittedRef.current = false;
+  }, [allAnswered, correctCount, questions, answers, track, itemId, topic]);
 
   const select = (qIndex: number, oIndex: number) => {
     if (answers[qIndex] !== undefined) return;

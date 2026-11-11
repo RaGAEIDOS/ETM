@@ -3,6 +3,8 @@
 import Link from "@/lib/i18n/navigation";
 import { useCopy, useLocale } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
+import { useEffect, useRef } from "react";
+import { trackEvent } from "@/lib/progress/store";
 import {
   Clock,
   ChevronLeft,
@@ -68,6 +70,13 @@ export default function LessonView({
   const stageName = isAr ? stage.name : stage.nameEn;
   const courseTitle = isAr ? course.title : course.titleEn;
   const lessonTitle = isAr ? lesson.title : lesson.titleEn;
+  const startedRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (startedRef.current === lesson.id) return;
+    startedRef.current = lesson.id;
+    trackEvent("cpp", "lesson_started", { itemId: lesson.id, topic: course.id });
+  }, [lesson.id, course.id]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
@@ -229,7 +238,14 @@ export default function LessonView({
           )}
 
           {/* Quiz */}
-          {lesson.quiz.length > 0 && <Quiz questions={lesson.quiz} />}
+          {lesson.quiz.length > 0 && (
+            <Quiz
+              questions={lesson.quiz}
+              track="cpp"
+              itemId={lesson.id}
+              topic={course.id}
+            />
+          )}
 
           {/* Navigation */}
           <LessonNav
