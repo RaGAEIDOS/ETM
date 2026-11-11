@@ -35,7 +35,7 @@ export const glossaryTerms: GlossaryTerm[] = [
 
   // C++
   { en: "Pointer", ar: "مؤشر", category: "C++", description: "متغير بيخزّن عنوان ذاكرة متغير تاني." },
-  { en: "Reference", ar: "مرجع", category: "C++", description: "اسم بديل لمتغير موجود، بيasher على نفس القيمة." },
+  { en: "Reference", ar: "مرجع", category: "C++", description: "اسم بديل لمتغير موجود، بيشاور على نفس القيمة." },
   { en: "Stack", ar: "المكدس", category: "C++", description: "منطقة ذاكرة بتنظّم بطريقة آخر ما يدخل أول ما يخرج (LIFO)." },
   { en: "Heap", ar: "الكومة", category: "C++", description: "منطقة ذاكرة ديناميكية بتحجز مساحة أثناء التشغيل ويديرها المبرمج يدويًا." },
   { en: "new / delete", ar: "تخصيص وتحرير", category: "C++", description: "أوامر حجز وتحرير الذاكرة الديناميكية." },
@@ -43,7 +43,7 @@ export const glossaryTerms: GlossaryTerm[] = [
   { en: "Memory Leak", ar: "تسريب ذاكرة", category: "C++", description: "حجز ذاكرة من غير تحريرها، فالبرنامج بيستهلك ذاكرة أكتر مع الوقت." },
   { en: "Class", ar: "صنف", category: "C++", description: "قالب بيحدد البيانات والدوال اللي بتخص كائن معيّن." },
   { en: "Object", ar: "كائن", category: "C++", description: "نسخة ملموسة من الصنف ليها بياناتها وسلوكها." },
-  { en: "Inheritance", ar: "وراثة", category: "C++", description: "آلية بيكopy بها صنف لخصائص صنف تاني." },
+  { en: "Inheritance", ar: "وراثة", category: "C++", description: "آلية بتكتسب بها صنف لخصائص صنف تاني." },
   { en: "Polymorphism", ar: "تعدد الأشكال", category: "C++", description: "قدرة الكود يتعامل مع كائنات مختلفة بنفس الواجهة." },
   { en: "Encapsulation", ar: "تغليف", category: "C++", description: "إخفاء التفاصيل الداخلية وكشف واجهة محددة بس." },
   { en: "STL", ar: "المكتبة القياسية", category: "C++", description: "مكتبة C++ الجاهزة من هياكل بيانات وخوارزميات عامة (vector, map, string)." },
