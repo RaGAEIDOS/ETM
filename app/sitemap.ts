@@ -4,43 +4,53 @@ import { elzeroVideos } from "@/lib/elzero-videos";
 
 const BASE_URL = "https://etm-learning.vercel.app";
 
+/** Unprefixed = Arabic (default). English lives under /en. */
+function entry(
+  path: string,
+  changeFrequency: "weekly" | "monthly",
+  priority: number
+): MetadataRoute.Sitemap[number] {
+  const arPath = path === "" ? "/" : path;
+  return {
+    url: `${BASE_URL}${arPath}`,
+    changeFrequency,
+    priority,
+    alternates: {
+      languages: {
+        ar: `${BASE_URL}${arPath}`,
+        en: `${BASE_URL}/en${arPath === "/" ? "/" : arPath}`,
+        "x-default": `${BASE_URL}${arPath}`,
+      },
+    },
+  };
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = [
-    { url: BASE_URL, changeFrequency: "weekly", priority: 1 },
-    { url: `${BASE_URL}/curriculum`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE_URL}/playground`, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE_URL}/glossary`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE_URL}/projects`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE_URL}/sources`, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${BASE_URL}/books`, changeFrequency: "monthly", priority: 0.6 },
+    entry("/", "weekly", 1),
+    entry("/landing", "weekly", 0.9),
+    entry("/curriculum", "weekly", 0.9),
+    entry("/dashboard", "weekly", 0.8),
+    entry("/playground", "monthly", 0.7),
+    entry("/glossary", "monthly", 0.6),
+    entry("/projects", "monthly", 0.6),
+    entry("/sources", "monthly", 0.5),
+    entry("/books", "monthly", 0.6),
+    entry("/guide", "monthly", 0.6),
   ];
 
-  entries.push({ url: `${BASE_URL}/elzero`, changeFrequency: "weekly", priority: 0.9 });
+  entries.push(entry("/elzero", "weekly", 0.9));
   elzeroVideos.forEach((video) => {
-    entries.push({
-      url: `${BASE_URL}/elzero/${video.id}`,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    });
+    entries.push(entry(`/elzero/${video.id}`, "monthly", 0.5));
   });
   stages.forEach((stage) => {
-    entries.push({
-      url: `${BASE_URL}/learn/${stage.id}`,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    });
+    entries.push(entry(`/learn/${stage.id}`, "weekly", 0.8));
     stage.courses.forEach((course) => {
-      entries.push({
-        url: `${BASE_URL}/learn/${stage.id}/${course.id}`,
-        changeFrequency: "weekly",
-        priority: 0.7,
-      });
+      entries.push(entry(`/learn/${stage.id}/${course.id}`, "weekly", 0.7));
       course.lessons.forEach((lesson) => {
-        entries.push({
-          url: `${BASE_URL}/learn/${stage.id}/${course.id}/${lesson.id}`,
-          changeFrequency: "monthly",
-          priority: 0.5,
-        });
+        entries.push(
+          entry(`/learn/${stage.id}/${course.id}/${lesson.id}`, "monthly", 0.5)
+        );
       });
     });
   });

@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Cairo", "Tajawal", "Segoe UI", "system-ui", "sans-serif"],
+        sans: ["Cairo", "Tajawal", "Inter", "Segoe UI", "system-ui", "sans-serif"],
         mono: ["Fira Code", "JetBrains Mono", "Consolas", "monospace"],
       },
       colors: {
