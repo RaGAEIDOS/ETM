@@ -1,34 +1,77 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Terminal, Menu, X, Flame, User } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import Link from "@/lib/i18n/navigation";
+import { useCanonicalPathname } from "@/lib/i18n/navigation";
+import { useCopy } from "@/lib/i18n/context";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const NAV = [
-  { href: "/", label: "Home" },
-  { href: "/curriculum", label: "Curriculum" },
-  { href: "/elzero", label: "ElZero" },
-  { href: "/playground", label: "Playground" },
-  { href: "/projects", label: "Projects" },
-  { href: "/glossary", label: "Glossary" },
-  { href: "/books", label: "Books" },
-  { href: "/dashboard", label: "Dashboard" },
-];
+  { href: "/", key: "home" },
+  { href: "/curriculum", key: "curriculum" },
+  { href: "/elzero", key: "elzero" },
+  { href: "/playground", key: "playground" },
+  { href: "/projects", key: "projects" },
+  { href: "/glossary", key: "glossary" },
+  { href: "/books", key: "books" },
+  { href: "/dashboard", key: "dashboard" },
+] as const;
+
+const COPY = {
+  ar: {
+    home: "الرئيسية",
+    curriculum: "المنهج",
+    elzero: "ElZero",
+    playground: "المحرر",
+    projects: "المشاريع",
+    glossary: "المصطلحات",
+    books: "الكتب",
+    dashboard: "لوحتي",
+    signIn: "تسجيل الدخول",
+    start: "ابدأ التعلم",
+    menu: "القائمة",
+    signInGithub: "الدخول بحساب GitHub",
+    profile: "الملف الشخصي",
+  },
+  en: {
+    home: "Home",
+    curriculum: "Curriculum",
+    elzero: "ElZero",
+    playground: "Playground",
+    projects: "Projects",
+    glossary: "Glossary",
+    books: "Books",
+    dashboard: "Dashboard",
+    signIn: "Sign in",
+    start: "Start learning",
+    menu: "Menu",
+    signInGithub: "Sign in with GitHub",
+    profile: "Profile",
+  },
+} as const;
 
 export default function SiteHeader() {
   const pathname = usePathname();
+  const canonical = useCanonicalPathname();
   const [open, setOpen] = useState(false);
   const { user, ready } = useAuth();
+  const c = useCopy(COPY);
   // Guest-only marketing landing: no app navigation tabs at all
-  const bare = pathname === "/landing";
+  const bare = canonical === "/landing";
+
+  const isActive = (href: string) =>
+    href === "/"
+      ? canonical === "/"
+      : canonical === href || canonical.startsWith(`${href}/`);
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex min-h-16 items-center justify-between py-2">
-          <Link href="/" className="flex items-center gap-2.5 group">
+        <div className="flex min-h-16 items-center justify-between gap-2 py-2">
+          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
               <Terminal className="h-5 w-5" strokeWidth={2.5} />
             </span>
@@ -43,10 +86,7 @@ export default function SiteHeader() {
           {!bare && (
             <nav className="hidden lg:flex items-center gap-1">
               {NAV.map((item) => {
-                const active =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
+                const active = isActive(item.href);
                 return (
                   <Link
                     key={item.href}
@@ -57,14 +97,15 @@ export default function SiteHeader() {
                         : "text-slate-400 hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    {item.label}
+                    {c[item.key]}
                   </Link>
                 );
               })}
             </nav>
           )}
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <LanguageSwitcher className="hidden sm:inline-flex" />
             {ready && user ? (
               <Link
                 href="/profile"
@@ -83,7 +124,9 @@ export default function SiteHeader() {
                     {user.name[0] || "?"}
                   </span>
                 )}
-                <span className="hidden sm:inline max-w-24 truncate">{user.name}</span>
+                <span className="hidden sm:inline max-w-24 truncate">
+                  {user.name}
+                </span>
               </Link>
             ) : (
               <Link
@@ -91,7 +134,7 @@ export default function SiteHeader() {
                 className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-bold text-white hover:bg-white/10 min-h-[44px]"
               >
                 <User className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">Sign in</span>
+                <span className="whitespace-nowrap">{c.signIn}</span>
               </Link>
             )}
             {!bare && (
@@ -100,14 +143,14 @@ export default function SiteHeader() {
                 className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
               >
                 <Flame className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">Start learning</span>
+                <span className="whitespace-nowrap">{c.start}</span>
               </Link>
             )}
             {!bare && (
               <button
                 onClick={() => setOpen(!open)}
                 className="lg:hidden p-2.5 rounded-lg text-slate-300 hover:bg-white/5 min-h-[44px] min-w-[44px] flex items-center justify-center"
-                aria-label="Menu"
+                aria-label={c.menu}
                 aria-expanded={open}
               >
                 {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -119,21 +162,23 @@ export default function SiteHeader() {
 
       {open && !bare && (
         <nav className="lg:hidden border-t border-white/5 bg-ink-900/95 px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
+          <div className="px-3 pb-2 sm:hidden">
+            <LanguageSwitcher />
+          </div>
           {NAV.map((item) => {
-            const active =
-              item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+            const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`block px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center ${
+                className={`px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center ${
                   active
                     ? "text-cyan-300 bg-cyan-500/10"
                     : "text-slate-300 hover:bg-white/5"
                 }`}
               >
-                {item.label}
+                {c[item.key]}
               </Link>
             );
           })}
@@ -143,7 +188,7 @@ export default function SiteHeader() {
               onClick={() => setOpen(false)}
               className="block px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center text-cyan-300 bg-cyan-500/10 border border-cyan-500/20"
             >
-              Sign in with GitHub
+              {c.signInGithub}
             </Link>
           )}
           {user && (
@@ -152,7 +197,7 @@ export default function SiteHeader() {
               onClick={() => setOpen(false)}
               className="block px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center text-cyan-300 bg-cyan-500/10 border border-cyan-500/20"
             >
-              Profile — {user.name}
+              {c.profile} — {user.name}
             </Link>
           )}
         </nav>

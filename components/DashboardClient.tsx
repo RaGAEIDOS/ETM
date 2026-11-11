@@ -1,6 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
 import { useAuth } from "@/lib/auth";
 import { useProgress } from "@/lib/progress";
 import { stageCompletion } from "@/lib/progress";
@@ -27,12 +29,83 @@ import {
   LayoutGrid,
 } from "lucide-react";
 
+const COPY = {
+  ar: {
+    loading: "جارٍ التحميل...",
+    title: "لوحة التحكم",
+    welcomeUserBefore: "أهلًا بعودتك، ",
+    welcomeUserAfter: " 👋 — هذه رحلة تعلّمك.",
+    welcomeGuest: "أهلًا بعودتك 👋 — هذه رحلة تعلّمك.",
+    signInGithub: "الدخول بحساب GitHub",
+    lessonsCompleted: "الدروس المكتملة",
+    of: "من",
+    elzeroVideos: "فيديوهات ElZero",
+    focusToday: "تركيز اليوم",
+    minute: "دقيقة",
+    minutes: "دقائق",
+    dayStreak: "سلسلة الأيام",
+    day: "يوم",
+    days: "أيام",
+    overallProgress: "التقدم الإجمالي",
+    overallPrefix: "أكملت",
+    overallLessons: "درسًا",
+    overallComplete: "مكتمل",
+    curriculum: "المنهج",
+    continueLearning: "تابع التعلم",
+    startLesson: "ابدأ الدرس",
+    finishedTitle: "أنهيت المنهج بالكامل! 🎉",
+    finishedBody:
+      "Miku فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
+    progressByStage: "التقدم حسب المستوى",
+    whatsRemaining: "ما تبقّى",
+    nothingLeft: "لا شيء متبقٍ — أنجزت كل شيء! 🏆",
+    playground: "المحرر",
+    projects: "المشاريع",
+    glossary: "المصطلحات",
+  },
+  en: {
+    loading: "Loading...",
+    title: "Dashboard",
+    welcomeUserBefore: "Welcome back, ",
+    welcomeUserAfter: " 👋 — here is your learning journey.",
+    welcomeGuest: "Welcome back 👋 — here is your learning journey.",
+    signInGithub: "Sign in with GitHub",
+    lessonsCompleted: "Lessons completed",
+    of: "of",
+    elzeroVideos: "ElZero videos",
+    focusToday: "Focus today",
+    minute: "minute",
+    minutes: "minutes",
+    dayStreak: "Day streak",
+    day: "day",
+    days: "days",
+    overallProgress: "Overall progress",
+    overallPrefix: "You completed",
+    overallLessons: "lessons",
+    overallComplete: "complete",
+    curriculum: "Curriculum",
+    continueLearning: "Continue learning",
+    startLesson: "Start lesson",
+    finishedTitle: "You finished the whole curriculum! 🎉",
+    finishedBody:
+      "Miku is proud of you. Check the projects page for your next challenge.",
+    progressByStage: "Progress by stage",
+    whatsRemaining: "What's remaining",
+    nothingLeft: "Nothing left — you did it all! 🏆",
+    playground: "Playground",
+    projects: "Projects",
+    glossary: "Glossary",
+  },
+} as const;
+
 export default function DashboardClient() {
+  const c = useCopy(COPY);
+  const locale = useLocale();
   const { user, ready: authReady } = useAuth();
   const { map, ready } = useProgress();
 
   if (!ready || !authReady) {
-    return <div className="p-10 text-center text-slate-400">Loading...</div>;
+    return <div className="p-10 text-center text-slate-400">{c.loading}</div>;
   }
 
   const total = totalLessons();
@@ -47,30 +120,30 @@ export default function DashboardClient() {
   const stats = [
     {
       icon: BookOpen,
-      label: "Lessons completed",
-      value: `${done}`,
-      sub: `of ${total}`,
+      label: c.lessonsCompleted,
+      value: formatNumber(done),
+      sub: `${c.of} ${formatNumber(total)}`,
       color: "from-cyan-400 to-blue-500",
     },
     {
       icon: PlayCircle,
-      label: "ElZero videos",
-      value: `${elzero.done}`,
-      sub: `of ${elzero.total} · ${elzero.percent}%`,
+      label: c.elzeroVideos,
+      value: formatNumber(elzero.done),
+      sub: `${c.of} ${formatNumber(elzero.total)} · ${formatNumber(elzero.percent)}%`,
       color: "from-violet-400 to-fuchsia-500",
     },
     {
       icon: Clock,
-      label: "Focus today",
-      value: `${focusToday}`,
-      sub: focusToday === 1 ? "minute" : "minutes",
+      label: c.focusToday,
+      value: formatNumber(focusToday),
+      sub: focusToday === 1 ? c.minute : c.minutes,
       color: "from-emerald-400 to-teal-500",
     },
     {
       icon: Flame,
-      label: "Day streak",
-      value: `${streak}`,
-      sub: streak === 1 ? "day" : "days",
+      label: c.dayStreak,
+      value: formatNumber(streak),
+      sub: streak === 1 ? c.day : c.days,
       color: "from-amber-400 to-orange-500",
     },
   ];
@@ -83,11 +156,18 @@ export default function DashboardClient() {
           <MikuAvatar size={52} />
           <div>
             <h1 className="text-3xl sm:text-4xl font-black text-white">
-              Dashboard
+              {c.title}
             </h1>
             <p className="text-slate-400">
-              {user ? `Welcome back, ${user.name} 👋` : "Welcome back 👋"} — here is
-              your learning journey.
+              {user ? (
+                <>
+                  {c.welcomeUserBefore}
+                  {user.name}
+                  {c.welcomeUserAfter}
+                </>
+              ) : (
+                c.welcomeGuest
+              )}
             </p>
           </div>
         </div>
@@ -97,7 +177,7 @@ export default function DashboardClient() {
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-4 py-2.5 text-sm font-bold text-ink-950"
           >
             <Github className="h-4 w-4" />
-            Sign in with GitHub
+            {c.signInGithub}
           </Link>
         )}
       </div>
@@ -131,17 +211,19 @@ export default function DashboardClient() {
           <div>
             <h2 className="font-black text-white flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-cyan-400" />
-              Overall progress
+              {c.overallProgress}
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              {done} of {total} lessons · {overall}% complete
+              {c.overallPrefix} {formatNumber(done)} {c.of}{" "}
+              {formatNumber(total)} {c.overallLessons} ·{" "}
+              {formatNumber(overall)}% {c.overallComplete}
             </p>
           </div>
           <Link
             href="/curriculum"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white hover:bg-white/10"
           >
-            <LayoutGrid className="h-4 w-4" /> Curriculum
+            <LayoutGrid className="h-4 w-4" /> {c.curriculum}
           </Link>
         </div>
         <div className="mt-4 h-3 rounded-full bg-white/10 overflow-hidden">
@@ -158,7 +240,7 @@ export default function DashboardClient() {
           <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
             <h2 className="font-black text-white flex items-center gap-2">
               <Target className="h-5 w-5 text-cyan-400" />
-              Continue learning
+              {c.continueLearning}
             </h2>
             {next ? (
               <div className="mt-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.06] p-5">
@@ -176,7 +258,8 @@ export default function DashboardClient() {
                     href={`/learn/${next.stage.id}/${next.courseId}/${next.lesson.id}`}
                     className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950"
                   >
-                    Start lesson <ArrowLeft className="h-4 w-4" />
+                    {c.startLesson}{" "}
+                    <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
                   </Link>
                   <span className="text-xs text-slate-500">
                     {next.lesson.duration}
@@ -187,12 +270,9 @@ export default function DashboardClient() {
               <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-center">
                 <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
                 <h3 className="mt-2 font-black text-white">
-                  You finished the whole curriculum! 🎉
+                  {c.finishedTitle}
                 </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  Miku is proud of you. Check the projects page for your next
-                  challenge.
-                </p>
+                <p className="mt-1 text-sm text-slate-400">{c.finishedBody}</p>
               </div>
             )}
           </div>
@@ -201,11 +281,11 @@ export default function DashboardClient() {
           <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
             <h2 className="font-black text-white flex items-center gap-2">
               <LayoutGrid className="h-5 w-5 text-cyan-400" />
-              Progress by stage
+              {c.progressByStage}
             </h2>
             <div className="mt-4 space-y-4">
               {stages.map((stage) => {
-                const c = stageCompletion(map, stage);
+                const comp = stageCompletion(map, stage);
                 return (
                   <Link
                     key={stage.id}
@@ -214,19 +294,23 @@ export default function DashboardClient() {
                   >
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {stage.name}
-                        <span className="ms-2 text-xs font-medium text-slate-500" dir="ltr">
-                          {stage.nameEn}
+                        {locale === "en" ? stage.nameEn : stage.name}
+                        <span
+                          className="ms-2 text-xs font-medium text-slate-500"
+                          dir={locale === "en" ? "rtl" : "ltr"}
+                        >
+                          {locale === "en" ? stage.name : stage.nameEn}
                         </span>
                       </span>
                       <span className="text-slate-400">
-                        {c.done}/{c.total} · {c.percent}%
+                        {formatNumber(comp.done)}/{formatNumber(comp.total)} ·{" "}
+                        {formatNumber(comp.percent)}%
                       </span>
                     </div>
                     <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
                       <div
                         className={`h-full bg-gradient-to-l ${stage.color}`}
-                        style={{ width: `${c.percent}%` }}
+                        style={{ width: `${comp.percent}%` }}
                       />
                     </div>
                   </Link>
@@ -240,12 +324,10 @@ export default function DashboardClient() {
         <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
           <h2 className="font-black text-white flex items-center gap-2">
             <BookOpen className="h-5 w-5 text-cyan-400" />
-            What&apos;s remaining
+            {c.whatsRemaining}
           </h2>
           {upcoming.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-400">
-              Nothing left — you did it all! 🏆
-            </p>
+            <p className="mt-4 text-sm text-slate-400">{c.nothingLeft}</p>
           ) : (
             <ul className="mt-4 space-y-3">
               {upcoming.map((n) => (
@@ -276,25 +358,25 @@ export default function DashboardClient() {
               href="/playground"
               className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
             >
-              Playground
+              {c.playground}
             </Link>
             <Link
               href="/elzero"
               className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
             >
-              ElZero videos
+              {c.elzeroVideos}
             </Link>
             <Link
               href="/projects"
               className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
             >
-              Projects
+              {c.projects}
             </Link>
             <Link
               href="/glossary"
               className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
             >
-              Glossary
+              {c.glossary}
             </Link>
           </div>
         </div>

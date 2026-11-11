@@ -1,6 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber, localePath } from "@/lib/i18n/config";
 import { useMemo } from "react";
 import {
   Trophy,
@@ -19,8 +21,45 @@ import { useProgress, stageCompletion } from "@/lib/progress";
 
 const LEVEL_ICONS = [Sparkles, Layers, Cpu, Rocket];
 
+const COPY = {
+  ar: {
+    loading: "جارٍ التحميل...",
+    overallTitle: "تقدمك الإجمالي",
+    overallBody: (done: string, total: string) =>
+      `أكملت ${done} من ${total} درساً`,
+    keepGoing: "استمر! كل درس يقربك خطوة واحدة من الإتقان",
+    resetConfirm: "هل أنت متأكد أنك تريد إعادة تعيين تقدمك؟",
+    reset: "إعادة تعيين التقدم",
+    perStage: "التقدم حسب المستوى",
+    continueLearning: "تابع التعلم",
+    startFirstLesson: "ابدأ الدرس الأول",
+    stageProgress: (done: string, total: string) => `${done} من ${total} درساً`,
+    completedLessons: (count: number) => `الدروس المكتملة (${count})`,
+    noneFinished:
+      "لم تكمل أي درس بعد. ابدأ من المنهج، وسيظهر أول درس منتهٍ هنا.",
+  },
+  en: {
+    loading: "Loading your progress...",
+    overallTitle: "Your overall progress",
+    overallBody: (done: string, total: string) =>
+      `You finished ${done} of ${total} lessons`,
+    keepGoing: "Keep going! Every lesson brings you closer to mastery",
+    resetConfirm: "Are you sure you want to reset your progress?",
+    reset: "Reset progress",
+    perStage: "Progress by stage",
+    continueLearning: "Continue learning",
+    startFirstLesson: "Start the first lesson",
+    stageProgress: (done: string, total: string) => `${done} of ${total} lessons`,
+    completedLessons: (count: number) => `Completed lessons (${count})`,
+    noneFinished:
+      "You have not finished any lesson yet. Start from the curriculum and your first finished lesson will appear here.",
+  },
+} as const;
+
 export default function ProgressDashboard() {
-  const { map, ready, reset, isDone } = useProgress();
+  const { map, ready, reset } = useProgress();
+  const locale = useLocale();
+  const c = useCopy(COPY);
 
   const overall = useMemo(() => {
     const all = stages.flatMap((s) => s.courses.flatMap((c) => c.lessons));
@@ -61,10 +100,14 @@ export default function ProgressDashboard() {
   }, [map]);
 
   if (!ready) {
-    return (
-      <div className="py-20 text-center text-slate-400">Loading your progress...</div>
-    );
+    return <div className="py-20 text-center text-slate-400">{c.loading}</div>;
   }
+
+  const stageTitle = (stageId: string) => {
+    const stage = stages.find((s) => s.id === stageId);
+    if (!stage) return "";
+    return locale === "en" ? stage.nameEn : stage.name;
+  };
 
   return (
     <div className="space-y-8">
@@ -74,14 +117,7 @@ export default function ProgressDashboard() {
           <div className="flex items-center gap-6">
             <div className="relative h-28 w-28">
               <svg className="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
-                <circle
-                  cx="50"
-                  cy="50"
-                  r="42"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.08)"
-                  strokeWidth="10"
-                />
+                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
                 <circle
                   cx="50"
                   cy="50"
@@ -106,14 +142,14 @@ export default function ProgressDashboard() {
               </span>
             </div>
             <div>
-              <h2 className="text-2xl font-black text-white">Your overall progress</h2>
+              <h2 className="text-2xl font-black text-white">{c.overallTitle}</h2>
               <p className="mt-1 text-slate-400">
-                You finished {overall.done} of {overall.total} lessons
+                {c.overallBody(formatNumber(overall.done), formatNumber(overall.total))}
               </p>
               {overall.done > 0 && (
                 <p className="mt-2 flex items-center gap-1.5 text-sm font-semibold text-amber-300">
                   <Flame className="h-4 w-4" />
-                  Keep going! Every lesson brings you closer to mastery
+                  {c.keepGoing}
                 </p>
               )}
             </div>
@@ -121,21 +157,21 @@ export default function ProgressDashboard() {
           <div className="flex flex-col items-center gap-2">
             {overall.done === 0 ? (
               <Link
-                href="/curriculum"
+                href={localePath(locale, "/curriculum")}
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-6 py-3 font-bold text-ink-950"
               >
-                Start the first lesson
-                <ArrowLeft className="h-4 w-4" />
+                {c.startFirstLesson}
+                <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
               </Link>
             ) : (
               <button
                 onClick={() => {
-                  if (window.confirm("Are you sure you want to reset your progress?")) reset();
+                  if (window.confirm(c.resetConfirm)) reset();
                 }}
                 className="flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-slate-300 hover:bg-white/10 transition-colors"
               >
                 <RotateCcw className="h-4 w-4" />
-                Reset progress
+                {c.reset}
               </button>
             )}
           </div>
@@ -147,21 +183,18 @@ export default function ProgressDashboard() {
         {stages.map((stage, i) => {
           const comp = stageCompletion(map, stage);
           const Icon = LEVEL_ICONS[i] ?? Layers;
+          const stageName = locale === "en" ? stage.nameEn : stage.name;
+          const stageDir = locale === "ar" ? "rtl" : "ltr";
           return (
-            <div
-              key={stage.id}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
-            >
+            <div key={stage.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
               <div className="flex items-center gap-4">
-                <span
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-ink-950`}
-                >
+                <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-ink-950`}>
                   <Icon className="h-5 w-5" />
                 </span>
                 <div className="flex-1">
-                  <h3 className="font-bold text-white" dir="rtl">{stage.name}</h3>
+                  <h3 className="font-bold text-white" dir={stageDir}>{stageName}</h3>
                   <p className="text-xs text-slate-500">
-                    {comp.done} of {comp.total} lessons
+                    {c.stageProgress(formatNumber(comp.done), formatNumber(comp.total))}
                   </p>
                 </div>
                 <span className="text-lg font-black text-cyan-300 tabular-nums">
@@ -175,11 +208,11 @@ export default function ProgressDashboard() {
                 />
               </div>
               <Link
-                href={`/learn/${stage.id}`}
+                href={localePath(locale, `/learn/${stage.id}`)}
                 className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-cyan-400 hover:text-cyan-300"
               >
-                Continue learning
-                <ArrowLeft className="h-4 w-4" />
+                {c.continueLearning}
+                <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
               </Link>
             </div>
           );
@@ -190,29 +223,23 @@ export default function ProgressDashboard() {
       <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
         <h3 className="flex items-center gap-2 text-lg font-bold text-white">
           <Trophy className="h-5 w-5 text-amber-400" />
-          Completed lessons ({completedLessons.length})
+          {c.completedLessons(completedLessons.length)}
         </h3>
         {completedLessons.length === 0 ? (
-          <p className="mt-4 text-slate-400 leading-7">
-            You have not finished any lesson yet. Start from the{" "}
-            <Link href="/curriculum" className="text-cyan-400 hover:underline">
-              curriculum
-            </Link>{" "}
-            and your first finished lesson will appear here.
-          </p>
+          <p className="mt-4 text-slate-400 leading-7">{c.noneFinished}</p>
         ) : (
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {completedLessons.map((l) => (
               <Link
                 key={l.id}
-                href={`/learn/${l.stageId}/${l.courseId}/${l.id}`}
+                href={localePath(locale, `/learn/${l.stageId}/${l.courseId}/${l.id}`)}
                 className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-4 py-3 hover:border-cyan-500/30 transition-colors"
               >
                 <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                 <span className="flex-1 min-w-0">
                   <span className="block truncate text-sm text-white">{l.title}</span>
                   <span className="block text-xs text-slate-500">
-                    {l.stageName} · {l.courseTitle}
+                    {stageTitle(l.stageId)} · {l.courseTitle}
                   </span>
                 </span>
               </Link>

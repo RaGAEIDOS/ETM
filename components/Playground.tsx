@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Editor from "react-simple-code-editor";
 import Prism from "prismjs";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
 import {
   Play,
   RotateCcw,
@@ -27,10 +30,10 @@ int main() {
     return 0;
 }`;
 
-const EXAMPLES: { name: string; code: string }[] = [
-  { name: "Hello World", code: DEFAULT_CODE },
+const EXAMPLES: { name: Record<Locale, string>; code: string }[] = [
+  { name: { ar: "مرحبا بالعالم", en: "Hello World" }, code: DEFAULT_CODE },
   {
-    name: "Sum of two numbers",
+    name: { ar: "مجموع رقمين", en: "Sum of two numbers" },
     code: `#include <iostream>
 using namespace std;
 
@@ -42,7 +45,7 @@ int main() {
 }`,
   },
   {
-    name: "For loop",
+    name: { ar: "حلقة for", en: "For loop" },
     code: `#include <iostream>
 using namespace std;
 
@@ -54,7 +57,7 @@ int main() {
 }`,
   },
   {
-    name: "Functions",
+    name: { ar: "الدوال", en: "Functions" },
     code: `#include <iostream>
 using namespace std;
 
@@ -68,7 +71,7 @@ int main() {
 }`,
   },
   {
-    name: "Arrays",
+    name: { ar: "المصفوفات", en: "Arrays" },
     code: `#include <iostream>
 using namespace std;
 
@@ -88,8 +91,63 @@ int main() {
   },
 ];
 
+const COPY = {
+  ar: {
+    readyExamples: "أمثلة جاهزة",
+    copyCode: "نسخ الكود",
+    downloadCpp: "تحميل main.cpp",
+    resetCode: "إعادة الكود الافتراضي",
+    codeEditor: "محرر كود C++",
+    compiling: "جارٍ الترجمة...",
+    run: "تشغيل",
+    output: "المخرجات",
+    serverError: "تعذر الاتصال بالخادم",
+    genericCompileError: "حدث خطأ أثناء الترجمة",
+    ranNoOutput: "(نُفّذ بنجاح — بدون مخرجات)",
+    networkError:
+      "تعذر الوصول إلى خدمة الترجمة. تحقق من اتصالك بالإنترنت وحاول مرة أخرى.",
+    pressRun: "اضغط «تشغيل» لترى نتيجة البرنامج هنا...",
+    aboutTitle: "عن المحرك",
+    about1: "يترجم ويشغّل C++ حقيقي عبر خدمة Wandbox المجانية.",
+    about2pre: "اضغط",
+    about2post: "لتشغيل سريع.",
+    about3: "يُرسل الكود للخدمة للترجمة — لا يُخزَّن شيء على جهازك.",
+    about4:
+      "للبرامج التي تحتاج مدخلات من المستخدم، استخدم stdin — قريباً. حالياً جرّب أمثلة لا تقرأ مدخلات.",
+    lines: (lines: string, chars: string) => `${lines} سطر · ${chars} حرف`,
+  },
+  en: {
+    readyExamples: "Ready examples",
+    copyCode: "Copy code",
+    downloadCpp: "Download main.cpp",
+    resetCode: "Reset to default code",
+    codeEditor: "C++ code editor",
+    compiling: "Compiling...",
+    run: "Run",
+    output: "Output",
+    serverError: "Could not reach the server",
+    genericCompileError: "An error occurred while compiling",
+    ranNoOutput: "(Ran successfully — no output)",
+    networkError:
+      "Could not reach the compilation service. Check your internet connection and try again.",
+    pressRun: "Press \"Run\" to see the program output here...",
+    aboutTitle: "About the playground",
+    about1: "Compiles and runs real C++ through the free Wandbox service.",
+    about2pre: "Use",
+    about2post: "to run quickly.",
+    about3:
+      "Your code is sent to the service for compilation — nothing is stored on your device.",
+    about4:
+      "For programs that need user input, use stdin — coming soon. For now, try examples that do not read input.",
+    lines: (lines: string, chars: string) =>
+      `${lines} lines · ${chars} chars`,
+  },
+} as const;
+
 export default function Playground() {
   const params = useSearchParams();
+  const locale = useLocale();
+  const c = useCopy(COPY);
   const [code, setCode] = useState(DEFAULT_CODE);
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -97,14 +155,9 @@ export default function Playground() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const c = params.get("code");
-    if (c) setCode(c);
+    const q = params.get("code");
+    if (q) setCode(q);
   }, [params]);
-
-  const highlighted = useMemo(
-    () => Prism.highlight(code, Prism.languages.cpp, "cpp"),
-    [code]
-  );
 
   const run = async () => {
     setCompiling(true);
@@ -123,7 +176,7 @@ export default function Playground() {
           save: false,
         }),
       });
-      if (!res.ok) throw new Error("Could not reach the server");
+      if (!res.ok) throw new Error(c.serverError);
       const data = await res.json();
       const programOut = data.program_output || data.output || "";
       const programErr = data.program_error || "";
@@ -136,19 +189,30 @@ export default function Playground() {
         .trim();
 
       if (data.status !== "0" && !programOut) {
-        setError(compilerErr || programErr || "An error occurred while compiling");
+        setError(compilerErr || programErr || c.genericCompileError);
       } else {
-        setOutput(combinedOut || "(Ran successfully — no output)");
+        setOutput(combinedOut || c.ranNoOutput);
         if (programErr) setError(programErr);
       }
     } catch {
-      setError(
-        "Could not reach the compilation service. Check your internet connection and try again."
-      );
+      setError(c.networkError);
     } finally {
       setCompiling(false);
     }
   };
+
+  // Ctrl/Cmd + Enter runs the code — matches the hint below
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+        e.preventDefault();
+        if (!compiling) run();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code, compiling, locale]);
 
   const copy = async () => {
     try {
@@ -193,23 +257,23 @@ export default function Playground() {
               }}
               className="rounded-lg bg-white/5 border border-white/10 px-2 py-1.5 text-xs text-slate-300 outline-none"
               defaultValue=""
-              dir="ltr"
-              aria-label="Ready examples"
+              dir="auto"
+              aria-label={c.readyExamples}
             >
               <option value="" disabled>
-                Ready examples
+                {c.readyExamples}
               </option>
               {EXAMPLES.map((ex, i) => (
-                <option key={ex.name} value={i}>
-                  {ex.name}
+                <option key={ex.name.en} value={i}>
+                  {ex.name[locale]}
                 </option>
               ))}
             </select>
             <button
               onClick={copy}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
-              title="Copy code"
-              aria-label="Copy code"
+              title={c.copyCode}
+              aria-label={c.copyCode}
             >
               {copied ? (
                 <Check className="h-3.5 w-3.5 text-emerald-400" />
@@ -220,8 +284,8 @@ export default function Playground() {
             <button
               onClick={download}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
-              title="Download main.cpp"
-              aria-label="Download main.cpp"
+              title={c.downloadCpp}
+              aria-label={c.downloadCpp}
             >
               <Download className="h-3.5 w-3.5" />
             </button>
@@ -232,7 +296,7 @@ export default function Playground() {
                 setError("");
               }}
               className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-white/10 transition-colors"
-              aria-label="Reset to default code"
+              aria-label={c.resetCode}
             >
               <RotateCcw className="h-3.5 w-3.5" />
             </button>
@@ -241,13 +305,13 @@ export default function Playground() {
 
         <div className="relative">
           <label htmlFor="playground-code" className="sr-only">
-            C++ code editor
+            {c.codeEditor}
           </label>
           <Editor
             textareaId="playground-code"
             value={code}
             onValueChange={setCode}
-            highlight={(c) => Prism.highlight(c, Prism.languages.cpp, "cpp")}
+            highlight={(text) => Prism.highlight(text, Prism.languages.cpp, "cpp")}
             padding={16}
             style={{
               fontFamily: "Fira Code, JetBrains Mono, Consolas, monospace",
@@ -262,7 +326,7 @@ export default function Playground() {
 
         <div className="flex items-center justify-between gap-3 border-t border-white/5 bg-white/[0.03] px-4 py-3">
           <span className="text-xs text-slate-400" dir="ltr">
-            {code.split("\n").length} lines · {code.length} chars
+            {c.lines(formatNumber(code.split("\n").length), formatNumber(code.length))}
           </span>
           <button
             onClick={run}
@@ -274,7 +338,7 @@ export default function Playground() {
             ) : (
               <Play className="h-4 w-4" />
             )}
-            {compiling ? "Compiling..." : "Run"}
+            {compiling ? c.compiling : c.run}
           </button>
         </div>
       </div>
@@ -284,7 +348,7 @@ export default function Playground() {
         <div className="flex-1 rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
           <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
             <Terminal className="h-4 w-4 text-emerald-400" />
-            <span className="text-xs text-slate-400">Output</span>
+            <span className="text-xs text-slate-400">{c.output}</span>
           </div>
           <div className="p-4 font-mono text-sm leading-7 min-h-[200px] max-h-[360px] overflow-auto">
             {error ? (
@@ -303,7 +367,7 @@ export default function Playground() {
               </pre>
             ) : (
               <span className="text-slate-400" dir="ltr">
-                Press &quot;Run&quot; to see the program output here...
+                {c.pressRun}
               </span>
             )}
           </div>
@@ -312,33 +376,33 @@ export default function Playground() {
         <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/[0.05] p-5">
           <h4 className="flex items-center gap-2 font-bold text-cyan-300">
             <Info className="h-4 w-4" />
-            About the playground
+            {c.aboutTitle}
           </h4>
           <ul className="mt-3 space-y-2 text-sm text-slate-300 leading-6">
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              Compiles and runs real C++ through the free Wandbox service.
+              {c.about1}
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              Use{" "}
-              <kbd
-                className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs"
-                dir="ltr"
-              >
-                Ctrl + Enter
-              </kbd>{" "}
-              to run quickly.
+              <span>
+                {c.about2pre}{" "}
+                <kbd
+                  className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-xs"
+                  dir="ltr"
+                >
+                  Ctrl + Enter
+                </kbd>{" "}
+                {c.about2post}
+              </span>
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              Your code is sent to the service for compilation — nothing is
-              stored on your device.
+              {c.about3}
             </li>
             <li className="flex gap-2">
               <span className="text-cyan-400">•</span>
-              For programs that need user input, use stdin — coming soon. For
-              now, try examples that do not read input.
+              {c.about4}
             </li>
           </ul>
         </div>

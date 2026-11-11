@@ -8,8 +8,10 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from "@/lib/i18n/navigation";
+import { useCanonicalPathname } from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
 import {
   X,
   GraduationCap,
@@ -38,14 +40,47 @@ export function useMiku() {
 const ONBOARDING_KEY = "etm-miku-onboarding-done";
 const MESSAGE_DURATION = 7000;
 
+const COPY = {
+  ar: {
+    step: (n: string, total: string) => `Miku · الخطوة ${n} من ${total}`,
+    back: "السابق",
+    skip: "تخطي",
+    next: "التالي",
+    letsGo: "يلا نبدأ! 🚀",
+    close: "إغلاق",
+    tutorials: "الشروحات",
+    replayTour: "إعادة الجولة",
+    hideMiku: "إخفاء Miku لهذه الجلسة",
+    assistant: "مساعدة Miku",
+    tagline: MIKU.taglines.ar,
+  },
+  en: {
+    step: (n: string, total: string) => `Miku · step ${n} of ${total}`,
+    back: "Back",
+    skip: "Skip",
+    next: "Next",
+    letsGo: "Let's go! 🚀",
+    close: "Close",
+    tutorials: "Tutorials",
+    replayTour: "Replay tour",
+    hideMiku: "Hide Miku for this session",
+    assistant: "Miku assistant",
+    tagline: MIKU.taglines.en,
+  },
+} as const;
+
 export function MikuProvider({ children }: { children: ReactNode }) {
-  const pathname = usePathname();
+  const pathname = useCanonicalPathname();
+  const locale = useLocale();
+  const c = useCopy(COPY);
   const [message, setMessage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [tourOpen, setTourOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
+
+  const steps = ONBOARDING_STEPS[locale];
 
   useEffect(() => {
     setMounted(true);
@@ -62,7 +97,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
     return () => clearTimeout(t);
   }, [message]);
 
-  const tip = tipForPath(pathname);
+  const tip = tipForPath(pathname, locale);
 
   function finishTour() {
     setTourOpen(false);
@@ -70,6 +105,8 @@ export function MikuProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(ONBOARDING_KEY, "1");
     } catch {}
   }
+
+  const isRtl = locale === "ar";
 
   return (
     <MikuContext.Provider value={{ say, message, open, setOpen }}>
@@ -82,20 +119,23 @@ export function MikuProvider({ children }: { children: ReactNode }) {
             <div className="flex items-center gap-3">
               <MikuAvatar size={56} />
               <div className="flex-1">
-                <h2 className="text-lg font-black text-white" dir="rtl">
-                  {ONBOARDING_STEPS[step].title}
+                <h2 className="text-lg font-black text-white" dir="auto">
+                  {steps[step].title}
                 </h2>
                 <p className="text-xs text-slate-300">
-                  Miku · step {step + 1} of {ONBOARDING_STEPS.length}
+                  {c.step(formatNumber(step + 1), formatNumber(steps.length))}
                 </p>
               </div>
             </div>
-            <p className="mt-4 min-h-[84px] text-slate-300 leading-7" dir="rtl">
-              {ONBOARDING_STEPS[step].body}
+            <p
+              className="mt-4 min-h-[84px] text-slate-300 leading-7"
+              dir="auto"
+            >
+              {steps[step].body}
             </p>
             <div className="mt-5 flex items-center justify-between gap-3">
               <div className="flex gap-1.5">
-                {ONBOARDING_STEPS.map((_, i) => (
+                {steps.map((_, i) => (
                   <span
                     key={i}
                     className={`h-1.5 rounded-full transition-all ${
@@ -110,28 +150,38 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                     onClick={() => setStep((s) => s - 1)}
                     className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white hover:bg-white/10"
                   >
-                    <ChevronRight className="h-4 w-4" /> Back
+                    {isRtl ? (
+                      <ChevronRight className="h-4 w-4" />
+                    ) : (
+                      <ChevronLeft className="h-4 w-4" />
+                    )}
+                    {c.back}
                   </button>
                 )}
                 <button
                   onClick={finishTour}
                   className="rounded-lg px-3 py-2 text-sm text-slate-400 hover:text-white"
                 >
-                  Skip
+                  {c.skip}
                 </button>
-                {step < ONBOARDING_STEPS.length - 1 ? (
+                {step < steps.length - 1 ? (
                   <button
                     onClick={() => setStep((s) => s + 1)}
                     className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-l from-cyan-400 to-violet-500 px-4 py-2 text-sm font-bold text-ink-950"
                   >
-                    Next <ChevronLeft className="h-4 w-4" />
+                    {c.next}
+                    {isRtl ? (
+                      <ChevronLeft className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
                   </button>
                 ) : (
                   <button
                     onClick={finishTour}
                     className="inline-flex items-center gap-1 rounded-lg bg-gradient-to-l from-cyan-400 to-violet-500 px-4 py-2 text-sm font-bold text-ink-950"
                   >
-                    Let&apos;s go! 🚀
+                    {c.letsGo}
                   </button>
                 )}
               </div>
@@ -142,12 +192,14 @@ export function MikuProvider({ children }: { children: ReactNode }) {
 
       {/* ===== Floating widget ===== */}
       {!hidden && (
-        <div className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2">
+        <div className="fixed bottom-4 start-4 z-40 flex flex-col items-start gap-2">
           {message && !open && (
-            <div className="max-w-[270px] rounded-2xl rounded-bl-sm border border-cyan-500/30 bg-ink-900/95 px-4 py-3 text-sm text-white shadow-xl shadow-cyan-500/10">
+            <div className="max-w-[270px] rounded-2xl rounded-es-sm border border-cyan-500/30 bg-ink-900/95 px-4 py-3 text-sm text-white shadow-xl shadow-cyan-500/10">
               <div className="flex items-start gap-2">
                 <MikuAvatar size={22} className="mt-0.5 shrink-0" />
-                <p className="leading-6" dir="rtl">{message}</p>
+                <p className="leading-6" dir="auto">
+                  {message}
+                </p>
               </div>
             </div>
           )}
@@ -158,12 +210,12 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 <MikuAvatar size={44} />
                 <div className="flex-1">
                   <div className="font-black text-white">{MIKU.fullName}</div>
-                  <div className="text-xs text-slate-400">{MIKU.tagline}</div>
+                  <div className="text-xs text-slate-400">{c.tagline}</div>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
                   className="p-2 text-slate-400 hover:text-white"
-                  aria-label="Close"
+                  aria-label={c.close}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -173,7 +225,9 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 <div className="text-xs font-bold text-cyan-400 mb-1" dir="auto">
                   {tip.title}
                 </div>
-                <p className="text-sm text-slate-300 leading-6" dir="auto">{tip.body}</p>
+                <p className="text-sm text-slate-300 leading-6" dir="auto">
+                  {tip.body}
+                </p>
               </div>
 
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -182,7 +236,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                   onClick={() => setOpen(false)}
                   className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 px-3 py-2 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20"
                 >
-                  <GraduationCap className="h-3.5 w-3.5" /> Tutorials
+                  <GraduationCap className="h-3.5 w-3.5" /> {c.tutorials}
                 </Link>
                 <button
                   onClick={() => {
@@ -192,7 +246,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                   }}
                   className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/10"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" /> Replay tour
+                  <RotateCcw className="h-3.5 w-3.5" /> {c.replayTour}
                 </button>
               </div>
 
@@ -200,7 +254,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 onClick={() => setHidden(true)}
                 className="mt-3 w-full text-center text-xs text-slate-500 hover:text-slate-300"
               >
-                Hide Miku for this session
+                {c.hideMiku}
               </button>
             </div>
           )}
@@ -208,7 +262,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
           <button
             onClick={() => setOpen((o) => !o)}
             className="group relative flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/40 bg-ink-900 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105"
-            aria-label="Miku assistant"
+            aria-label={c.assistant}
           >
             <MikuAvatar size={52} />
             <span className="absolute top-0 end-0 h-3.5 w-3.5 rounded-full border-2 border-ink-950 bg-emerald-400" />

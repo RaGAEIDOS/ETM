@@ -1,7 +1,48 @@
-import Link from "next/link";
+"use client";
+
 import { Terminal, Github, Heart } from "lucide-react";
+import Link from "@/lib/i18n/navigation";
+import { useCopy } from "@/lib/i18n/context";
+
+const COPY = {
+  ar: {
+    tagline: "Education Technology Miku",
+    blurb:
+      "منصة عربية مجانية لتعلم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب. مبنية على منهج OSSU، معاد كتابتها بالعربية مع أمثلة تفاعلية ومشاريع حقيقية.",
+    platform: "المنصة",
+    curriculum: "المنهج",
+    elzero: "فيديوهات ElZero",
+    playground: "محرر C++",
+    projects: "المشاريع",
+    glossary: "المصطلحات",
+    books: "كتب مجانية",
+    dashboard: "لوحة التقدم",
+    sources: "المصادر المفتوحة",
+    made: "صُنعت بـ",
+    forCommunity: "من أجل المجتمع العربي — معرفة مجانية للجميع.",
+    openSource: "مفتوح المصدر على GitHub",
+  },
+  en: {
+    tagline: "Education Technology Miku",
+    blurb:
+      "A free platform for learning C++ from zero to building an operating system and a game engine. Based on the OSSU curriculum, with interactive examples and real projects.",
+    platform: "Platform",
+    curriculum: "Curriculum",
+    elzero: "ElZero Videos",
+    playground: "C++ Playground",
+    projects: "Projects",
+    glossary: "Glossary",
+    books: "Free Books",
+    dashboard: "Dashboard",
+    sources: "Open Sources",
+    made: "Made with",
+    forCommunity: "for the Arabic community — free knowledge for everyone.",
+    openSource: "Open source on GitHub",
+  },
+} as const;
 
 export default function SiteFooter() {
+  const c = useCopy(COPY);
   return (
     <footer className="border-t border-white/5 bg-ink-900/60 mt-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14">
@@ -14,41 +55,39 @@ export default function SiteFooter() {
               <span className="text-xl font-black text-white">
                 ETM
                 <span className="text-sm font-medium text-slate-400 ms-2">
-                  Education Technology Miku
+                  {c.tagline}
                 </span>
               </span>
             </div>
             <p className="text-slate-400 leading-7 max-w-md">
-              A free Arabic platform for learning <b className="text-white">C++</b> from
-              zero to building an operating system and a game engine. Based on the{" "}
+              {c.blurb}{" "}
               <a
                 href="https://github.com/ossu/computer-science"
                 target="_blank"
                 rel="noreferrer"
                 className="text-cyan-400 hover:underline"
+                dir="ltr"
               >
                 OSSU
-              </a>{" "}
-              curriculum, rewritten in Arabic with interactive examples and real
-              projects.
+              </a>
             </p>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">Platform</h4>
+            <h4 className="text-white font-bold mb-4">{c.platform}</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
-              <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">Curriculum</Link></li>
-              <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">ElZero Videos</Link></li>
-              <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">C++ Playground</Link></li>
-              <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">Projects</Link></li>
-              <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">Glossary</Link></li>
-              <li><Link href="/books" className="hover:text-cyan-300 transition-colors">Free Books</Link></li>
-              <li><Link href="/dashboard" className="hover:text-cyan-300 transition-colors">Dashboard</Link></li>
+              <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">{c.curriculum}</Link></li>
+              <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">{c.elzero}</Link></li>
+              <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">{c.playground}</Link></li>
+              <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">{c.projects}</Link></li>
+              <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">{c.glossary}</Link></li>
+              <li><Link href="/books" className="hover:text-cyan-300 transition-colors">{c.books}</Link></li>
+              <li><Link href="/dashboard" className="hover:text-cyan-300 transition-colors">{c.dashboard}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-bold mb-4">Open Sources</h4>
+            <h4 className="text-white font-bold mb-4">{c.sources}</h4>
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li>
                 <a href="https://github.com/ossu/computer-science" target="_blank" rel="noreferrer" className="hover:text-cyan-300 transition-colors">
@@ -76,8 +115,8 @@ export default function SiteFooter() {
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-slate-500">
           <p className="flex items-center gap-1.5">
-            Made with <Heart className="h-4 w-4 text-rose-400 fill-rose-400" /> for the
-            Arabic community — free knowledge for everyone.
+            {c.made} <Heart className="h-4 w-4 text-rose-400 fill-rose-400" />{" "}
+            {c.forCommunity}
           </p>
           <a
             href="https://github.com/RaGAEIDOS/ETM"
@@ -86,7 +125,7 @@ export default function SiteFooter() {
             className="flex items-center gap-1.5 hover:text-cyan-300 transition-colors"
           >
             <Github className="h-4 w-4" />
-            Open source on GitHub
+            {c.openSource}
           </a>
         </div>
       </div>
