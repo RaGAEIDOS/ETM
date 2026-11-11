@@ -56,7 +56,7 @@ export const elzeroVideos: ElzeroVideo[] = [
         explanation: "الاستمرارية اليومية مع التطبيق هي أهم عامل للنجاح في C++.",
       },
       {
-        question: "الكورس مناسب لحد ما عنده خبرة؟",
+        question: "الكورس مناسب لمين؟",
         options: ["للمحترفين فقط", "للمبتدئ من الصفر", "فقط للطلبة", "فقط للـ AI"],
         answer: 1,
       },
@@ -83,7 +83,7 @@ export const elzeroVideos: ElzeroVideo[] = [
         answer: 1,
       },
       {
-        question: "لماذا C++ مهمة للمبرمج؟",
+        question: "ليه تعلّم C++ مفيد للمبرمج؟",
         options: ["لأنها الأسهل", "لأنها تعلمك كيف يعمل الكمبيوتر من الداخل", "لأنها مجانية فقط", "لأنها لغة رسم"],
         answer: 1,
       },
@@ -107,8 +107,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "المصحح Debugger فايدته إيه؟",
-        options: ["كتابة الكود", "ملاحظة القيم أثناء التنفيذ", "فتح الصور", "إنشاء القناة"],
+        options: ["كتابة الكود", "ملاحظة القيم أثناء التنفيذ", "تشغيل الموسيقى", "فتح الصور"],
         answer: 1,
+      },
+      {
+        question: "إيه الفرق بين المحرر والمترجم؟",
+        options: ["المحرر للكتابة، والمترجم يحوّل الكود لملف قابل للتنفيذ", "الاتنين نفس البرنامج", "المترجم بيصحح الأخطاء المنطقية فقط", "المحرر بيحوّل الكود لملف تنفيذي"],
+        answer: 0,
+        explanation: "المحرر أداة كتابة، والمترجم هو اللي يحوّل الكود للغة الآلة.",
       },
     ],
     example: {
@@ -125,7 +131,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Introduction",
     youtube: yt(4),
     summary:
-      "بديل أثقل (Visual Studio IDE) لمحبي بيئة كاملة، مع إجابات على أسئلة المبتدئين: أثبّت إيه بالضبط؟ الأقل حجم Ger? الملخص: لو جهازك قوي وتريد كل شيء في مكان واحد جرّب Visual Studio، ولو تفضل الخفة فـ VS Code أسرع.",
+      "بديل أثقل (Visual Studio IDE) لمحبي بيئة كاملة، مع إجابات على أسئلة المبتدئين: ماذا نثبّت بالضبط؟ وأيّ نسخة أقل حجمًا؟ الملخص: لو جهازك قوي وتريد كل شيء في مكان واحد جرّب Visual Studio، ولو تفضل الخفة فـ VS Code أسرع.",
     terms: [
       { en: "IDE", ar: "بيئة التطوير المتكاملة: محرر + مترجم + مصحح في برنامج واحد." },
     ],
@@ -134,6 +140,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "الفرق بين VS Code و Visual Studio؟",
         options: ["لا يوجد فرق", "VS Code محرر خفيف، وVisual Studio بيئة كاملة", "VS Code أضخم", "Visual Studio للموبايل"],
         answer: 1,
+      },
+      {
+        question: "إمتى تختار VS Code بدل Visual Studio؟",
+        options: ["لو عايز بيئة كاملة ثقيلة", "لو بتكتب C# فقط", "لو جهازك أضعف وتفضّل بيئة خفيفة", "لو مش عندك مترجم"],
+        answer: 2,
+        explanation: "VS Code أخف، وVisual Studio بيئة متكاملة تحتاج موارد أكبر.",
       },
     ],
   },
@@ -146,7 +158,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Introduction",
     youtube: "https://www.youtube.com/watch?v=FVV4kTy0dJg&list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS",
     summary:
-      "الصورة الكبيرة: الكمبيوتر لا يفهم C++ — يفهم 0 و1. ما يكتب بالشكل الذي نراه يمر بأربع مراحل: المعالجة المسبقة، الترجمة، الربط، ثم التنفيذ. افهم هذه المراحل قبل كتابة أي سطر، فهي تفسر 90% من أخطاء المبتدئين.",
+      "الصورة الكبيرة: الكمبيوتر لا يفهم C++ — يفهم 0 و1. ما نكتبه يمر بأربع مراحل: المعالجة المسبقة، الترجمة، الربط، ثم التنفيذ. افهم هذه المراحل قبل كتابة أي سطر، فهي تفسر أغلب أخطاء المبتدئين.",
     terms: [
       { en: "Machine Code", ar: "كود الآلة: أوامر 0 و1 التي يفهمها المعالج مباشرة." },
       { en: "Execution", ar: "التنفيذ: تشغيل البرنامج المترجم من main." },
@@ -156,6 +168,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "الكمبيوتر يفهم مباشرة إيه؟",
         options: ["C++", "كود الآلة (0 و1)", "الصور", "الملفات النصية"],
         answer: 1,
+      },
+      {
+        question: "أول مرحلة بيمر بيها الكود قبل التنفيذ؟",
+        options: ["الربط Linking", "الترجمة Compiling", "التنفيذ", "المعالجة المسبقة Preprocessing"],
+        answer: 3,
+        explanation: "المعالجة المسبقة أولًا، ثم الترجمة، ثم الربط، ثم التنفيذ.",
       },
     ],
   },
@@ -180,6 +198,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["الكتابة", "الربط Linking", "التثبيت", "التشغيل فقط"],
         answer: 1,
       },
+      {
+        question: "إيه وظيفة Linker؟",
+        options: ["يمسح أسطر #", "يجمع ملفات Object والمكتبات في ملف تنفيذي واحد", "يحوّل الكود المصدري لملف Object", "يشغّل البرنامج"],
+        answer: 1,
+        explanation: "الربط هو آخر مرحلة بناء قبل التنفيذ.",
+      },
     ],
   },
   {
@@ -202,6 +226,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["نقطة", "فاصلة منقوطة ;", "سطر جديد", "قفزة"],
         answer: 1,
       },
+      {
+        question: "كل برنامج C++ بيبدأ تنفيذه من فين؟",
+        options: ["دالة main", "أول سطر في الملف", "آخر دالة معرّفة", "سطر #include"],
+        answer: 0,
+        explanation: "main هي نقطة بداية التنفيذ.",
+      },
     ],
   },
   {
@@ -213,7 +243,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Introduction",
     youtube: yt(8),
     summary:
-      "التعليقات (`//` و `/* */`) ليست زينة — هي توثيق لما ستعود إليه بعد أسبوع. متى تعلّق؟ لشرح «ليه» وليس «إيه» (المترجم يقرأ الكود). ومتى تعبّق الكود نفسه بدل تعليقه؟",
+      "التعليقات (`//` و `/* */`) ليست زينة — هي توثيق لما ستعود إليه بعد أسبوع. متى تعلّق؟ لشرح «ليه» وليس «إيه» (المترجم يقرأ الكود). ومتى تحذف الكود نفسه بدل تعليقه؟",
     terms: [
       { en: "Comment", ar: "التعليق: سطر لا ينفذ، لتوضيح الفكرة للمطور." },
     ],
@@ -222,6 +252,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أفضل تعليق يشرح إيه؟",
         options: ["نسخ الكود", "سبب الحل أو الفكرة (ليه)", "اسم المؤلف", "تاريخ البناء"],
         answer: 1,
+      },
+      {
+        question: "إيه نوع التعليق اللي بيمتد لأكتر من سطر؟",
+        options: ["//", "#", "/* ... */", "--"],
+        answer: 2,
+        explanation: "// لسطر واحد، و/* */ لعدة أسطر.",
       },
     ],
     example: {
@@ -249,6 +285,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["age int", "int age = 20;", "age = 20 int", "int = age"],
         answer: 1,
       },
+      {
+        question: "في `int age = 20;` إيه اسم الجزء `= 20`؟",
+        options: ["تعريف فقط", "طباعة", "إسناد بعد التعريف", "تهيئة Initialization"],
+        answer: 3,
+        explanation: "التعريف يحدد النوع، والتهيئة تعطي القيمة الأولى.",
+      },
     ],
     example: {
       title: "متغير أول",
@@ -273,7 +315,13 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أي اسم ممنوع؟",
         options: ["studentCount", "1stPlace", "book_count", "totalPrice"],
         answer: 1,
-        explanation: "المبتدئ لا يبدأ برقم.",
+        explanation: "اسم المتغير لا يبدأ برقم.",
+      },
+      {
+        question: "أي اسم متغير أفضل لسعر إجمالي؟",
+        options: ["x", "totalPrice", "1price", "total price"],
+        answer: 1,
+        explanation: "الاسم الواضح وبلا مسافات ولا بداية برقم.",
       },
     ],
   },
@@ -296,6 +344,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["نعم", "لا، النوع ثابت", "في C++ فقط نعم", "فقط بتحويل"],
         answer: 1,
       },
+      {
+        question: "هل نوع المتغير في C++ بيتغير بعد تعريفه؟",
+        options: ["لا، النوع ثابت", "نعم تلقائيًا", "فقط مع cout", "فقط داخل الحلقات"],
+        answer: 0,
+        explanation: "C++ ثابتة النوع، وتغيير النوع يحتاج تحويلًا صريحًا أو متغيرًا جديدًا.",
+      },
     ],
   },
   {
@@ -315,8 +369,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "متغير عُرّف داخل `{ if }` هل يظهر خارجه؟",
-        options: ["نعم", "لا", "فظيفي", "أحيانًا"],
+        options: ["نعم", "لا", "فقط لو كان static", "أحيانًا"],
         answer: 1,
+      },
+      {
+        question: "إمتى المتغير بيموت (يخرج من النطاق)؟",
+        options: ["بعد أول استخدام", "بعد إغلاق البرنامج", "عند نهاية الكتلة اللي عُرّف فيها", "مش بيموت أبدًا"],
+        answer: 2,
+        explanation: "النطاق هو الكتلة التي عُرّف فيها المتغير.",
       },
     ],
   },
@@ -329,15 +389,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Variables & Constants",
     youtube: yt(13),
     summary:
-      "الثابت `const` قيمة لا تتغير أبدًا — مفيد لقيم لا يفترض أن تُعدل (ثمن الضريبة، الحد الأقصى). لو حاولت تعديله، المترجم يمنعك قبل التنفيذ — أمان إضافي.",
+      "الثابت `const` قيمة لا تتغير أبدًا — مفيد لقيم لا يفترض أن تُعدل (نسبة الضريبة، الحد الأقصى). لو حاولت تعديله، المترجم يمنعك قبل التنفيذ — أمان إضافي.",
     terms: [
       { en: "const", ar: "ثابت: متغير لا يمكن تغيير قيمته بعد التعريف." },
     ],
     quiz: [
       {
         question: "ميزة `const` الأساسية؟",
-        options: ["السرعة", "منع التغيير الخطأ", "اختصار الكتابة", "التعليقات"],
+        options: ["السرعة", "منع التغيير الخطأ", "اختصار الكتابة", "تسريع التنفيذ"],
         answer: 1,
+      },
+      {
+        question: "لو حاولت تعديل قيمة const، مين بيمنعك؟",
+        options: ["نظام التشغيل", "المستخدم", "الذاكرة", "المترجم"],
+        answer: 3,
+        explanation: "المترجم يرفض التعديل وقت البناء.",
       },
     ],
     example: {
@@ -364,6 +430,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["cout", "cin", "endl", "return"],
         answer: 1,
       },
+      {
+        question: "تطبيق حساب العمر بيستخدم إيه لإدخال سنة الميلاد؟",
+        options: ["cout", "cin", "cerr", "endl"],
+        answer: 1,
+        explanation: "cin للإدخال، cout للإخراج.",
+      },
     ],
     example: {
       title: "احسب العمر",
@@ -389,6 +461,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["تاب", "سطر جديد", "شرطة", "ثابت"],
         answer: 1,
       },
+      {
+        question: "أي حرف هروب بيرجع مؤشر الكتابة لأول السطر؟",
+        options: ["\\r", "\\n", "\\t", "\\\\"],
+        answer: 0,
+        explanation: "\\r carriage return، و\\n سطر جديد.",
+      },
     ],
   },
   {
@@ -409,6 +487,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "نوع البيانات يقرر إيه؟",
         options: ["اسم المتغير", "الحجم والتفسير في الذاكرة", "لون الكود", "سرعة القراءة"],
         answer: 1,
+      },
+      {
+        question: "ليه `int` مش مناسب لتخزين كلمة؟",
+        options: ["لأنه أبطأ من string", "لأنه بيفقد الذاكرة", "لأنه يخزن أعدادًا صحيحة فقط", "لأنه نوع منطقي"],
+        answer: 2,
+        explanation: "الكلمة نص، وint للأعداد الصحيحة.",
       },
     ],
   },
@@ -432,6 +516,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["1 بايت", "2 بايت", "4 بايت", "8 بايت"],
         answer: 2,
       },
+      {
+        question: "البايت يساوي كام بت؟",
+        options: ["4", "16", "32", "8"],
+        answer: 3,
+        explanation: "البايت = 8 بت.",
+      },
     ],
   },
   {
@@ -443,7 +533,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Data Types",
     youtube: yt(18),
     summary:
-      "أنواع الأعداد الصحيحة: `short` (2)، `int` (4)، `long long` (8). كلها بلا كسر. الفرق بينهم المدى (القيمة القصوى). اختر النوع المناسب لمدى بياناتك — الأكبر يستهلك ذاكرة أكثر.",
+      "أنواع الأعداد الصحيحة: `short` (2 بايت)، `int` (4 بايت)، `long long` (8 بايت) على معظم الأنظمة. كلها بلا كسر. الفرق بينها المدى (القيمة القصوى). اختر النوع المناسب لمدى بياناتك — الأكبر يستهلك ذاكرة أكثر.",
     terms: [
       { en: "Integer", ar: "عدد صحيح: بلا كسر عشري." },
       { en: "Range", ar: "المدى: أصغر وأكبر قيمة يمكن تخزينها." },
@@ -453,6 +543,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أي نوع أكبر حجمًا؟",
         options: ["short", "int", "long long", "char"],
         answer: 2,
+      },
+      {
+        question: "إيه الفرق الأساسي بين short و int و long long؟",
+        options: ["نوع البيانات (كسر/صحيح)", "المدى والحجم في الذاكرة", "طريقة الطباعة", "سرعة المترجم"],
+        answer: 1,
+        explanation: "كلها أعداد صحيحة، لكن بأحجام ومدى مختلف.",
       },
     ],
   },
@@ -476,6 +572,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["float", "double", "int", "char"],
         answer: 1,
       },
+      {
+        question: "ليه نفضّل double على float غالبًا؟",
+        options: ["دقة أعلى للكسور", "أصغر حجمًا", "أسرع في الطباعة", "بيخزن نصوص"],
+        answer: 0,
+        explanation: "double بدقة مضاعفة، وهذا مهم في الحسابات.",
+      },
     ],
   },
   {
@@ -498,6 +600,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["0", "65", "97", "256"],
         answer: 1,
       },
+      {
+        question: "قيمة ASCII للحرف 'a'؟",
+        options: ["65", "90", "97", "122"],
+        answer: 2,
+        explanation: "A = 65، وa = 97.",
+      },
     ],
     example: {
       title: "الحرف كرقم",
@@ -513,7 +621,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Data Types",
     youtube: yt(21),
     summary:
-      "النوع المنطقي `bool` قيمتان فقط: `true` أو `false` — أساس كل الشروط. أما `void` فليس نوع بيانات عاديًا، بل نوع للدوال التي لا ترجع شيئًا، وللإشارة العامة.",
+      "النوع المنطقي `bool` قيمتان فقط: `true` أو `false` — أساس كل الشروط. أما `void` فليس نوع بيانات قيميًّا، بل نوع للدوال التي لا ترجع شيئًا، ويُستخدم أيضًا في المؤشر العام `void*`.",
     terms: [
       { en: "bool", ar: "منطقي: صح (true) أو خطأ (false)." },
       { en: "void", ar: "فراغ: لا قيمة — للدوال بلا إرجاع." },
@@ -523,6 +631,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "`void` يستخدم غالبًا لـ؟",
         options: ["المتغيرات", "الدوال التي لا ترجع قيمة", "الحلقات", "الأرقام"],
         answer: 1,
+      },
+      {
+        question: "قيم bool الممكنة؟",
+        options: ["0 و1 فقط", "أي رقم", "نص فقط", "true و false"],
+        answer: 3,
+        explanation: "bool نوع منطقي قيمتاه true/false.",
       },
     ],
   },
@@ -535,7 +649,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Data Types",
     youtube: yt(22),
     summary:
-      "المعدّلات مثل `unsigned` تضاعف النطاق للوجب (من 0 بدل السالب). و `type alias` يعطي النوع اسمًا أوضح: `using Price = double;` — في المشاريع الكبيرة هذا يجعل الكود مفهومًا.",
+      "المعدّل `unsigned` يخصص كل البتات للقيم الموجبة، فيبدأ النطاق من 0 بدل السالب ويقترب من ضعف المدى الموجب. و `type alias` يعطي النوع اسمًا أوضح: `using Price = double;` — في المشاريع الكبيرة هذا يجعل الكود مفهومًا.",
     terms: [
       { en: "unsigned", ar: "معدل: نوع موجب (من صفر) بمدى أكبر." },
       { en: "Type Alias", ar: "اسم بديل للنوع لتوضيحه." },
@@ -545,6 +659,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "`unsigned char` مداه الأصغر والأكبر؟",
         options: ["-128 إلى 127", "0 إلى 255", "0 إلى 65535", "بلا حدود"],
         answer: 1,
+      },
+      {
+        question: "`using Price = double;` بتعمل إيه؟",
+        options: ["تنشئ متغيرًا جديدًا", "تدي النوع اسمًا بديلًا", "تحوّل النوع تلقائيًا", "تحذف النوع"],
+        answer: 1,
+        explanation: "هذا type alias، وليس متغيرًا.",
       },
     ],
   },
@@ -569,6 +689,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         answer: 1,
         explanation: "يقطع الكسر لا يقرّب.",
       },
+      {
+        question: "التحويل من double لـ int بيعمل إيه؟",
+        options: ["يقطع الجزء العشري", "يقرّب لأقرب رقم", "يرمي استثناء", "بيحافظ على الكسر"],
+        answer: 0,
+        explanation: "التحويل لـ int يقطع الكسر ولا يقرّب.",
+      },
     ],
   },
   {
@@ -580,7 +706,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Operators",
     youtube: yt(24),
     summary:
-      "الأدوات الست: `+ - * / %` وباقي القسمة `%`. القاعدة: `%` تقبل الأعداد الصحيحة فقط، و `/` في الصحيح ينتج صحيحًا (5/2=2). هذه فخاخ الامتحانات الكلاسيكية.",
+      "العوامل الحسابية الخمسة: `+ - * / %`. القاعدة: `%` تقبل الأعداد الصحيحة فقط، و `/` بين عددين صحيحين ينتج عددًا صحيحًا (5/2=2). هذه فخاخ الامتحانات الكلاسيكية.",
     terms: [
       { en: "Modulo %", ar: "باقي القسمة: ما يتبقى بعد القسمة المنتظمة." },
     ],
@@ -589,6 +715,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "نواتج `5 / 2` في `int`؟",
         options: ["2.5", "2", "3", "0"],
         answer: 1,
+      },
+      {
+        question: "ناتج `7 % 3`؟",
+        options: ["2", "3", "1", "0"],
+        answer: 2,
+        explanation: "7 = 3×2 + 1، فالباقي 1.",
       },
     ],
   },
@@ -611,6 +743,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["x = 5", "x = x + 5", "x++", "5 = x"],
         answer: 1,
       },
+      {
+        question: "`x -= 2` معناها؟",
+        options: ["x = 2 - x", "x = x * 2", "x = -2", "x = x - 2"],
+        answer: 3,
+        explanation: "الاختصار يطبّق العملية على القيمة الحالية.",
+      },
     ],
   },
   {
@@ -622,7 +760,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Operators",
     youtube: yt(26),
     summary:
-      "زيادة بواحد `++` ونقصان `--`: قبل الاستخدام (`++x`) يزيد ثم يستخدم، وبعده (`x++`) يستخدم ثم يزيد. الفرق بضعة ملي ثانية لكنه يغيّر النتيجة تمامًا في الجمل المركبة.",
+      "زيادة بواحد `++` ونقصان `--`: قبل الاستخدام (`++x`) يزيد ثم يستخدم، وبعده (`x++`) يستخدم ثم يزيد. الفرق في ترتيب التقييم، لكنه يغيّر النتيجة تمامًا في الجمل المركبة.",
     terms: [
       { en: "++ (pre/post)", ar: "الزيادة: قبل الاستخدام `++x` وبعده `x++`." },
     ],
@@ -631,6 +769,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "لو `int x=5; int y=x++;` قيمة y؟",
         options: ["6", "5", "10", "خطأ"],
         answer: 1,
+      },
+      {
+        question: "`++x` معناها؟",
+        options: ["استخدم x ثم زيده", "زيد x ثم استخدمه", "انقص x", "اجعل x صفرًا"],
+        answer: 1,
+        explanation: "البادئة تزيد قبل الاستخدام.",
       },
     ],
   },
@@ -650,8 +794,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "`a == b` تعني؟",
-        options: ["عين", "أعطِ b لـ a", "هل a تساوي b؟", "جمع"],
+        options: ["إسناد قيمة", "أعطِ b لـ a", "هل a تساوي b؟", "جمع"],
         answer: 2,
+      },
+      {
+        question: "`!=` معناها؟",
+        options: ["لا يساوي", "يساوي", "أكبر من", "إسناد"],
+        answer: 0,
+        explanation: "!= نفي المساواة.",
       },
     ],
   },
@@ -671,8 +821,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "`true && false` تساوي؟",
-        options: ["true", "false", "خطأ", "مريح"],
+        options: ["true", "false", "خطأ", "قيمة غير معرّفة"],
         answer: 1,
+      },
+      {
+        question: "`true || false` تساوي؟",
+        options: ["false", "خطأ ترجمة", "true", "قيمة غير معرّفة"],
+        answer: 2,
+        explanation: "OR تكفي فيها قيمة واحدة صحيحة.",
       },
     ],
   },
@@ -695,6 +851,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["26", "16", "20", "13"],
         answer: 1,
       },
+      {
+        question: "ناتج `(10 + 3) * 2`؟",
+        options: ["16", "23", "20", "26"],
+        answer: 3,
+        explanation: "الأقواس أولًا: 13 × 2 = 26.",
+      },
     ],
   },
   {
@@ -713,8 +875,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "شرط `if` يتنفذ عندما؟",
-        options: ["دائمًا", "عندما الشرط true", "عندما false", "عندما مريح"],
+        options: ["دائمًا", "عندما الشرط true", "عندما false", "عندما يكون الشرط صفرًا"],
         answer: 1,
+      },
+      {
+        question: "إيه اللي بينكتب جوه أقواس if؟",
+        options: ["أوامر التنفيذ", "شرط منطقي", "اسم الدالة", "نوع المتغير"],
+        answer: 1,
+        explanation: "الشرط هو اللي يحدد هل الكتلة تتنفذ.",
       },
     ],
   },
@@ -734,8 +902,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "لو أول شرط صح، هل ستُفحص شروط else if؟",
-        options: ["نعم", "لا، تُنفذ الأولى وتخرج", "فظيفي", "حسب القناة"],
+        options: ["نعم", "لا، تُنفذ الأولى وتخرج", "حسب نوع المتغير", "دائمًا"],
         answer: 1,
+      },
+      {
+        question: "لو كل الشروط طلعت false، مين بيتنفذ؟",
+        options: ["كتلة else", "أول else if", "آخر if", "مفيش حاجة"],
+        answer: 0,
+        explanation: "else هي البديل الأخير.",
       },
     ],
   },
@@ -755,8 +929,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "فائدة التداخل؟",
-        options: ["السرعة", "اعتماد قرار على قرار داخلي", "الشفافية", "الاختصار"],
+        options: ["السرعة", "اعتماد قرار على قرار داخلي", "تقليل عدد الأسطر", "الاختصار"],
         answer: 1,
+      },
+      {
+        question: "إمتى نستخدم Nested If؟",
+        options: ["دايمًا بدل else", "لما نكتب حلقة", "لما يكون القرار معتمدًا على قرار داخلي", "لما نعرّف مصفوفة"],
+        answer: 2,
+        explanation: "التداخل مفيد فقط عند اعتماد قرار على آخر.",
       },
     ],
   },
@@ -779,6 +959,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["حلقات", "حالة ثنائية فقط", "دوال", "مصفوفات"],
         answer: 1,
       },
+      {
+        question: "الصيغة الصحيحة للثلاثي؟",
+        options: ["cond : a ? b", "if cond ? a : b", "cond ? a ; b", "cond ? a : b"],
+        answer: 3,
+        explanation: "الشرط ثم ? ثم قيمة الصدق ثم : ثم قيمة الكذب.",
+      },
     ],
     example: {
       title: "ثلاثي",
@@ -794,15 +980,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "If & Switch",
     youtube: yt(34),
     summary:
-      "ثلاثي داخل ثلاثي — قوي لكنه مدمر للقراءة. إذا احتجت أكثر من درجات فأدرّج الدرجات في `if else if` العادية أفضل. هنا فقط لفهم الصياغة، لا للإنتاج.",
+      "ثلاثي داخل ثلاثي — قوي لكنه مدمر للقراءة. إذا احتجت أكثر من مستويين، استخدم `if else if` العادية — أوضح وأسهل في القراءة. هنا فقط لفهم الصياغة، لا للإنتاج.",
     terms: [
       { en: "Nested Ternary", ar: "ثلاثي متداخل: اختصار متعدد في سطر واحد." },
     ],
     quiz: [
       {
         question: "مشكلة الثلاثي المتداخل؟",
-        options: ["البطء", "صعوبة القراءة", "الذاكرة", "الأخطاء"],
+        options: ["البطء", "صعوبة القراءة", "الذاكرة", "سرعة التنفيذ"],
         answer: 1,
+      },
+      {
+        question: "بديل أوضح من الثلاثي المتداخل؟",
+        options: ["switch فقط", "if else if", "while", "goto"],
+        answer: 1,
+        explanation: "if else if أوضح للقراءة.",
       },
     ],
   },
@@ -815,15 +1007,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "If & Switch",
     youtube: yt(35),
     summary:
-      "أربعة تطبيقات مثبتة: درجة نجاح، زوجي/فردي، أكبر عدد، وآلة حاسبة مبسطة. كلها `if` عادية بلا حيل. انصح أن تكتبها بيدك مرة واحدة قبل الانتقال لـ `switch`.",
+      "أربعة تطبيقات عملية: درجة نجاح، زوجي/فردي، أكبر عدد، وآلة حاسبة مبسطة. كلها `if` عادية بلا حيل. أنصحك أن تكتبها بيدك مرة واحدة قبل الانتقال لـ `switch`.",
     terms: [
       { en: "Application", ar: "تطبيق صغير: ممارسة التركيز على مشكلة واحدة." },
     ],
     quiz: [
       {
-        question: "أول تطبيق؟",
-        options: ["الثلاثي فقط", "درجة نجاح الطالب", "الرسم", "البث"],
+        question: "أي تطبيق من تطبيقات الفيديو بيحدد إذا كانت درجة الطالب ناجحة؟",
+        options: ["آلة حاسبة", "درجة نجاح الطالب", "زوجي أو فردي", "أكبر عدد"],
         answer: 1,
+      },
+      {
+        question: "تطبيق الآلة الحاسبة المبسطة بيستخدم إيه؟",
+        options: ["شروط if على العملية", "حلقات فقط", "مصفوفات", "ملفات"],
+        answer: 0,
+        explanation: "كل عملية لها شرط، مع else للحالات غير المعروفة.",
       },
     ],
   },
@@ -836,7 +1034,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "If & Switch",
     youtube: yt(36),
     summary:
-      "للقيم الثابتة المحدودة أنظف من عشرات `if`: `switch(x){ case 1: ... break; }`. القاعدة الذهبية: لا تنسي `break` (وإلا ستقع في Fall-Through). و `default` دائمًا موجود كـ `else`.",
+      "للقيم الثابتة المحدودة أنظف من عشرات `if`: `switch(x){ case 1: ... break; }`. القاعدة الذهبية: لا تنسَ `break` (وإلا ستقع في Fall-Through). و `default` اختياري، ويُستخدم كبديل لأي قيمة لم تطابق أي `case`.",
     terms: [
       { en: "switch", ar: "اختيار متعدد على قيمة ثابتة." },
       { en: "Fall-Through", ar: "الوقوع: أكمل للكيس الجاية لعدم وجود break." },
@@ -846,6 +1044,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "نسيان `break` يسبب إيه؟",
         options: ["أسرع", "إكمال للـ case الجاية", "خطأ", "بطء"],
         answer: 1,
+      },
+      {
+        question: "`default` في switch بيتنفذ إمتى؟",
+        options: ["دايمًا", "قبل أول case", "لما مفيش case مطابق", "لما break يشتغل"],
+        answer: 2,
+        explanation: "default هو البديل عند عدم تطابق أي case.",
       },
     ],
   },
@@ -868,6 +1072,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["شروط أكبر من", "قيم ثابتة من قائمة", "قرارات منطقية", "لا شيء"],
         answer: 1,
       },
+      {
+        question: "ليه switch أنسب من if لقائمة ثابتة؟",
+        options: ["أسرع دايمًا", "بيشتغل بدون break", "بيتعامل مع النصوص", "أوضح لما تكون القيم محدودة ومعروفة"],
+        answer: 3,
+        explanation: "الوضوح هو المكسب الأساسي هنا.",
+      },
     ],
   },
   {
@@ -889,6 +1099,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "فهرس أول عنصر؟",
         options: ["1", "0", "-1", "عشوائي"],
         answer: 1,
+      },
+      {
+        question: "إزاي نعرّف مصفوفة 5 أعداد صحيحة؟",
+        options: ["array int[5];", "int arr[5];", "int arr = 5;", "arr[5] int;"],
+        answer: 1,
+        explanation: "النوع ثم الاسم ثم الحجم بين أقواس.",
       },
     ],
     example: {
@@ -915,6 +1131,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["عشوائية", "متسلسلة", "متقطعة", "مختلطة"],
         answer: 1,
       },
+      {
+        question: "`arr[i]` بتساوي إيه في حساب المؤشر؟",
+        options: ["*(arr + i)", "&arr + i", "arr + i", "*arr + i"],
+        answer: 0,
+        explanation: "arr[i] تكافئ *(arr + i).",
+      },
     ],
   },
   {
@@ -926,7 +1148,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Array & String",
     youtube: yt(40),
     summary:
-      "التعديل سهل: `arr[2] = 99` يغير العنصر ثالث. لكن «الإضافة» في المصفوفة الثابتة لا تُنشئ خانتها الجديدة — إما تملأ خانة موجودة فارغة، أو تتحول إلى Vector مرنة.",
+      "التعديل سهل: `arr[2] = 99` يغير العنصر الثالث. لكن «الإضافة» في المصفوفة الثابتة لا تُنشئ خانتها الجديدة — إما تملأ خانة موجودة فارغة، أو تتحول إلى Vector مرنة.",
     terms: [
       { en: "Update", ar: "تحديث: تغيير قيمة موجودة في خانة." },
     ],
@@ -935,6 +1157,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "تعديل `arr[2] = 99` يغير إيه؟",
         options: ["الحجم", "العنصر الثالث", "كل العناصر", "الاسم"],
         answer: 1,
+      },
+      {
+        question: "هل المصفوفة الثابتة بتزيد حجمها لما تضيف عنصر؟",
+        options: ["نعم تلقائيًا", "فقط لو int", "لا، الحجم ثابت", "فقط داخل main"],
+        answer: 2,
+        explanation: "المصفوفة الثابتة حجمها محدد وقت التعريف.",
       },
     ],
   },
@@ -954,8 +1182,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "`int m[2][3]` معناه؟",
-        options: ["3 صف 2 عمود", "2 صف 3 عمود", "5 عناصر", "6 عناصر"],
+        options: ["3 صف 2 عمود", "2 صف 3 عمود", "5 عناصر", "2 عمود و3 صف"],
         answer: 1,
+      },
+      {
+        question: "`m[1][2]` بتشير لإيه في `int m[2][3]`؟",
+        options: ["الصف الأول والعمود الثاني", "الصف الثالث والعمود الثاني", "العنصر رقم 12", "الصف الثاني والعمود الثالث"],
+        answer: 3,
+        explanation: "الفهارس تبدأ من 0: الصف 1 هو الثاني، والعمود 2 هو الثالث.",
       },
     ],
   },
@@ -968,7 +1202,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Array & String",
     youtube: yt(42),
     summary:
-      "البديل الحديث `std::array<int, 5>` يعرف حجمه في القالب وله دوال (`size()`, `at()`) ويمنع الخروج عن الحدود باستثناء. أفضل من المصفوفة C القديمة في العمل الحديث.",
+      "البديل الحديث `std::array<int, 5>` يعرف حجمه في القالب وله دوال (`size()`, `at()`). و `at()` ترمي استثناءً عند الخروج عن الحدود، بخلاف `[]`. أفضل من مصفوفة C القديمة في العمل الحديث.",
     terms: [
       { en: "std::array", ar: "كلاس Array الحديث: آمن ودوال جاهزة." },
     ],
@@ -977,6 +1211,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "ميزة `std::array` عن C array؟",
         options: ["أسرع", "أمان + size/at", "أكبر", "أصغر"],
         answer: 1,
+      },
+      {
+        question: "إيه اللي بيميز `at()` عن `[]` في std::array؟",
+        options: ["أسرع", "بتتحقق من الحدود وترمي استثناء", "بترجع حجم المصفوفة", "بتعدل الحجم"],
+        answer: 1,
+        explanation: "at() تتحقق من الفهرس قبل الوصول.",
       },
     ],
   },
@@ -989,15 +1229,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Array & String",
     youtube: yt(43),
     summary:
-      "حلقة التكرار، المجموع، والعنصر الأكبر — كلها أساليب تقليدية على المصفوفة. القاعدة: العبّار عن حجم المصفوفة كثابت لعدم تكرار الأرقام في الكود.",
+      "المرور على المصفوفة بحلقة، حساب المجموع، وإيجاد العنصر الأكبر — كلها أساليب تقليدية على المصفوفة. القاعدة: استخدم ثابتًا لحجم المصفوفة حتى لا تكرر الرقم في الكود.",
     terms: [
       { en: "Iteration", ar: "التكرار: المرور على كل عنصر مرة." },
     ],
     quiz: [
       {
-        question: "أفضل لحلقة على مصفوفة؟",
-        options: ["أرقام مكررة", "ثابت للحجم", "عشوائي", "لا شيء"],
+        question: "إيه أفضل ممارسة لحجم المصفوفة في الكود؟",
+        options: ["رقم متكرر في كل مكان", "ثابت باسم واضح", "متغير عشوائي", "بدون حجم"],
         answer: 1,
+      },
+      {
+        question: "ليه نستخدم ثابتًا لحجم المصفوفة؟",
+        options: ["لتجنب تكرار الرقم وتسهيل التعديل", "لتحسين الألوان", "لأن المصفوفة بتحتاج const", "لإبطاء البرنامج"],
+        answer: 0,
+        explanation: "الثابت باسم واضح يمنع الأرقام السحرية.",
       },
     ],
   },
@@ -1010,15 +1256,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Array & String",
     youtube: yt(44),
     summary:
-      "لعبة كلاسيكية تدمج الحلقات والمصفوفات والعشوائية: ولّد الرقم بـ `rand()`، وخلي المستخدم يخمنه مع رسائل «أعلى» و«أقل». هذه وظيفة ممتازة في البورتفوليو.",
+      "لعبة كلاسيكية تدمج الحلقات والمصفوفات والعشوائية: ابدأ بـ `srand(time(0))` ثم ولّد الرقم بـ `rand()`، وخلي المستخدم يخمنه مع رسائل «أعلى» و«أقل». هذه وظيفة ممتازة في البورتفوليو.",
     terms: [
       { en: "rand() / srand()", ar: "مولد عشوائي: أرقام عشوائية." },
     ],
     quiz: [
       {
         question: "`srand(time(0))` وظيفتها إيه؟",
-        options: ["نصيحة", "بذر عشوائية كل مرة", "نتائج بطيئة", "لا شيء"],
+        options: ["طباعة النتيجة", "بذر عشوائية كل مرة", "نتائج بطيئة", "لا شيء"],
         answer: 1,
+      },
+      {
+        question: "قبل استخدام rand() في لعبة التخمين، بنعمل إيه؟",
+        options: ["بنستخدم cin", "بنعرّف const", "بنكتب srand(time(0))", "بنكتب break"],
+        answer: 2,
+        explanation: "srand يبذر المولّد العشوائي بوقت مختلف كل تشغيل.",
       },
     ],
   },
@@ -1031,7 +1283,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Array & String",
     youtube: yt(45),
     summary:
-      "النصوص سلسلة `char` تُدار ككل بـ `string`. النوع `string` من `<string>` يمنحك الطول، الاتصال، والبحث. لا تستخدم `char[]` القديمة إلا لسبب نظامي.",
+      "النصوص سلسلة `char` تُدار ككل بـ `string`. النوع `string` من `<string>` يمنحك الطول، الاتصال، والبحث. لا تستخدم `char[]` القديمة إلا للتعامل مع واجهات C القديمة.",
     terms: [
       { en: "string", ar: "النص: سلسلة حروف تُعامل كوحدة." },
     ],
@@ -1040,6 +1292,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "المكتبة المطلوبة لـ string؟",
         options: ["<iostream>", "<string>", "<cmath>", "<vector>"],
         answer: 1,
+      },
+      {
+        question: "من أنهي هيدر يجي `std::string`؟",
+        options: ["<iostream>", "<cstring>", "<vector>", "<string>"],
+        answer: 3,
+        explanation: "string في <string>، وcstring لدوال C القديمة.",
       },
     ],
   },
@@ -1058,9 +1316,15 @@ export const elzeroVideos: ElzeroVideo[] = [
     ],
     quiz: [
       {
-        question: "دمج 25 كنص؟",
-        options: ["25 +", "\"25\"", "to_string(25)", "int"],
-        answer: 2,
+        question: "إزاي تحوّل الرقم 25 إلى نص عشان تدمجه؟",
+        options: ["std::string(25)", "to_string(25)", "\"25\"", "char(25)"],
+        answer: 1,
+      },
+      {
+        question: "لدمج نصين في C++ نستخدم إيه؟",
+        options: ["-", "+", "*", "%"],
+        answer: 1,
+        explanation: "عامل + يدمج std::string.",
       },
     ],
   },
@@ -1083,6 +1347,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["4", "5", "6", "0"],
         answer: 1,
       },
+      {
+        question: "أجزاء for الثلاثة بالترتيب؟",
+        options: ["بداية، شرط، زيادة", "شرط، بداية، زيادة", "زيادة، شرط، بداية", "بداية، زيادة، شرط"],
+        answer: 0,
+        explanation: "init ثم condition ثم increment.",
+      },
     ],
   },
   {
@@ -1094,7 +1364,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Loops",
     youtube: yt(48),
     summary:
-      "صياغات متقدمة: خطوة `i += 2`، التناقص `i--`، و Ranged Loop `for(auto x : v)`. Ranged Loop أنظف المصفوفات — استخدمها كلما أمكن.",
+      "صياغات متقدمة: خطوة `i += 2`، التناقص `i--`، و range-based for `for(auto x : v)`. صياغة range-based for أنظف للمصفوفات — استخدمها كلما أمكن.",
     terms: [
       { en: "Ranged Loop", ar: "الحلقة النطاقية: for (x : container) نظيفة." },
     ],
@@ -1103,6 +1373,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أفضل صياغة لمصفوفة؟",
         options: ["for(idx)", "for(auto x : v)", "while", "goto"],
         answer: 1,
+      },
+      {
+        question: "`for(auto x : v)` بتعمل إيه؟",
+        options: ["بتعدل حجم v", "بترتب v", "بتلف على عناصر v واحد واحد", "بتحذف v"],
+        answer: 2,
+        explanation: "هذه صياغة range-based for.",
       },
     ],
   },
@@ -1121,9 +1397,15 @@ export const elzeroVideos: ElzeroVideo[] = [
     ],
     quiz: [
       {
-        question: "عدد الزوجي في 0..10 بـ for خطوته؟",
+        question: "لو عايز تعدّ الأرقام الزوجية من 0 لـ 10، خطوة الحلقة تكون كام؟",
         options: ["1", "2", "3", "10"],
         answer: 1,
+      },
+      {
+        question: "لو عايز تطبع من 10 لـ 1، إيه المناسب؟",
+        options: ["i++", "i += 2", "break", "i--"],
+        answer: 3,
+        explanation: "التناقص يعكس العد.",
       },
     ],
   },
@@ -1136,7 +1418,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Loops",
     youtube: yt(50),
     summary:
-      "حلقة داخل حلقة: جدول ضرب، مصفوفة صف × عمود، أو حتى مربع حسابي. عدد التكرارات يضرب (3 × 4 = 12 لفة). انتبه: عكس الترتيب يغير المتغير الخارجي.",
+      "حلقة داخل حلقة: جدول ضرب، مصفوفة صف × عمود، أو حتى مربع حسابي. عدد التكرارات يضرب (3 × 4 = 12 لفة). انتبه: عكس ترتيب الحلقات يغيّر ترتيب الطباعة (الصفوف والأعمدة).",
     terms: [
       { en: "Nested Loop", ar: "الحلقة المتداخلة: حلقة داخل حلقة." },
     ],
@@ -1145,6 +1427,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "حلقة 3 داخل حلقة 4 تتكرر الداخلي كم مرة؟",
         options: ["7", "12", "3", "4"],
         answer: 1,
+      },
+      {
+        question: "لو الحلقة الخارجية 3 مرات والداخلية 4، مجموع اللفات؟",
+        options: ["7", "12", "3", "4"],
+        answer: 1,
+        explanation: "3 × 4 = 12.",
       },
     ],
   },
@@ -1157,15 +1445,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Loops",
     youtube: yt(51),
     summary:
-      "تُستخدم عندما لا تعرف عدد اللفات مسبقًا: كرر طالما الشرط صح. الخطر الأول: حلقة مالانهاية لو نسيت تعديل المتغير الذي يتحقق منه الشرط.",
+      "تُستخدم عندما لا تعرف عدد اللفات مسبقًا: كرر طالما الشرط صح. الخطر الأول: حلقة لا نهائية لو نسيت تعديل المتغير الذي يتحقق منه الشرط.",
     terms: [
       { en: "while", ar: "حلقة شرطية: تفحص أولًا." },
     ],
     quiz: [
       {
         question: "سبب الحلقة اللانهائية الأشهر؟",
-        options: ["break", "نسيان تعديل الشرط", "الخطأ", "السرعة"],
+        options: ["break", "نسيان تعديل الشرط", "استخدام continue", "السرعة"],
         answer: 1,
+      },
+      {
+        question: "إمتى نستخدم while بدل for؟",
+        options: ["لما عدد اللفات مش معروف مسبقًا", "لما عدد اللفات ثابت", "لما نكتب مصفوفة", "لما نستخدم switch"],
+        answer: 0,
+        explanation: "while مناسبة للشروط غير المعروفة مسبقًا.",
       },
     ],
   },
@@ -1185,8 +1479,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "الفرق عن while؟",
-        options: ["نفس الشيء", "تدخل مرة على الأقل", "أسرع", "لا فرق"],
+        options: ["نفس الشيء", "تدخل مرة على الأقل", "أسرع", "تفحص الشرط أولًا"],
         answer: 1,
+      },
+      {
+        question: "`do { ... } while(false);` هتتنفذ كام مرة؟",
+        options: ["صفر", "مرتين", "مرة واحدة", "لانهائي"],
+        answer: 2,
+        explanation: "do تنفذ مرة قبل فحص الشرط.",
       },
     ],
   },
@@ -1210,6 +1510,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["يخرج كليًا", "يتخطى اللفة الحالية", "يوقف البرنامج", "يقلل الذاكرة"],
         answer: 1,
       },
+      {
+        question: "`break` بتعمل إيه؟",
+        options: ["تتخطى اللفة الحالية", "توقف البرنامج نهائيًا", "تعيد اللفة", "تخرج من الحلقة كلها"],
+        answer: 3,
+        explanation: "break ينهي الحلقة، continue يتخطى لفة.",
+      },
     ],
   },
   {
@@ -1227,9 +1533,15 @@ export const elzeroVideos: ElzeroVideo[] = [
     ],
     quiz: [
       {
-        question: "جدول ضرب كامل يحتاج أي حلقة؟",
-        options: ["for", "while فقط", "do", "switch"],
+        question: "إيه الأنسب لجدول ضرب بعدد صفوف وأعمدة معروف؟",
+        options: ["حلقة for متداخلة", "while واحدة", "do while", "switch"],
         answer: 0,
+      },
+      {
+        question: "تطبيق مجموع الأرقام بيحتاج إيه؟",
+        options: ["مصفوفة أسماء", "متغير مجموع يتراكم عليه", "switch", "ملف"],
+        answer: 1,
+        explanation: "اجمع كل قيمة في متغير واحد.",
       },
     ],
   },
@@ -1242,7 +1554,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(55),
     summary:
-      "الدالة صندوق مهمة: تأخذ باراميترات، تنفذ، وترجع نتيجة. القاعدة الذهبية: لو كرّرت كودًا فأنت تحتاج دالة. الدالة المفيدة مقصّرة على مهمة واحدة باسم واضح.",
+      "الدالة صندوق مهمة: تأخذ باراميترات، تنفذ، وترجع نتيجة. القاعدة الذهبية: لو كرّرت كودًا فأنت تحتاج دالة. الدالة المفيدة مقصورة على مهمة واحدة باسم واضح.",
     terms: [
       { en: "Function", ar: "الدالة: كود قابل للإعادة باسم وباراميترات." },
     ],
@@ -1251,6 +1563,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أفضل اسم لدالة تجمع؟",
         options: ["x", "add", "a", "fun"],
         answer: 1,
+      },
+      {
+        question: "إيه علامة إنك محتاج دالة؟",
+        options: ["تكرار نفس الكود أكتر من مرة", "الكود قصير", "مفيش متغيرات", "بتستخدم cout"],
+        answer: 0,
+        explanation: "التكرار إشارة قوية لاستخراج دالة.",
       },
     ],
     example: {
@@ -1267,15 +1585,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(56),
     summary:
-      "الباراميترات مدخلات الدالة: `add(int a, int b)` تستقبل قيمتين. القيمة تُنسخ للدالة (تمرير بالنسخ) افتراضيًا. لو أردت التعديل على الأصل، نحتاج المؤشرات أو المراجع (جاية قدام).",
+      "الباراميترات مدخلات الدالة: `add(int a, int b)` تستقبل قيمتين. القيمة تُنسخ للدالة (تمرير بالنسخ) افتراضيًا. لو أردت التعديل على الأصل، هنحتاج المؤشرات أو المراجع (ستأتي لاحقًا).",
     terms: [
       { en: "Parameter", ar: "الباراميتر: متغير داخل الدالة يستقبل قيمة." },
     ],
     quiz: [
       {
-        question: "لو الدالة `f(int x)` ونداء `f(5)` قيمة x داخلها؟",
+        question: "لو استدعيت `f(5)` والدالة `f(int x)`، قيمة `x` جوّاها تكون إيه؟",
         options: ["0", "5", "عشوائية", "null"],
         answer: 1,
+      },
+      {
+        question: "تمرير الباراميتر بالنسخ معناه إيه؟",
+        options: ["الدالة بتعدل الأصل", "الدالة بترجع عنوان", "الدالة بتشتغل على نسخة من القيمة", "الدالة مش بتاخد قيمة"],
+        answer: 2,
+        explanation: "النسخة لا تؤثر على المتغير الأصلي.",
       },
     ],
   },
@@ -1298,6 +1622,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["قيمة واحدة", "قيم مختلفة (3+4، -1+1...)", "صفر", "نص"],
         answer: 1,
       },
+      {
+        question: "دالة `square(x)` بترجع إيه؟",
+        options: ["x + 2", "x / 2", "x - 2", "x * x"],
+        answer: 3,
+        explanation: "مربع العدد = العدد × نفسه.",
+      },
     ],
   },
   {
@@ -1319,6 +1649,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["خطأ", "يستخدم الافتراضية", "عشوائي", "لا شيء"],
         answer: 1,
       },
+      {
+        question: "الباراميتر الافتراضي بيتستخدم إمتى؟",
+        options: ["لما تبعت قيمة", "لما تنده الدالة من غير ما تبعت قيمة له", "لما يكون النوع int", "لما تكتب return"],
+        answer: 1,
+        explanation: "الافتراضي بديل عند غياب الوسيط.",
+      },
     ],
   },
   {
@@ -1336,9 +1672,15 @@ export const elzeroVideos: ElzeroVideo[] = [
     ],
     quiz: [
       {
-        question: "لتمررير مصفوفة لدالة تحتاج إيه إضافي؟",
+        question: "لتمرير مصفوفة لدالة تحتاج إيه إضافي؟",
         options: ["حجمها", "اسمها فقط", "نوعها", "مؤشرها"],
         answer: 0,
+      },
+      {
+        question: "ليه بنبعت حجم المصفوفة معاها للدالة؟",
+        options: ["لأن الدالة بتشوف العنوان فقط ومش عارفة الحجم", "لأن المصفوفة بتنسى قيمها", "لأن C++ بتمنع المصفوفات", "لتسريع الطباعة"],
+        answer: 0,
+        explanation: "اسم المصفوفة يتحول لمؤشر، فيضيع الحجم.",
       },
     ],
   },
@@ -1359,8 +1701,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "`void` تعني؟",
-        options: ["صفر", "لا إرجاع", "نص", "رقم"],
+        options: ["قيمة فارغة", "لا إرجاع", "نص", "رقم"],
         answer: 1,
+      },
+      {
+        question: "الدالة void بترجع إيه؟",
+        options: ["صفر", "nullptr", "لا ترجع قيمة", "نص فارغ"],
+        answer: 2,
+        explanation: "void تعني بلا قيمة إرجاع.",
       },
     ],
   },
@@ -1373,15 +1721,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(61),
     summary:
-      "ترتيبك قد يجعل `main` يستدعي دالة لم تُعرّف بعد. حلّها بتصريح مسبق `int add(int,int);` في الأعلى، والتعريف أسفل `main`. من بدونه: `add was not declared`.",
+      "ترتيبك قد يجعل `main` يستدعي دالة لم تُعرّف بعد. حلّها بتصريح مسبق `int add(int,int);` في الأعلى، والتعريف أسفل `main`. بدونه ستظهر رسالة `add was not declared`.",
     terms: [
       { en: "Forward Declaration", ar: "التصريح المسبق: إخبار المترجم بدالة لاحقة." },
     ],
     quiz: [
       {
         question: "فائدة التصريح المسبق؟",
-        options: ["السرعة", "إبلاغ المترجم بدالة قادمة", "النظام", "الخطأ"],
+        options: ["السرعة", "إبلاغ المترجم بدالة قادمة", "تقليل حجم الملف", "الخطأ"],
         answer: 1,
+      },
+      {
+        question: "إيه شكل التصريح المسبق لدالة add؟",
+        options: ["add(int, int);", "int add() { }", "declaration add;", "int add(int, int);"],
+        answer: 3,
+        explanation: "التصريح يحدد نوع الإرجاع والباراميترات بلا جسم.",
       },
     ],
   },
@@ -1394,7 +1748,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(62),
     summary:
-      "مكتبة `<cmath>` فيها كل ما تحتاجه: `sqrt`, `pow`, `abs`, `max`, `sin`, `log`. لا تعيد اختراع العجلة — استخدام الجاهز أسرع وأدق.",
+      "مكتبة `<cmath>` فيها دوال الرياضيات: `sqrt`, `pow`, `abs`, `sin`, `log`. أما `max` و `min` ففي `<algorithm>`. لا تعيد اختراع العجلة — استخدام الجاهز أسرع وأدق.",
     terms: [
       { en: "Built-in", ar: "مدمج/جاهز: ضمن المكتبات القياسية." },
     ],
@@ -1403,6 +1757,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "مكتبة دوال الرياضة؟",
         options: ["<string>", "<cmath>", "<vector>", "<iostream>"],
         answer: 1,
+      },
+      {
+        question: "`sqrt(16)` بترجع؟",
+        options: ["8", "4", "16", "2"],
+        answer: 1,
+        explanation: "الجذر التربيعي لـ 16 هو 4.",
       },
     ],
     example: {
@@ -1419,7 +1779,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(63),
     summary:
-      "تطبيقان بالدوال الجاهزة: حاسبة رياضيات (جذر وقوة)، وتصنيف درجة (max/min). الفكرة: اقرأ وثائق المكتبة واختر أنسب دالة معينة.",
+      "تطبيقان بالدوال الجاهزة: حاسبة رياضيات (جذر وقوة)، وتصنيف درجة (max/min). الفكرة: اقرأ وثائق المكتبة واختر أنسب دالة.",
     terms: [
       { en: "Library", ar: "المكتبة: تجميعة دوال جاهزة." },
     ],
@@ -1428,6 +1788,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "أكبر عدد بين 15 و22؟",
         options: ["15", "22", "30", "خطأ"],
         answer: 1,
+      },
+      {
+        question: "الدالة المناسبة لأكبر رقمين؟",
+        options: ["max", "sqrt", "abs", "pow"],
+        answer: 0,
+        explanation: "max ترجع الأكبر بين قيمتين.",
       },
     ],
   },
@@ -1440,15 +1806,21 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(64),
     summary:
-      "ثلاثة تطبيقات: قوة عدد، أكبر ثلاث، وهمية حول مضلعات؟ تطبيق متقدم يجمع `pow`, `max`, `abs`. اكتبها وتأكد من النواتج في الملعب.",
+      "ثلاثة تطبيقات: قوة عدد، أكبر ثلاثة أرقام، والقيمة المطلقة. التطبيقات بتجمع بين `pow` و`max` و`abs`. اكتبها وتأكد من النواتج في الملعب.",
     terms: [
       { en: "Math", ar: "رياضيات: حسابات رقمية قياسية." },
     ],
     quiz: [
       {
-        question: "أي من دول جاهزة؟",
+        question: "أي من الدوال الجاهزة التالية؟",
         options: ["ownPow", "std::pow", "sqrt2", "calc"],
         answer: 1,
+      },
+      {
+        question: "`abs(-7)` بترجع؟",
+        options: ["-7", "0", "7", "14"],
+        answer: 2,
+        explanation: "abs ترجع القيمة المطلقة.",
       },
     ],
   },
@@ -1461,7 +1833,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(65),
     summary:
-      "نفس الاسم، باراميترات مختلفة: `add(int,int)` و `add(double,double)`. المترجم يختار الأنسب. لو الباراميترات متطابقة، المترجم يرتبك — تجنبها.",
+      "نفس الاسم، باراميترات مختلفة: `add(int,int)` و `add(double,double)`. المترجم يختار الأنسب. لو الباراميترات متطابقة، إعادة التعريف بنفس التوقيع خطأ ترجمة — تجنبها.",
     terms: [
       { en: "Overloading", ar: "تعدد التعريفات: نفس الاسم بقوائم مختلفة." },
     ],
@@ -1470,6 +1842,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "مثال Overloading صحيح؟",
         options: ["`add(int)` و `add(double)`", "`add(int)` و `add(int)`", "`f()` و `f()`", "لا شيء"],
         answer: 0,
+      },
+      {
+        question: "شرط صحة Overloading؟",
+        options: ["نفس الاسم ونفس الباراميترات", "أسماء مختلفة ونفس الباراميترات", "نفس الاسم ونفس النوع", "نفس الاسم وباراميترات مختلفة"],
+        answer: 3,
+        explanation: "التوقيع المختلف هو ما يميز النسخ.",
       },
     ],
   },
@@ -1482,7 +1860,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Functions",
     youtube: yt(66),
     summary:
-      "دالة تنادي نفسها: أساس (Base Case) يوقف بها، وخطوات تقرب للأُسس. مثال المضروب `n! = n * (n-1)!`. بدون الأساس: انهيار لانهائي.",
+      "دالة تنادي نفسها: أساس (Base Case) يوقفها، وخطوات تقترب من الأساس. مثال المضروب `n! = n * (n-1)!`. بدون الأساس: انهيار لانهائي.",
     terms: [
       { en: "Recursion", ar: "العودية: دالة تنادي نفسها." },
       { en: "Base Case", ar: "الحالة الأساسية: شرط التوقف." },
@@ -1490,8 +1868,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "سبب الكراش في العودية غالبًا؟",
-        options: ["بطء", "غياب الأساس", "السرعة", "الذاكرة"],
+        options: ["بطء", "غياب الأساس", "السرعة", "زيادة عدد الباراميترات"],
         answer: 1,
+      },
+      {
+        question: "إيه اللي بيوقف العودية؟",
+        options: ["الحلقة for", "شرط الأساس Base Case", "المتغير const", "المكتبة cmath"],
+        answer: 1,
+        explanation: "بدون أساس تستمر النداءات بلا نهاية.",
       },
     ],
     example: {
@@ -1508,7 +1892,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Vector",
     youtube: yt(67),
     summary:
-      "الـ Vector مصفوفة مرنة الحجم من STL: `push_back` يضيف، `size` يقيس. بمعنى آخر «المصفوفة التي تعرف التمديد تلقائيًا». كل عمل modern بـ C++ يوصل إليه.",
+      "الـ Vector مصفوفة مرنة الحجم من STL: `push_back` يضيف، و `size` يقيس. بمعنى آخر «المصفوفة التي تعرف التمديد تلقائيًا». كل عمل حديث بـ C++ يوصل إليه.",
     terms: [
       { en: "Vector", ar: "المتجه: مصفوفة مرنة من STL." },
     ],
@@ -1517,6 +1901,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "الـ Vector مقابل المصفوفة العادية؟",
         options: ["حجم ثابت", "مرن", "أصغر", "لا فرق"],
         answer: 1,
+      },
+      {
+        question: "إزاي نضيف عنصر في آخر Vector؟",
+        options: ["push_back", "pop_back", "at", "size"],
+        answer: 0,
+        explanation: "push_back يضيف في النهاية.",
       },
     ],
   },
@@ -1529,7 +1919,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Vector",
     youtube: yt(68),
     summary:
-      "جدول مقارنة شامل: الثابت مقابل المرن، الوصول، الحذف، الاستهلاك. القاعدة: عرفت عدد العناصر من البداية؟ Array، وإلا Vector default.",
+      "جدول مقارنة شامل: الثابت مقابل المرن، الوصول، الحذف، الاستهلاك. القاعدة: عرفت عدد العناصر من البداية؟ Array، وإلا فـ Vector هو الافتراضي.",
     terms: [
       { en: "Capacity", ar: "السعة: المساحة المحجوزة فعليًا." },
     ],
@@ -1538,6 +1928,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "عدد غير معروف سابقًا؟",
         options: ["Array", "Vector", "char", "double"],
         answer: 1,
+      },
+      {
+        question: "إمتى نختار Array بدل Vector؟",
+        options: ["لما العدد غير معروف", "لما نحتاج إضافة مستمرة", "لما عدد العناصر معروف وثابت", "لما نحتاج حذف من المنتصف"],
+        answer: 2,
+        explanation: "الثبات يفضل Array، والمرونة تفضل Vector.",
       },
     ],
   },
@@ -1561,6 +1957,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["حذف أول", "إضافة 9 في الآخر", "فراغ", "ترتيب"],
         answer: 1,
       },
+      {
+        question: "إزاي نحذف آخر عنصر من Vector؟",
+        options: ["push_back", "erase(begin)", "clear", "pop_back"],
+        answer: 3,
+        explanation: "pop_back يحذف الأخير.",
+      },
     ],
     example: {
       title: "Vector أساسي",
@@ -1582,9 +1984,15 @@ export const elzeroVideos: ElzeroVideo[] = [
     ],
     quiz: [
       {
-        question: "أي دالة آمنة للوصول؟",
-        options: ["v[100]", "v.at(100)", "v.back", "v.size"],
+        question: "أي دالة تتحقق من الحدود وترمي استثناء عند الخروج عنها؟",
+        options: ["v[100]", "v.at(100)", "v.back()", "v.size()"],
         answer: 1,
+      },
+      {
+        question: "`v.front()` بترجع إيه؟",
+        options: ["آخر عنصر", "أول عنصر", "حجم v", "عنوان v"],
+        answer: 1,
+        explanation: "front أول عنصر، back آخره.",
       },
     ],
   },
@@ -1597,7 +2005,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Vector",
     youtube: yt(71),
     summary:
-      "الـ Iterator مؤشر تنقّل آمن: `auto it = v.begin()` يشير لأول عنصر، و `*it` قيمته، و `it != v.end()` حدود Loop. بلا حساب فهارس، وبلا تجاوز.",
+      "الـ Iterator كائن يشبه المؤشر للتنقل: `auto it = v.begin()` يشير لأول عنصر، و `*it` قيمته، و `it != v.end()` حدّ الحلقة. بلا حساب فهارس يدويًا.",
     terms: [
       { en: "Iterator", ar: "المؤشر التكراري: مؤشر تنقل آمن." },
     ],
@@ -1606,6 +2014,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "`*it` يعني؟",
         options: ["عنوان", "القيمة التي يشير لها", "حجم", "كل العناصر"],
         answer: 1,
+      },
+      {
+        question: "`v.begin()` بتشير لفين؟",
+        options: ["أول عنصر", "آخر عنصر", "قبل أول عنصر", "حجم v"],
+        answer: 0,
+        explanation: "begin مؤشر بداية المجموعة.",
       },
     ],
   },
@@ -1618,7 +2032,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Vector",
     youtube: yt(72),
     summary:
-      "قفزة نمط Loop: `for(auto it=v.begin(); it!=v.end(); ++it)` — تطبع كل عنصر. المكتبة الآن توفر Ranged Loop الأبسط، لكن فهم Iterator ضروري للعمليات المتقدمة (ترتيب، إزالة).",
+      "نمط الحلقة: `for(auto it=v.begin(); it!=v.end(); ++it)` — تطبع كل عنصر. المكتبة الآن توفر range-based for الأبسط، لكن فهم Iterator ضروري للعمليات المتقدمة (ترتيب، إزالة).",
     terms: [
       { en: "begin() / end()", ar: "بداية ونهاية: حدود Iterator." },
     ],
@@ -1627,6 +2041,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "حد النهاية في Iterator؟",
         options: ["begin()", "end()", "size()", "back()"],
         answer: 1,
+      },
+      {
+        question: "شرط استمرار حلقة Iterator؟",
+        options: ["it < v.size()", "it == v.begin()", "it != v.end()", "it > 0"],
+        answer: 2,
+        explanation: "نقارن بالـ end، وليس بالحجم.",
       },
     ],
   },
@@ -1649,6 +2069,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["Iterator كامل", "for(auto x : v)", "goto", "while"],
         answer: 1,
       },
+      {
+        question: "أبسط صياغة لطباعة كل عناصر v؟",
+        options: ["for(i=0;i<v;i++)", "while(v)", "goto", "for(auto x : v)"],
+        answer: 3,
+        explanation: "range-based for هي الأبسط.",
+      },
     ],
   },
   {
@@ -1668,8 +2094,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "ترتيب Vector بسرعة؟",
-        options: ["يدوي", "sort()", "عشوائي", "خلاصة"],
+        options: ["يدوي", "sort()", "عشوائي", "reverse()"],
         answer: 1,
+      },
+      {
+        question: "`count(v.begin(), v.end(), 5)` بترجع إيه؟",
+        options: ["أول عنصر", "عدد مرات ظهور 5", "ترتيب v", "حجم v"],
+        answer: 1,
+        explanation: "count تعدّ القيم المطابقة.",
       },
     ],
     example: {
@@ -1697,6 +2129,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         options: ["قيمة", "عنوان", "نوع", "اسم"],
         answer: 1,
       },
+      {
+        question: "`&x` بتعني إيه؟",
+        options: ["عنوان x في الذاكرة", "قيمة x", "نوع x", "حجم x"],
+        answer: 0,
+        explanation: "& مؤثر العنوان.",
+      },
     ],
     example: {
       title: "أول مؤشر",
@@ -1712,7 +2150,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Pointers",
     youtube: yt(76),
     summary:
-      "اسم المصفوفة هو عنوان أول عنصر. `int* p = arr;` يعني p يشير لأول عنصر. ومن هنا كل فضائل الحساب المؤشر (Pointers Arithmetic) المذكورة في الفيديو الجاي.",
+      "اسم المصفوفة هو عنوان أول عنصر. `int* p = arr;` يعني p يشير لأول عنصر. ومن هنا كل مزايا حساب المؤشرات (Pointers Arithmetic) المذكورة في الفيديو الجاي.",
     terms: [
       { en: "Array Decay", ar: "سقوط المصفوفة: اسم المصفوفة يتحول لمؤشر." },
     ],
@@ -1721,6 +2159,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "`int* p = arr;` p يشير لـ؟",
         options: ["كل المصفوفة", "أول عنصر", "الأخير", "الحجم"],
         answer: 1,
+      },
+      {
+        question: "اسم المصفوفة في C++ بيعامل كإيه؟",
+        options: ["قيمة أول عنصر", "حجم المصفوفة", "عنوان أول عنصر", "نص"],
+        answer: 2,
+        explanation: "اسم المصفوفة يتحول لمؤشر لأول عنصر.",
       },
     ],
   },
@@ -1742,8 +2186,14 @@ export const elzeroVideos: ElzeroVideo[] = [
     quiz: [
       {
         question: "تهيئة آمنة لمؤشر فارغ؟",
-        options: ["`int* p;`", "`int* p = nullptr;`", "`int* p = 0;`", "`int* p = wild;`"],
+        options: ["`int* p;`", "`int* p = nullptr;`", "`int* p = 1;`", "`int* p = wild;`"],
         answer: 1,
+      },
+      {
+        question: "إيه أخطر نوع مؤشر؟",
+        options: ["nullptr", "void*", "مؤشر لمصفوفة", "المؤشر الضال غير المهيأ"],
+        answer: 3,
+        explanation: "المؤشر غير المهيأ قد يشير لأي مكان.",
       },
     ],
   },
@@ -1756,7 +2206,7 @@ export const elzeroVideos: ElzeroVideo[] = [
     sectionEn: "Pointers",
     youtube: yt(78),
     summary:
-      "حساب المؤشر: `p + i` يعني العنصر `i`. لذا `*(p+2)` تساوي `p[2]` وتساوي `arr[2]`. `p++` يشير للعنصر التالي. هذا هو أساس كل المكتبات الحديثة (`sort`, `find`).",
+      "حساب المؤشر: `p + i` يشير إلى العنصر `i`؛ و `*(p+i)` هي قيمته. لذا `*(p+2)` تساوي `p[2]` وتساوي `arr[2]`. `p++` يشير للعنصر التالي. هذا هو أساس كل المكتبات الحديثة (`sort`, `find`).",
     terms: [
       { en: "Pointer Arithmetic", ar: "حساب المؤشر: الجمع مع العناصر المتسلسلة." },
     ],
@@ -1765,6 +2215,12 @@ export const elzeroVideos: ElzeroVideo[] = [
         question: "`*(p+2)` تساوي؟",
         options: ["p", "p[2]", "arr", "2"],
         answer: 1,
+      },
+      {
+        question: "`p++` على مؤشر لمصفوفة بيعمل إيه؟",
+        options: ["يزيد القيمة بواحد", "يشير للعنصر التالي", "يحذف العنصر", "يرجع للبداية"],
+        answer: 1,
+        explanation: "حساب المؤشر يتحرك بحجم النوع.",
       },
     ],
     example: {
