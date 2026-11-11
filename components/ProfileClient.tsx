@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { useCopy, useLocale } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
 import { totalLessons } from "@/lib/data";
-import { loadProgress } from "@/lib/progress";
+import { useProgressStore } from "@/lib/progress/store";
 import {
   Cloud,
   RefreshCw,
@@ -17,6 +17,8 @@ import {
   WifiOff,
   Github,
   LayoutDashboard,
+  Zap,
+  Flame,
 } from "lucide-react";
 
 const COPY = {
@@ -26,6 +28,9 @@ const COPY = {
     signOut: "تسجيل الخروج",
     lessonsCompleted: "الدروس المكتملة",
     videosWatched: (n: number) => `${formatNumber(n)} فيديو من ElZero تمت مشاهدته`,
+    levelShort: (n: number) => `المستوى ${formatNumber(n)}`,
+    xpShort: (n: number) => `${formatNumber(n)} نقطة خبرة`,
+    streakShort: (n: number) => `${formatNumber(n)} يوم متتالي`,
     sync: "المزامنة",
     onThisDevice: "على هذا الجهاز",
     lastSync: "آخر مزامنة:",
@@ -46,6 +51,9 @@ const COPY = {
     signOut: "Sign out",
     lessonsCompleted: "Lessons completed",
     videosWatched: (n: number) => `${formatNumber(n)} ElZero videos watched`,
+    levelShort: (n: number) => `Level ${formatNumber(n)}`,
+    xpShort: (n: number) => `${formatNumber(n)} XP`,
+    streakShort: (n: number) => `${formatNumber(n)}-day streak`,
     sync: "Sync",
     onThisDevice: "On this device",
     lastSync: "Last sync:",
@@ -64,6 +72,7 @@ const COPY = {
 
 export default function ProfileClient() {
   const { user, ready, signOut, syncNow, lastSync, online } = useAuth();
+  const { stats } = useProgressStore();
   const locale = useLocale();
   const c = useCopy(COPY);
   const router = useLocaleRouter();
@@ -76,9 +85,8 @@ export default function ProfileClient() {
     return <div className="p-10 text-center text-slate-400">{c.loading}</div>;
   if (!user) return null;
 
-  const map = loadProgress();
-  const done = Object.keys(map).filter((k) => !k.startsWith("elzero-")).length;
-  const videos = Object.keys(map).filter((k) => k.startsWith("elzero-")).length;
+  const done = stats.doneLessonIds.length;
+  const videos = stats.doneVideoIds.length;
   const total = totalLessons();
   const localeTag = locale === "en" ? "en-GB" : "ar-EG-u-nu-latn";
   const lastSyncStr = lastSync
@@ -144,6 +152,20 @@ export default function ProfileClient() {
             </div>
             <div className="mt-2 text-xs text-slate-500">
               {c.videosWatched(videos)}
+            </div>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] font-bold text-slate-300">
+              <span className="inline-flex items-center gap-1 rounded-full border border-amber-500/25 bg-amber-500/10 px-2.5 py-1 text-amber-300">
+                <Zap className="h-3 w-3" />
+                {c.levelShort(stats.level)}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-violet-500/25 bg-violet-500/10 px-2.5 py-1 text-violet-300">
+                <Zap className="h-3 w-3" />
+                {c.xpShort(stats.xp)}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full border border-orange-500/25 bg-orange-500/10 px-2.5 py-1 text-orange-300">
+                <Flame className="h-3 w-3" />
+                {c.streakShort(stats.currentStreak)}
+              </span>
             </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">

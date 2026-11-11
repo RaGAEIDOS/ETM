@@ -35,6 +35,7 @@ import { projects } from "@/lib/projects";
 import HeroTerminal from "@/components/HeroTerminal";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
+import ResumeCard from "@/components/ResumeCard";
 
 const FEATURES: { key: string; icon: typeof BookOpen; color: string }[] = [
   { key: "curriculum", icon: BookOpen, color: "from-cyan-400 to-blue-500" },
@@ -402,6 +403,9 @@ export default function HomePage() {
             <Stat value={courseCount} label={c.statsCourses} />
             <Stat value={projects.length} label={c.statsProjects} />
             <Stat value={4} label={c.statsLevels} />
+          </div>
+          <div className="mt-8">
+            <ResumeCard />
           </div>
         </div>
       </section>

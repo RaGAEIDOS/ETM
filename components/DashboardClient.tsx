@@ -4,18 +4,18 @@ import Link from "@/lib/i18n/navigation";
 import { useCopy, useLocale } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
 import { useAuth } from "@/lib/auth";
-import { useProgress } from "@/lib/progress";
 import { stageCompletion } from "@/lib/progress";
+import { useProgressStore } from "@/lib/progress/store";
 import { stages, totalLessons } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
-import {
-  currentStreak,
-  elzeroProgress,
-  findNextLesson,
-  focusMinutesToday,
-  nextLessons,
-} from "@/lib/stats";
+import { nextLessons } from "@/lib/stats";
 import MikuAvatar from "./MikuAvatar";
+import ResumeCard from "./ResumeCard";
+import Heatmap from "./dash/Heatmap";
+import AccuracyTrend from "./dash/AccuracyTrend";
+import WeakTopics from "./dash/WeakTopics";
+import Badges from "./dash/Badges";
+import GoalAndData from "./dash/GoalAndData";
 import {
   BookOpen,
   Flame,
@@ -23,10 +23,12 @@ import {
   PlayCircle,
   ArrowLeft,
   Sparkles,
-  Target,
   CheckCircle2,
   Github,
   LayoutGrid,
+  Zap,
+  Trophy,
+  ClipboardList,
 } from "lucide-react";
 
 const COPY = {
@@ -42,26 +44,37 @@ const COPY = {
     elzeroVideos: "فيديوهات ElZero",
     focusToday: "تركيز اليوم",
     minute: "دقيقة",
-    minutes: "دقائق",
+    minutes: "دقيقة",
     dayStreak: "سلسلة الأيام",
     day: "يوم",
     days: "أيام",
+    best: "الأفضل",
     overallProgress: "التقدم الإجمالي",
     overallPrefix: "أكملت",
     overallLessons: "درسًا",
     overallComplete: "مكتمل",
     curriculum: "المنهج",
     continueLearning: "تابع التعلم",
-    startLesson: "ابدأ الدرس",
     finishedTitle: "أنهيت المنهج بالكامل! 🎉",
-    finishedBody:
-      "Miku فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
+    finishedBody: "Miku فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
     progressByStage: "التقدم حسب المستوى",
     whatsRemaining: "ما تبقّى",
     nothingLeft: "لا شيء متبقٍ — أنجزت كل شيء! 🏆",
     playground: "المحرر",
     projects: "المشاريع",
     glossary: "المصطلحات",
+    weekSummary: "هذا الأسبوع",
+    activities: "نشاط",
+    xpShort: "XP",
+    level: "المستوى",
+    xpToNext: "نقطة للترقية",
+    xpThisWeek: "XP هذا الأسبوع",
+    quizAccuracy: "دقة الاختبارات",
+    attempts: "محاولة",
+    answered: "سؤال أُجيب",
+    reviewDue: "للمراجعة",
+    reviewDueBody: "أسئلة من آخر محاولة خاطئة — راجعها ثم أعد المحاولة.",
+    reviewCta: "راجع الآن",
   },
   en: {
     loading: "Loading...",
@@ -79,45 +92,61 @@ const COPY = {
     dayStreak: "Day streak",
     day: "day",
     days: "days",
+    best: "Best",
     overallProgress: "Overall progress",
     overallPrefix: "You completed",
     overallLessons: "lessons",
     overallComplete: "complete",
     curriculum: "Curriculum",
     continueLearning: "Continue learning",
-    startLesson: "Start lesson",
     finishedTitle: "You finished the whole curriculum! 🎉",
-    finishedBody:
-      "Miku is proud of you. Check the projects page for your next challenge.",
+    finishedBody: "Miku is proud of you. Check the projects page for your next challenge.",
     progressByStage: "Progress by stage",
     whatsRemaining: "What's remaining",
     nothingLeft: "Nothing left — you did it all! 🏆",
     playground: "Playground",
     projects: "Projects",
     glossary: "Glossary",
+    weekSummary: "This week",
+    activities: "activities",
+    xpShort: "XP",
+    level: "Level",
+    xpToNext: "XP to level up",
+    xpThisWeek: "XP this week",
+    quizAccuracy: "Quiz accuracy",
+    attempts: "attempts",
+    answered: "questions answered",
+    reviewDue: "To review",
+    reviewDueBody: "Questions missed in your latest attempt — review, then retry.",
+    reviewCta: "Review now",
   },
 } as const;
 
 export default function DashboardClient() {
   const c = useCopy(COPY);
   const locale = useLocale();
+  const isAr = locale === "ar";
   const { user, ready: authReady } = useAuth();
-  const { map, ready } = useProgress();
+  const { ready, stats, grid, trend, todayKey } = useProgressStore();
 
   if (!ready || !authReady) {
     return <div className="p-10 text-center text-slate-400">{c.loading}</div>;
   }
 
+  const map = { ...stats.map };
   const total = totalLessons();
-  const done = Object.keys(map).filter((k) => !k.startsWith("elzero-")).length;
-  const elzero = elzeroProgress(map, elzeroVideos.length);
-  const focusToday = focusMinutesToday();
-  const streak = currentStreak();
-  const next = findNextLesson(map, stages);
-  const upcoming = nextLessons(map, stages, 6);
+  const done = stats.doneLessonIds.length;
+  const videosDone = stats.doneVideoIds.length;
+  const videoPercent = elzeroVideos.length
+    ? Math.round((videosDone / elzeroVideos.length) * 100)
+    : 0;
+  const focusToday = stats.minutesByDay[todayKey] ?? 0;
+  const streak = stats.currentStreak;
   const overall = total ? Math.round((done / total) * 100) : 0;
+  const upcoming = nextLessons(map, stages, 6);
+  const xpInLevel = stats.xp % 100;
 
-  const stats = [
+  const cards = [
     {
       icon: BookOpen,
       label: c.lessonsCompleted,
@@ -128,22 +157,22 @@ export default function DashboardClient() {
     {
       icon: PlayCircle,
       label: c.elzeroVideos,
-      value: formatNumber(elzero.done),
-      sub: `${c.of} ${formatNumber(elzero.total)} · ${formatNumber(elzero.percent)}%`,
+      value: formatNumber(videosDone),
+      sub: `${c.of} ${formatNumber(elzeroVideos.length)} · ${formatNumber(videoPercent)}%`,
       color: "from-violet-400 to-fuchsia-500",
     },
     {
       icon: Clock,
       label: c.focusToday,
       value: formatNumber(focusToday),
-      sub: focusToday === 1 ? c.minute : c.minutes,
+      sub: c.minutes,
       color: "from-emerald-400 to-teal-500",
     },
     {
       icon: Flame,
       label: c.dayStreak,
       value: formatNumber(streak),
-      sub: streak === 1 ? c.day : c.days,
+      sub: `${streak === 1 ? c.day : c.days} · ${c.best} ${formatNumber(stats.longestStreak)}`,
       color: "from-amber-400 to-orange-500",
     },
   ];
@@ -182,9 +211,9 @@ export default function DashboardClient() {
         )}
       </div>
 
-      {/* stats */}
+      {/* primary stats */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((s) => (
+        {cards.map((s) => (
           <div
             key={s.label}
             className="rounded-2xl border border-white/10 bg-ink-900/60 p-5"
@@ -205,7 +234,80 @@ export default function DashboardClient() {
         ))}
       </div>
 
-      {/* overall progress */}
+      {/* level / quiz / review */}
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 text-ink-950">
+              <Zap className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.level}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.level)}
+                <span className="ms-2 text-xs font-medium text-slate-500 align-middle">
+                  {formatNumber(stats.xp)} {c.xpShort} · {formatNumber(stats.xpThisWeek)}{" "}
+                  {c.xpThisWeek}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-l from-amber-400 to-yellow-500 transition-all"
+              style={{ width: `${xpInLevel}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-[11px] text-slate-500">
+            {formatNumber(100 - xpInLevel)} {c.xpToNext}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 text-ink-950">
+              <Trophy className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.quizAccuracy}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.quiz.accuracy)}%
+                <span className="ms-2 text-xs font-medium text-slate-500 align-middle">
+                  {formatNumber(stats.quiz.correct)}/{formatNumber(stats.quiz.total)}{" "}
+                  {c.answered}
+                </span>
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] text-slate-500">
+            {formatNumber(stats.quiz.attempts)} {c.attempts}
+          </p>
+        </div>
+
+        <Link
+          href="/curriculum"
+          className="group rounded-2xl border border-white/10 bg-ink-900/60 p-5 hover:border-amber-500/30 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-ink-950">
+              <ClipboardList className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.reviewDue}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.reviewDue)}
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] leading-5 text-slate-500">{c.reviewDueBody}</p>
+          <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 group-hover:text-amber-200">
+            {c.reviewCta}
+            <ArrowLeft className="h-3.5 w-3.5 ltr:rotate-180" />
+          </span>
+        </Link>
+      </div>
+
+      {/* overall + weekly */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-ink-900/60 p-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -214,9 +316,13 @@ export default function DashboardClient() {
               {c.overallProgress}
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              {c.overallPrefix} {formatNumber(done)} {c.of}{" "}
-              {formatNumber(total)} {c.overallLessons} ·{" "}
-              {formatNumber(overall)}% {c.overallComplete}
+              {c.overallPrefix} {formatNumber(done)} {c.of} {formatNumber(total)}{" "}
+              {c.overallLessons} · {formatNumber(overall)}% {c.overallComplete}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {c.weekSummary}: {formatNumber(stats.eventsThisWeek)} {c.activities} ·{" "}
+              {formatNumber(stats.minutesThisWeek)} {c.minutes} ·{" "}
+              {formatNumber(stats.xpThisWeek)} {c.xpShort}
             </p>
           </div>
           <Link
@@ -234,48 +340,15 @@ export default function DashboardClient() {
         </div>
       </div>
 
+      {/* resume */}
+      <div className="mt-6">
+        <ResumeCard />
+      </div>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        {/* continue learning */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
-            <h2 className="font-black text-white flex items-center gap-2">
-              <Target className="h-5 w-5 text-cyan-400" />
-              {c.continueLearning}
-            </h2>
-            {next ? (
-              <div className="mt-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.06] p-5">
-                <div className="text-xs font-bold text-cyan-400">
-                  {next.stage.name} · {next.courseTitle}
-                </div>
-                <h3 className="mt-2 text-lg font-black text-white">
-                  {next.lesson.title}
-                </h3>
-                <p className="mt-2 text-sm text-slate-400 leading-6 line-clamp-2">
-                  {next.lesson.description}
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <Link
-                    href={`/learn/${next.stage.id}/${next.courseId}/${next.lesson.id}`}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950"
-                  >
-                    {c.startLesson}{" "}
-                    <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
-                  </Link>
-                  <span className="text-xs text-slate-500">
-                    {next.lesson.duration}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-center">
-                <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
-                <h3 className="mt-2 font-black text-white">
-                  {c.finishedTitle}
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">{c.finishedBody}</p>
-              </div>
-            )}
-          </div>
+          <Heatmap grid={grid} />
+          <AccuracyTrend trend={trend} />
 
           {/* stages */}
           <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
@@ -320,66 +393,82 @@ export default function DashboardClient() {
           </div>
         </div>
 
-        {/* what's remaining */}
-        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
-          <h2 className="font-black text-white flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-cyan-400" />
-            {c.whatsRemaining}
-          </h2>
-          {upcoming.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-400">{c.nothingLeft}</p>
-          ) : (
-            <ul className="mt-4 space-y-3">
-              {upcoming.map((n) => (
-                <li key={n.lesson.id}>
-                  <Link
-                    href={`/learn/${n.stage.id}/${n.courseId}/${n.lesson.id}`}
-                    className="group flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-colors"
-                  >
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-cyan-400">
-                      <BookOpen className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="flex-1">
-                      <span className="block text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {n.lesson.title}
+        {/* what's remaining + weak topics */}
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
+            <h2 className="font-black text-white flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-cyan-400" />
+              {c.whatsRemaining}
+            </h2>
+            {upcoming.length === 0 ? (
+              <div className="mt-6 text-center">
+                <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
+                <p className="mt-2 text-sm text-slate-400">{c.nothingLeft}</p>
+              </div>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {upcoming.map((n) => (
+                  <li key={n.lesson.id}>
+                    <Link
+                      href={`/learn/${n.stage.id}/${n.courseId}/${n.lesson.id}`}
+                      className="group flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-colors"
+                    >
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-cyan-400">
+                        <BookOpen className="h-3.5 w-3.5" />
                       </span>
-                      <span className="block text-xs text-slate-500">
-                        {n.stage.name} · {n.courseTitle}
+                      <span className="flex-1">
+                        <span className="block text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
+                          {isAr ? n.lesson.title : n.lesson.titleEn}
+                        </span>
+                        <span className="block text-xs text-slate-500">
+                          {isAr ? n.stage.name : n.stage.nameEn} ·{" "}
+                          {isAr ? n.courseTitle : n.courseTitleEn}
+                        </span>
                       </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          <div className="mt-6 grid grid-cols-2 gap-2">
-            <Link
-              href="/playground"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              {c.playground}
-            </Link>
-            <Link
-              href="/elzero"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              {c.elzeroVideos}
-            </Link>
-            <Link
-              href="/projects"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              {c.projects}
-            </Link>
-            <Link
-              href="/glossary"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              {c.glossary}
-            </Link>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <Link
+                href="/playground"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.playground}
+              </Link>
+              <Link
+                href="/elzero"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.elzeroVideos}
+              </Link>
+              <Link
+                href="/projects"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.projects}
+              </Link>
+              <Link
+                href="/glossary"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.glossary}
+              </Link>
+            </div>
           </div>
+
+          <WeakTopics weakTopics={stats.weakTopics} />
         </div>
+      </div>
+
+      <div className="mt-6">
+        <Badges stats={stats} />
+      </div>
+
+      <div className="mt-6">
+        <GoalAndData />
       </div>
     </div>
   );
