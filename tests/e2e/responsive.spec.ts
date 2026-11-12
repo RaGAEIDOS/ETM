@@ -5,7 +5,7 @@ const SIZES: Array<{ width: number; height: number }> = [
   { width: 768, height: 1024 },
   { width: 1280, height: 900 },
 ];
-const SAFE_ROUTES = ["/", "/curriculum", "/learn/stage-1/cpp-basics/hello-world", "/books", "/elzero", "/glossary", "/playground"];
+const SAFE_ROUTES = ["/", "/curriculum", "/learn/stage-1/cpp-basics/hello-world", "/books", "/elzero", "/glossary", "/playground", "/cs50x", "/cs50x/intro", "/leaderboard"];
 
 for (const { width, height } of SIZES) {
   test.describe(`viewport ${width}x${height}`, () => {
