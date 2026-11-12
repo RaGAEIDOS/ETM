@@ -93,7 +93,10 @@ export default function SiteHeader() {
           </Link>
 
           {!bare && (
-            <nav className="hidden lg:flex items-center gap-0.5">
+            <nav
+              aria-label={c.menu}
+              className="hidden lg:flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
               {NAV.map((item) => {
                 const active = isActive(item.href);
                 return (

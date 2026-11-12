@@ -3,7 +3,7 @@
 /**
  * Click-to-load YouTube facade for the English track.
  *
- * - Nothing is requested from YouTube until the learner clicks the thumbnail.
+ * - Nothing is requested from YouTube until the learner clicks the poster.
  * - Playback uses the official IFrame Player API on youtube-nocookie.com
  *   (lazy-loaded after the click). If the API cannot load (offline / blocked),
  *   we degrade to a plain nocookie embed without resume or speed controls.
@@ -244,24 +244,24 @@ export default function EnglishVideoFacade({
         type="button"
         onClick={start}
         aria-label={`شغّل الفيديو: ${title}`}
-        className="group relative block w-full overflow-hidden rounded-2xl border border-white/10 bg-black text-start focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        className="group relative block aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black text-start focus:outline-none focus:ring-2 focus:ring-emerald-400"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`}
-          alt=""
-          width={1280}
-          height={720}
-          className="aspect-video w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
-          onError={(event) => {
-            // Some ids only have the SD/HQ thumbnail.
-            const img = event.currentTarget;
-            if (!img.dataset.fallback) {
-              img.dataset.fallback = "1";
-              img.src = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
-            }
-          }}
+        {/* Local poster — nothing is requested from YouTube until the learner clicks. */}
+        <span
+          aria-hidden
+          className="absolute inset-0 bg-[radial-gradient(circle_at_30%_15%,rgba(52,211,153,0.20),transparent_55%),radial-gradient(circle_at_78%_85%,rgba(34,211,238,0.16),transparent_55%),linear-gradient(160deg,#0b0f19_0%,#0d1b1a_100%)]"
         />
+        <span aria-hidden className="absolute inset-0 flex flex-col justify-between p-4 sm:p-6">
+          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-emerald-300">
+            @ZAmericanEnglish · English
+          </span>
+          <span
+            dir="auto"
+            className="max-w-[85%] text-start text-sm sm:text-base font-semibold leading-6 text-slate-300 line-clamp-2 opacity-80"
+          >
+            {title}
+          </span>
+        </span>
         <span
           aria-hidden
           className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 via-black/10 to-transparent"
