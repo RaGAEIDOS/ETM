@@ -2,12 +2,19 @@
 
 import Link from "@/lib/i18n/navigation";
 import { useCopy, useLocale } from "@/lib/i18n/context";
-import { ArrowLeft, BookOpen, CheckCircle2, PlayCircle, GraduationCap } from "lucide-react";
+import { ArrowLeft, BookOpen, CheckCircle2, PlayCircle, GraduationCap, Terminal } from "lucide-react";
 import { useProgressStore } from "@/lib/progress/store";
+import { formatNumber } from "@/lib/i18n/config";
+import { LINUX_SECTIONS, linuxVideos } from "@/lib/linux-videos";
 import { findNextLesson } from "@/lib/stats";
 import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
 import { englishCourses, englishVideos } from "@/lib/english-videos";
+
+/** Section id → localized section title for the linux resume card. */
+const LINUX_SECTION_TITLES: Record<string, string> = Object.fromEntries(
+  LINUX_SECTIONS.map((s) => [s.id, s.title]),
+);
 
 const COPY = {
   ar: {
@@ -15,14 +22,18 @@ const COPY = {
     startCpp: "ابدأ رحلة C++",
     startElzero: "ابدأ رحلة ElZero",
     startEnglish: "ابدأ مسار الإنجليزية",
+    startLinux: "ابدأ دورة اللينكس",
     nextCpp: "الدرس التالي",
     nextElzero: "الفيديو التالي",
     nextEnglish: "الفيديو التالي",
+    nextLinux: "الفيديو التالي",
     cppDone: "أنهيت كل دروس C++! 🎉",
     elzeroDone: "أنهيت كل فيديوهات ElZero! 🎉",
     englishDone: "أنهيت كل فيديوهات الإنجليزية المتاحة! 🎉",
     englishSyncing: "فيديوهات الإنجليزية قيد المزامنة — ستظهر هنا قريبًا",
     englishHubCta: "افتح قسم الإنجليزية",
+    linuxDone: "أنهيت كل فيديوهات دورة اللينكس! 🎉",
+    linuxHubCta: "افتح قسم لينكس",
     projectsCta: "تحدَّ نفسك بالمشاريع",
     curriculumCta: "راجع المنهج من البداية",
     lesson: "درس",
@@ -32,14 +43,18 @@ const COPY = {
     startCpp: "Start the C++ track",
     startElzero: "Start the ElZero track",
     startEnglish: "Start the English track",
+    startLinux: "Start the Linux course",
     nextCpp: "Next lesson",
     nextElzero: "Next video",
     nextEnglish: "Next video",
+    nextLinux: "Next video",
     cppDone: "You finished every C++ lesson! 🎉",
     elzeroDone: "You finished every ElZero video! 🎉",
     englishDone: "You finished every available English video! 🎉",
     englishSyncing: "The English videos are being synced — they will appear here soon",
     englishHubCta: "Open the English section",
+    linuxDone: "You finished every Linux course video! 🎉",
+    linuxHubCta: "Open the Linux section",
     projectsCta: "Challenge yourself with projects",
     curriculumCta: "Review the curriculum from the start",
     lesson: "Lesson",
@@ -52,12 +67,13 @@ const COPY = {
  *  - "elzero"  → next incomplete ElZero video
  *  - "english" → next incomplete English (@ZAmericanEnglish) video, courses in
  *                suggested order (English from zero first)
+ *  - "linux"   → next incomplete video in the Linuxtopia Linux course order
  *  - "auto"    → whichever track saw activity most recently (default)
  */
 export default function ResumeCard({
   variant = "auto",
 }: {
-  variant?: "auto" | "cpp" | "elzero" | "english";
+  variant?: "auto" | "cpp" | "elzero" | "english" | "linux";
 }) {
   const locale = useLocale();
   const c = useCopy(COPY);
@@ -79,20 +95,27 @@ export default function ResumeCard({
         .find((v) => !doneEnglishIds.has(v.id)) ?? null
     : null;
 
-  let track: "cpp" | "elzero" | "english" = "cpp";
+  const doneLinuxIds = new Set(stats.doneLinuxVideoIds);
+  const linuxNext = ready
+    ? linuxVideos.find((v) => !doneLinuxIds.has(v.id)) ?? null
+    : null;
+
+  let track: "cpp" | "elzero" | "english" | "linux" = "cpp";
   if (variant === "elzero") track = "elzero";
   else if (variant === "cpp") track = "cpp";
   else if (variant === "english") track = "english";
+  else if (variant === "linux") track = "linux";
   else {
     const at = {
       cpp: stats.lastActivityByTrack.cpp ?? "",
       elzero: stats.lastActivityByTrack.elzero ?? "",
       english: stats.lastActivityByTrack.english ?? "",
+      linux: stats.lastActivityByTrack.linux ?? "",
     } as const;
-    const ordered = (Object.keys(at) as ("cpp" | "elzero" | "english")[]).sort(
+    const ordered = (Object.keys(at) as ("cpp" | "elzero" | "english" | "linux")[]).sort(
       (a, b) => at[b].localeCompare(at[a]),
     );
-    const nextFor = { cpp: cppNext, elzero: elzeroNext, english: englishNext } as const;
+    const nextFor = { cpp: cppNext, elzero: elzeroNext, english: englishNext, linux: linuxNext } as const;
     track = ordered.find((candidate) => nextFor[candidate]) ?? "cpp";
   }
 
@@ -201,6 +224,54 @@ export default function ResumeCard({
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-emerald-400 to-cyan-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
           >
             {c.nextEnglish}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (track === "linux") {
+    if (!linuxNext) {
+      return (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+            <p className="font-bold text-white">{c.linuxDone}</p>
+          </div>
+          <Link
+            href="/linux"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-sm font-bold text-emerald-300 hover:bg-emerald-500/30"
+          >
+            {c.linuxHubCta}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      );
+    }
+    const section = LINUX_SECTION_TITLES[linuxNext.section] ?? linuxNext.section;
+    return (
+      <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-l from-amber-500/[0.08] to-orange-500/[0.08] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+              <Terminal className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-400">
+                {c.label} · {c.nextLinux}
+              </p>
+              <h3 className="mt-1 font-black text-white leading-6" dir="auto">
+                {formatNumber(linuxNext.number)}. {linuxNext.title}
+              </h3>
+              <p className="mt-1 text-xs text-slate-400" dir="rtl">{section}</p>
+            </div>
+          </div>
+          <Link
+            href={`/linux/${linuxNext.id}`}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-amber-400 to-orange-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
+          >
+            {c.nextLinux}
             <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
           </Link>
         </div>

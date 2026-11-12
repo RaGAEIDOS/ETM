@@ -7,6 +7,7 @@
  *   etm-progress-v2          JSON ProgressFile { version: 2, events, settings }
  *   etm-progress-v2-migrated ISO timestamp of the one-time legacy import
  *   etm-english-notes-v1     JSON map videoId -> { text, updatedAt } (Phase 4)
+ *   etm-linux-notes-v1       JSON map videoId -> { text, updatedAt } (Linux)
  *
  * Legacy keys (etm-progress-v1, etm-progress-<uid>, etm-activity-days,
  * etm-focus-log) are READ ONCE during migration and never written again or
@@ -37,6 +38,12 @@ import {
   importEnglishNotes,
   loadEnglishNotes,
 } from "../english-notes";
+import {
+  LINUX_NOTES_KEY,
+  deleteLinuxNotes,
+  importLinuxNotes,
+  loadLinuxNotes,
+} from "../linux-notes";
 
 const V2_KEY = "etm-progress-v2";
 const MIGRATED_KEY = "etm-progress-v2-migrated";
@@ -255,7 +262,9 @@ export function toggleCompletion(track: Track, itemId: string, topic?: string): 
       ? stats.doneVideoIds.includes(itemId)
       : track === "english"
         ? stats.doneEnglishVideoIds.includes(itemId)
-        : stats.doneLessonIds.includes(itemId);
+        : track === "linux"
+          ? stats.doneLinuxVideoIds.includes(itemId)
+          : stats.doneLessonIds.includes(itemId);
   trackEvent(track, done ? "lesson_uncompleted" : "lesson_completed", { itemId, topic });
   return !done;
 }
@@ -264,6 +273,7 @@ export function isItemDone(file: ProgressFile, track: Track, itemId: string): bo
   const stats = deriveProgress(file.events);
   if (track === "elzero") return stats.doneVideoIds.includes(itemId);
   if (track === "english") return stats.doneEnglishVideoIds.includes(itemId);
+  if (track === "linux") return stats.doneLinuxVideoIds.includes(itemId);
   return stats.doneLessonIds.includes(itemId);
 }
 
@@ -280,7 +290,7 @@ export function setDailyGoalMinutes(minutes: number): void {
 export function exportMyData(): string {
   const file = loadProgressFile();
   return JSON.stringify(
-    { app: "etm", exportedAt: new Date().toISOString(), ...file, englishNotes: loadEnglishNotes() },
+    { app: "etm", exportedAt: new Date().toISOString(), ...file, englishNotes: loadEnglishNotes(), linuxNotes: loadLinuxNotes() },
     null,
     2,
   );
@@ -289,9 +299,11 @@ export function exportMyData(): string {
 export function importMyData(json: string): { ok: boolean; mergedEvents: number; error?: string } {
   try {
     const raw = JSON.parse(json) as unknown;
-    // English notes (Phase 4) ride along as an optional extra section.
+    // English + Linux notes ride along as optional extra sections.
     const notes = (raw as { englishNotes?: unknown } | null)?.englishNotes;
     if (notes && typeof notes === "object") importEnglishNotes(notes);
+    const linuxNotes = (raw as { linuxNotes?: unknown } | null)?.linuxNotes;
+    if (linuxNotes && typeof linuxNotes === "object") importLinuxNotes(linuxNotes);
     const parsed = parseProgressFile(raw);
     const current = loadProgressFile();
     const merged = mergeEvents(current.events, parsed.events);
@@ -322,6 +334,8 @@ export function deleteMyData(): void {
           k === LEGACY_FOCUS_KEY ||
           k === ENGLISH_NOTES_KEY ||
           k.startsWith(`${ENGLISH_NOTES_KEY}-corrupt-`) ||
+          k === LINUX_NOTES_KEY ||
+          k.startsWith(`${LINUX_NOTES_KEY}-corrupt-`) ||
           k.startsWith(`${V2_KEY}-corrupt-`) ||
           k.startsWith(USER_PREFIX) ||
           k.startsWith(LASTSYNC_PREFIX))
@@ -340,6 +354,7 @@ export function deleteMyData(): void {
     }
   }
   deleteEnglishNotes();
+  deleteLinuxNotes();
   try {
     window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
   } catch {
@@ -403,7 +418,9 @@ export function useProgressStore(): ProgressStore {
         ? stats.doneVideoIds.includes(itemId)
         : track === "english"
           ? stats.doneEnglishVideoIds.includes(itemId)
-          : stats.doneLessonIds.includes(itemId),
+          : track === "linux"
+            ? stats.doneLinuxVideoIds.includes(itemId)
+            : stats.doneLessonIds.includes(itemId),
     [stats]
   );
 

@@ -145,6 +145,16 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
       body: "Free courses from @ZAmericanEnglish: Arabic summaries, key-term flashcards, drills and a pronunciation tab — and your position is saved automatically.",
     },
   },
+  linux: {
+    ar: {
+      title: "قسم لينكس 🐧",
+      body: "دورة Linuxtopia العربية «تعلم نظام اللينكس 2021»: ملخص عربي وأسئلة لكل فيديو، فلاش كارد، ومعمل طرفية محاكاة — تجرّب كل حاجة بأمان من غير ما تبوظ جهازك.",
+    },
+    en: {
+      title: "Linux section 🐧",
+      body: "Linuxtopia's Arabic Linux course (2021): Arabic summaries, flashcards, quizzes and a fully simulated browser terminal — nothing real ever runs, you learn by understanding.",
+    },
+  },
   dashboard: {
     ar: {
       title: "الداش بورد 📊",
@@ -264,6 +274,7 @@ export function tipForPath(pathname: string, locale: Locale): MikuTip {
   if (n.startsWith("/playground")) return PAGE_TIPS.playground[locale];
   if (n.startsWith("/elzero")) return PAGE_TIPS.elzero[locale];
   if (n.startsWith("/english")) return PAGE_TIPS.english[locale];
+  if (n.startsWith("/linux")) return PAGE_TIPS.linux[locale];
   if (n.startsWith("/dashboard")) return PAGE_TIPS.dashboard[locale];
   if (n.startsWith("/progress")) return PAGE_TIPS.progress[locale];
   if (n.startsWith("/projects")) return PAGE_TIPS.projects[locale];

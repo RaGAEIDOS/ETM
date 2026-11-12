@@ -4,15 +4,19 @@ import { seedMikuDone } from "./helpers/ui";
 const COURSE_EN = ["English from Zero", "Grammar", "Phonetics", "Listening", "Conversation"];
 
 test.describe("English section (Phase 4)", () => {
-  test("nav shows الإنجليزية on the Arabic locale and English on /en", async ({ page }) => {
+  test("nav shows Courses dropdown with الإنجليزية (ar) and English (en)", async ({ page }) => {
     seedMikuDone(page);
-    await page.goto("/", { waitUntil: "domcontentloaded" });
+    // NB: assert on /curriculum — `/` client-redirects guests to /landing (bare header)
+    await page.goto("/curriculum", { waitUntil: "domcontentloaded" });
+    // Courses live behind the "الدورات / Courses" dropdown — open it first.
+    await page.locator("header button", { hasText: "الدورات" }).first().click();
     await expect(
       page.locator('header a[href="/english"]').first(),
       "Arabic header must link to /english with the label الإنجليزية"
     ).toContainText("الإنجليزية");
 
-    await page.goto("/en", { waitUntil: "domcontentloaded" });
+    await page.goto("/en/curriculum", { waitUntil: "domcontentloaded" });
+    await page.locator("header button", { hasText: "Courses" }).first().click();
     await expect(
       page.locator('header a[href="/en/english"]').first(),
       "English header must link to /en/english with the label English"
