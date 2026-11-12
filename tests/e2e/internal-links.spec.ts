@@ -17,7 +17,7 @@ const EXTERNAL_URLS = [
 test.describe("Link integrity", () => {
   test("every internal link extracted from the main pages resolves", async ({ page, request }) => {
     seedMikuDone(page);
-    const sources = ["/", "/curriculum", "/books", "/projects", "/glossary", "/guide"];
+    const sources = ["/en", "/en/curriculum", "/en/books", "/en/projects", "/en/glossary", "/en/guide"];
     const internal = new Set<string>();
     for (const route of sources) {
       await page.goto(route, { waitUntil: "domcontentloaded" });
@@ -56,7 +56,7 @@ test.describe("Link integrity", () => {
 
   test("404 page link to curriculum exists", async ({ page }) => {
     seedMikuDone(page);
-    await page.goto("/definitely-not-a-page", { waitUntil: "domcontentloaded" });
+    await page.goto("/en/definitely-not-a-page", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("link", { name: /curriculum|Curriculum/i }).first()).toBeVisible();
   });
 });

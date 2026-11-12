@@ -8,7 +8,7 @@ import React, {
   useState,
   type ReactNode,
 } from "react";
-import { loadProgress, saveProgress } from "./progress";
+import { loadProgressFile, PROGRESS_CHANGE_EVENT } from "./progress/store";
 
 export interface AuthUser {
   id: string;
@@ -25,7 +25,7 @@ interface AuthCtx {
   online: boolean;
   lastSync: string | null;
   cloudEnabled: boolean;
-  signInWithGithub: (token: string) => Promise<{ error?: string }>;
+  signInWithGithub: (token: string) => Promise<{ error?: AuthErrorCode }>;
   signOut: () => void;
   syncNow: () => void;
 }
@@ -33,6 +33,12 @@ interface AuthCtx {
 const SESSION_KEY = "etm-auth-session-v1";
 const LASTSYNC_PREFIX = "etm-lastsync-";
 export const AUTH_CHANGE_EVENT = "etm-auth-change";
+
+export type AuthErrorCode =
+  | "invalidToken"
+  | "githubUnavailable"
+  | "networkError"
+  | "genericError";
 
 const Ctx = createContext<AuthCtx | null>(null);
 
@@ -75,8 +81,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const syncTs = new Date().toISOString();
       localStorage.setItem(LASTSYNC_PREFIX + u.id, syncTs);
       setLastSync(syncTs);
-      // Carry over any guest progress into the signed-in profile.
-      saveProgress(loadProgress());
+      // One-time migration of any guest/per-user legacy progress into the
+      // unified v2 store; new events are device-local today (no backend).
+      loadProgressFile();
+    } catch {}
+    try {
+      window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
     } catch {}
     window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
   }, []);
@@ -112,9 +122,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGithub = useCallback(
-    async (token: string) => {
+    async (token: string): Promise<{ error?: AuthErrorCode }> => {
       // 1) Preferred: the server verifies the token and sets a secure cookie.
-      let serverError = "";
+      //    On any failure we fall through to client-side verification as a
+      //    backup and report a generic code there.
       try {
         const res = await fetch("/api/auth/github", {
           method: "POST",
@@ -126,9 +137,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           applyUser(data.user as AuthUser);
           return {};
         }
-        serverError = data.error || "Sign in failed.";
+        // fall through to the client-side fallback below
       } catch {
-        serverError = "Could not reach GitHub from our server.";
+        // fall through to the client-side fallback below
       }
 
       // 2) Fallback: verify directly from the browser (works on static hosts
@@ -138,12 +149,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         applyUser(u);
         return {};
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "Sign in failed.";
-        if (msg.includes("invalid or expired")) return { error: msg };
-        return {
-          error:
-            "Could not reach GitHub from this network. Please try again later or check your internet connection.",
-        };
+        const msg = e instanceof Error ? e.message : "";
+        if (msg.includes("invalid or expired")) return { error: "invalidToken" };
+        return { error: "networkError" };
       }
     },
     [applyUser]
@@ -165,10 +173,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLastSync(now);
     try {
       localStorage.setItem(LASTSYNC_PREFIX + user.id, now);
-      localStorage.setItem(
-        `etm-progress-${user.id}`,
-        JSON.stringify(loadProgress())
-      );
+      // Ensure the v2 store exists/loads; with no backend configured the
+      // merge surface is this device. Dispatching refreshes open dashboards.
+      loadProgressFile();
+      window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
     } catch {}
   }, [user]);
 

@@ -1,94 +1,34 @@
 "use client";
 
+/**
+ * Backwards-compatible adapter over the Phase 3 progress store.
+ * Existing components keep working; new code should import from
+ * "@/lib/progress/store" directly.
+ *
+ * The exported `map` shape matches the legacy boolean record:
+ * cpp lesson ids map to true, ElZero videos map to `elzero-<id>` -> true.
+ */
+
 import { useCallback, useEffect, useState } from "react";
 import type { Lesson, Stage } from "./types";
-import { recordActivityDay } from "./stats";
+import {
+  loadProgressFile,
+  saveProgressFile,
+  PROGRESS_CHANGE_EVENT,
+  toggleCompletion,
+} from "./progress/store";
+import { deriveProgress, emptyProgressFile } from "./progress/core";
 
-const STORAGE_KEY = "etm-progress-v1";
-const SESSION_KEY = "etm-auth-session-v1";
+const AUTH_CHANGE_EVENT = "etm-auth-change";
 
 export type ProgressMap = Record<string, boolean>;
 
-function currentUserId(): string | null {
-  try {
-    const raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    const u = JSON.parse(raw) as { id?: string };
-    return u.id || null;
-  } catch {
-    return null;
-  }
-}
-
-function userProgressKey(userId: string) {
-  return `etm-progress-${userId}`;
-}
-
-function readUserProgress(userId: string): ProgressMap {
-  try {
-    const raw = localStorage.getItem(userProgressKey(userId));
-    return raw ? (JSON.parse(raw) as ProgressMap) : {};
-  } catch {
-    return {};
-  }
-}
-
+/** Synchronous read of the merged progress map (guest + per-user legacy, migrated). */
 export function loadProgress(): ProgressMap {
   if (typeof window === "undefined") return {};
-  try {
-    const uid = currentUserId();
-    if (uid) {
-      const fromUser = readUserProgress(uid);
-      // دمج السحابة (المستخدم) مع المحلي - السحابة لها الأولوية لكن مفيش حذف
-      const guest = (() => {
-        try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          return raw ? (JSON.parse(raw) as ProgressMap) : {};
-        } catch {
-          return {};
-        }
-      })();
-      return { ...guest, ...fromUser };
-    }
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw) as ProgressMap;
-  } catch {
-    return {};
-  }
-}
-
-export function saveProgress(map: ProgressMap) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
-    const uid = currentUserId();
-    if (uid) {
-      localStorage.setItem(userProgressKey(uid), JSON.stringify(map));
-      // تحديث وقت المزامنة (sync)
-      localStorage.setItem(
-        `etm-lastsync-${uid}`,
-        new Date().toISOString()
-      );
-    }
-  } catch {
-    // ignore quota errors
-  }
-}
-
-export function saveElzeroProgress(videoId: string, done: boolean) {
-  const map = loadProgress();
-  if (done) {
-    map[`elzero-${videoId}`] = true;
-    recordActivityDay();
-  } else {
-    delete map[`elzero-${videoId}`];
-  }
-  saveProgress(map);
-}
-
-export function isElzeroDone(videoId: string): boolean {
-  return Boolean(loadProgress()[`elzero-${videoId}`]);
+  const file = loadProgressFile();
+  const derived = deriveProgress(file.events);
+  return { ...derived.map };
 }
 
 export function countCompleted(map: ProgressMap, lessons: Lesson[]) {
@@ -110,34 +50,35 @@ export function useProgress() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setMap(loadProgress());
-    setReady(true);
     const reload = () => setMap(loadProgress());
-    window.addEventListener("etm-auth-change", reload);
+    reload();
+    setReady(true);
+    window.addEventListener(AUTH_CHANGE_EVENT, reload);
+    window.addEventListener(PROGRESS_CHANGE_EVENT, reload);
     window.addEventListener("storage", reload);
     return () => {
-      window.removeEventListener("etm-auth-change", reload);
+      window.removeEventListener(AUTH_CHANGE_EVENT, reload);
+      window.removeEventListener(PROGRESS_CHANGE_EVENT, reload);
       window.removeEventListener("storage", reload);
     };
   }, []);
 
   const toggle = useCallback((lessonId: string) => {
-    setMap((prev) => {
-      const next = { ...prev, [lessonId]: !prev[lessonId] };
-      if (!next[lessonId]) delete next[lessonId];
-      saveProgress(next);
-      if (next[lessonId]) recordActivityDay();
-      return next;
-    });
+    if (lessonId.startsWith("elzero-")) {
+      toggleCompletion("elzero", lessonId.slice("elzero-".length));
+    } else if (lessonId.startsWith("english-")) {
+      toggleCompletion("english", lessonId.slice("english-".length));
+    } else {
+      toggleCompletion("cpp", lessonId);
+    }
+    // saveProgressFile dispatches PROGRESS_CHANGE_EVENT, which reloads the map.
   }, []);
 
-  const isDone = useCallback(
-    (lessonId: string) => Boolean(map[lessonId]),
-    [map]
-  );
+  const isDone = useCallback((lessonId: string) => Boolean(map[lessonId]), [map]);
 
   const reset = useCallback(() => {
-    saveProgress({});
+    const file = loadProgressFile();
+    saveProgressFile({ ...emptyProgressFile(), settings: file.settings });
     setMap({});
   }, []);
 

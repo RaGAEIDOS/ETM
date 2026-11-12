@@ -79,6 +79,7 @@ export const lessons: Lesson[] = [
       { en: "VCS", ar: "نظام تحكم بالإصدارات: بيسجّل كل تعديل في المشروع ويتيح الرجوع لأي نسخة وتعاون الفريق." },
       { en: "Commit", ar: "التزام: لقطة محفوظة من حالة المشروع كله مع رسالة وصفية وتاريخ ومؤشر بالتزام السابق." },
       { en: "Repository (Repo)", ar: "مستودع: المجلد اللي Git بيتابع فيه تاريخ المشروع كاملًا." },
+      { en: "Version Control", ar: "تحكم بالإصدارات: نظام بيسجّل كل التعديلات ويتيح الرجوع لأي نسخة (زي Git)." },
     ],
   },
   {
@@ -178,7 +179,7 @@ git commit -m "chore: initial project setup"`,
       },
       {
         heading: "git status — عيناك في المشروع",
-        body: "أكتر أمر هتستخدمه:\n\n```bash\ngit status\n```\n\nبيقول لك إيه اتغير:\n\n- **Changes to be committed** — محضّرة للـ commit الجاي (خضراء).\n- **Changes not staged for commit** — اتعدّلت ولسه ما جيهاتش للـ staging.\n- **Untracked files** — ملفات جديدة Git لسه ماشافهاش.",
+        body: "أكتر أمر هتستخدمه:\n\n```bash\ngit status\n```\n\nبيقول لك إيه اتغير:\n\n- **Changes to be committed** — محضّرة للـ commit الجاي (خضراء).\n- **Changes not staged for commit** — اتعدّلت ولسه ما اتضافتش للـ staging.\n- **Untracked files** — ملفات جديدة Git لسه ماشافهاش.",
       },
       {
         heading: "git add و git diff",
@@ -243,7 +244,7 @@ git log --oneline`,
         ],
         answer: 1,
         explanation:
-          "git diff بيريك التغييرات اللي لسه ما جيهاتش للـ staging، أما --staged بيريك اللي جاهز للحفظ.",
+          "git diff بيريك التغييرات اللي لسه ما اتضافتش للـ staging، أما --staged بيريك اللي جاهز للحفظ.",
       },
     ],
     exercise:
@@ -325,9 +326,9 @@ git branch -d add-calculator`,
         question: "النزاع Merge Conflict بيحصل لما:",
         options: [
           "فرع بيتعمل",
-          "الاتنين عدّلتهم نفس السطر في نفس الملف والدمج مش قادر يحسم",
+          "الاتنين عدّلوا نفس السطر في نفس الملف والدمج مش قادر يحسم",
           "الملف محذوف",
-          "GitHub ما متاحش",
+          "GitHub مش متاح",
         ],
         answer: 1,
         explanation: "النزاع بيظهر عندما لا يستطيع الدمج التلقائي حسم نفس السطر المتغير.",
@@ -401,7 +402,7 @@ git push -u origin new-feature
       {
         question: "إيه وظيفة الـ Pull Request؟",
         options: [
-          "تحميل الملفات من الإسطول",
+          "تحميل الملفات من السيرفر",
           "طلب دمج فرع في فرع آخر مع مراجعة الكود قبل الدمج",
           "حذف الفرع",
           "بناء المشروع",
@@ -427,6 +428,7 @@ git push -u origin new-feature
       { en: "Remote", ar: "نسخة من المستودع على سيرفر بعيد (زي GitHub) بيتزامن معاها git push و git pull." },
       { en: "Pull Request", ar: "طلب دمج تغييرات فرع في آخر مع مراجعة من الفريق قبل الدمج." },
       { en: "origin", ar: "الاسم التقليدي للمستودع البعيد الأساسي المرتبط بمشروعك محليًا." },
+      { en: "Open Source", ar: "مفتوح المصدر: كود متاح للجميع يشوفوه ويعدّلوا فيه ويضيفوا عليه." },
     ],
   },
   {
@@ -501,7 +503,7 @@ git revert 3f2a1b4               # هيعمل commit عكس التأثير`,
           "ينشئ فرع جديد",
           "يضع علامة ثابتة على هذه اللحظة في التاريخ — مفيدة للإصدارات",
           "يحذف الـ commits القديمة",
-          "يرفع الملف لGitHub Releases تلقائيًا",
+          "يرفع الملف لـ GitHub Releases تلقائيًا",
         ],
         answer: 1,
         explanation: "الوسوم بتحدد لقطات مهمة في تاريخ المشروع — زي الإصدارات النهائية.",

@@ -16,19 +16,76 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { useMiku } from "./Miku";
-import { addFocusSession } from "@/lib/stats";
+import { trackEvent } from "@/lib/progress/store";
 import { POMODORO_MESSAGES } from "@/lib/miku";
+import { useLocale, useCopy } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
+import type { Locale } from "@/lib/i18n/config";
 
 type Mode = "focus" | "short" | "long";
 
-const MODE_META: Record<
-  Mode,
-  { label: string; duration: number; icon: typeof Brain }
-> = {
-  focus: { label: "Focus", duration: 25 * 60, icon: Brain },
-  short: { label: "Short Break", duration: 5 * 60, icon: Coffee },
-  long: { label: "Long Break", duration: 15 * 60, icon: Moon },
+const MODE_DURATIONS: Record<Mode, number> = {
+  focus: 25 * 60,
+  short: 5 * 60,
+  long: 15 * 60,
 };
+
+const MODE_ICONS: Record<Mode, typeof Brain> = {
+  focus: Brain,
+  short: Coffee,
+  long: Moon,
+};
+
+const COPY = {
+  ar: {
+    modes: { focus: "تركيز", short: "استراحة قصيرة", long: "استراحة طويلة" },
+    tagline: "ركّز مع Miku 🎵",
+    close: "إغلاق",
+    overtime: "تجاوزت الوقت — Miku تنتظرك!",
+    focusing: "تركيز...",
+    resting: "استراحة...",
+    paused: "متوقف مؤقتاً",
+    reset: "إعادة الضبط",
+    skip: "تخطي",
+    pause: "إيقاف مؤقت",
+    start: "ابدأ",
+    backToFocus: "العودة إلى التركيز",
+    focusLength: "مدة التركيز",
+    minutes: (n: number) => `${formatNumber(n)} دقيقة`,
+    studyRadio: "راديو الدراسة",
+    toggleRadio: "تبديل راديو الدراسة",
+    volume: "مستوى الصوت",
+    radioVolume: "مستوى صوت الراديو",
+    radioNote: "بثوث حية من ",
+    radioNoteEnd:
+      " — راديو مجاني يدعمه المستمعون. اختر المحطة التي تضعك في منطقة التركيز.",
+    pomodoroTimer: "مؤقّت Pomodoro",
+  },
+  en: {
+    modes: { focus: "Focus", short: "Short Break", long: "Long Break" },
+    tagline: "Focus with Miku 🎵",
+    close: "Close",
+    overtime: "Overtime — Miku is waiting!",
+    focusing: "Focusing...",
+    resting: "Resting...",
+    paused: "Paused",
+    reset: "Reset",
+    skip: "Skip",
+    pause: "Pause",
+    start: "Start",
+    backToFocus: "Back to focus",
+    focusLength: "Focus length",
+    minutes: (n: number) => `${n} min`,
+    studyRadio: "Study Radio",
+    toggleRadio: "Toggle study radio",
+    volume: "Volume",
+    radioVolume: "Radio volume",
+    radioNote: "Live streams by ",
+    radioNoteEnd:
+      " — free, listener-supported radio. Pick the one that gets you in the zone.",
+    pomodoroTimer: "Pomodoro timer",
+  },
+} as const;
 
 const STORAGE_KEY = "etm-pomodoro-v1";
 const RADIO_KEY = "etm-radio-v1";
@@ -37,7 +94,7 @@ const FOCUS_PRESETS = [15, 25, 50];
 interface RadioStation {
   id: string;
   name: string;
-  desc: string;
+  desc: Record<Locale, string>;
   url: string;
 }
 
@@ -46,49 +103,73 @@ const RADIOS: RadioStation[] = [
   {
     id: "groove-salad",
     name: "Groove Salad",
-    desc: "Chill ambient beats — the classic study radio",
+    desc: {
+      ar: "إيقاعات هادئة — إذاعة الدراسة الكلاسيكية",
+      en: "Chill ambient beats — the classic study radio",
+    },
     url: "https://stream.somafm.com/groovesalad-128-mp3",
   },
   {
     id: "beat-blender",
     name: "Beat Blender",
-    desc: "Downtempo and chill electronica",
+    desc: {
+      ar: "موسيقى إلكترونية هادئة وبطيئة الإيقاع",
+      en: "Downtempo and chill electronica",
+    },
     url: "https://stream.somafm.com/beatblender-128-mp3",
   },
   {
     id: "deep-space-one",
     name: "Deep Space One",
-    desc: "Deep ambient and space music",
+    desc: {
+      ar: "موسيقى ambient وفضاء عميق",
+      en: "Deep ambient and space music",
+    },
     url: "https://stream.somafm.com/deepspaceone-128-mp3",
   },
   {
     id: "space-station",
     name: "Space Station Soma",
-    desc: "Spaced-out ambient, NASA style",
+    desc: {
+      ar: "موسيقى فضائية بأسلوب ناسا",
+      en: "Spaced-out ambient, NASA style",
+    },
     url: "https://stream.somafm.com/spacestation-128-mp3",
   },
   {
     id: "drone-zone",
     name: "Drone Zone",
-    desc: "Mellow drone-based ambient",
+    desc: {
+      ar: "موسيقى ambient ناعمة بطبقات ممتدة",
+      en: "Mellow drone-based ambient",
+    },
     url: "https://stream.somafm.com/dronezone-128-mp3",
   },
   {
     id: "mission-control",
     name: "Mission Control",
-    desc: "Ambience inspired by NASA missions",
+    desc: {
+      ar: "أجواء مستوحاة من بعثات ناسا",
+      en: "Ambience inspired by NASA missions",
+    },
     url: "https://stream.somafm.com/missioncontrol-128-mp3",
   },
   {
     id: "cliqhop",
     name: "Cliqhop IDM",
-    desc: "Intelligent dance music — rhythmic focus",
+    desc: {
+      ar: "موسيقى رقص ذكية — تركيز إيقاعي",
+      en: "Intelligent dance music — rhythmic focus",
+    },
     url: "https://stream.somafm.com/cliqhop-128-mp3",
   },
   {
     id: "secret-agent",
     name: "Secret Agent",
-    desc: "Spy lounge and exotica",
+    desc: {
+      ar: "لاونج الجاسوس وأجواء السينما",
+      en: "Spy lounge and exotica",
+    },
     url: "https://stream.somafm.com/secretagent-128-mp3",
   },
 ];
@@ -129,6 +210,9 @@ function fmt(s: number): string {
 
 export default function Pomodoro() {
   const { say } = useMiku();
+  const locale = useLocale();
+  const c = useCopy(COPY);
+  const messages = POMODORO_MESSAGES[locale];
   const [mode, setMode] = useState<Mode>("focus");
   const [focusLen, setFocusLen] = useState(25);
   const [secondsLeft, setSecondsLeft] = useState(25 * 60);
@@ -219,11 +303,11 @@ export default function Pomodoro() {
   }, [mounted, radioOn, radioId, radioVol]);
 
   const duration =
-    mode === "focus" ? focusLen * 60 : MODE_META[mode].duration;
+    mode === "focus" ? focusLen * 60 : MODE_DURATIONS[mode];
 
   const switchMode = useCallback(
     (m: Mode, autostart = false) => {
-      const dur = m === "focus" ? focusLenRef.current * 60 : MODE_META[m].duration;
+      const dur = m === "focus" ? focusLenRef.current * 60 : MODE_DURATIONS[m];
       setMode(m);
       modeRef.current = m;
       setSecondsLeft(dur);
@@ -236,10 +320,12 @@ export default function Pomodoro() {
   );
 
   const handleFocusComplete = useCallback(() => {
-    addFocusSession(focusLenRef.current);
+    trackEvent("playground", "focus_session", {
+      payload: { minutes: focusLenRef.current },
+    });
     focusCountRef.current += 1;
     chime();
-    say(POMODORO_MESSAGES.focusDone);
+    say(messages.focusDone);
     const next: Mode = focusCountRef.current % 4 === 0 ? "long" : "short";
     switchMode(next, true);
   }, [say, switchMode]);
@@ -259,7 +345,7 @@ export default function Pomodoro() {
       } else if (m !== "focus" && left < 0) {
         if (!overtimeSaidRef.current && -left >= 60) {
           overtimeSaidRef.current = true;
-          say(POMODORO_MESSAGES.longBreakOvertime);
+          say(messages.longBreakOvertime);
         }
       }
     }, 250);
@@ -281,7 +367,7 @@ export default function Pomodoro() {
           modeRef.current === "focus" &&
           away > 8000
         ) {
-          say(POMODORO_MESSAGES.welcomeBack);
+          say(messages.welcomeBack);
         }
       }
     };
@@ -335,8 +421,8 @@ export default function Pomodoro() {
       runningRef.current = true;
       say(
         mode === "focus"
-          ? POMODORO_MESSAGES.focusStart
-          : POMODORO_MESSAGES.breakStart
+          ? messages.focusStart
+          : messages.breakStart
       );
     }
   }
@@ -359,17 +445,17 @@ export default function Pomodoro() {
 
   function backToFocus() {
     switchMode("focus");
-    say(POMODORO_MESSAGES.breakDone);
+    say(messages.breakDone);
   }
 
   const progress = 1 - Math.max(0, secondsLeft) / duration;
   const isOvertime = secondsLeft < 0;
-  const Icon = MODE_META[mode].icon;
+  const Icon = MODE_ICONS[mode];
 
   if (!mounted) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+    <div className="fixed bottom-4 end-4 z-40 flex flex-col items-end gap-2">
       {open && (
         <div className="w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl backdrop-blur">
           <div className="flex items-center justify-between">
@@ -380,14 +466,14 @@ export default function Pomodoro() {
               <div>
                 <div className="font-black text-white text-sm">Pomodoro</div>
                 <div className="text-[11px] text-slate-500">
-                  Focus with Miku 🎵
+                  {c.tagline}
                 </div>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
               className="p-2 text-slate-400 hover:text-white"
-              aria-label="Close"
+              aria-label={c.close}
             >
               <X className="h-4 w-4" />
             </button>
@@ -395,7 +481,7 @@ export default function Pomodoro() {
 
           {/* mode tabs */}
           <div className="mt-3 grid grid-cols-3 gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
-            {(Object.keys(MODE_META) as Mode[]).map((m) => (
+            {(Object.keys(MODE_DURATIONS) as Mode[]).map((m) => (
               <button
                 key={m}
                 onClick={() => switchMode(m)}
@@ -405,7 +491,7 @@ export default function Pomodoro() {
                     : "text-slate-400 hover:text-white hover:bg-white/5"
                 }`}
               >
-                {MODE_META[m].label}
+                {c.modes[m]}
               </button>
             ))}
           </div>
@@ -426,12 +512,12 @@ export default function Pomodoro() {
             </div>
             <div className="mt-1 text-xs text-slate-500">
               {isOvertime
-                ? "Overtime — Miku is waiting!"
+                ? c.overtime
                 : running
                 ? mode === "focus"
-                  ? "Focusing..."
-                  : "Resting..."
-                : "Paused"}
+                  ? c.focusing
+                  : c.resting
+                : c.paused}
             </div>
             {/* progress bar */}
             <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
@@ -451,7 +537,7 @@ export default function Pomodoro() {
             <button
               onClick={reset}
               className="p-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
-              aria-label="Reset"
+              aria-label={c.reset}
             >
               <RotateCcw className="h-4 w-4" />
             </button>
@@ -461,18 +547,18 @@ export default function Pomodoro() {
             >
               {running ? (
                 <>
-                  <Pause className="h-4 w-4" /> Pause
+                  <Pause className="h-4 w-4" /> {c.pause}
                 </>
               ) : (
                 <>
-                  <Play className="h-4 w-4" /> Start
+                  <Play className="h-4 w-4" /> {c.start}
                 </>
               )}
             </button>
             <button
               onClick={skip}
               className="p-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10"
-              aria-label="Skip"
+              aria-label={c.skip}
             >
               <SkipForward className="h-4 w-4" />
             </button>
@@ -483,13 +569,13 @@ export default function Pomodoro() {
               onClick={backToFocus}
               className="mt-3 w-full rounded-xl bg-amber-500/15 border border-amber-500/30 py-2.5 text-sm font-bold text-amber-300 hover:bg-amber-500/25"
             >
-              Back to focus
+              {c.backToFocus}
             </button>
           )}
 
           {/* focus length presets */}
           <div className="mt-4">
-            <div className="text-xs text-slate-500 mb-2">Focus length</div>
+            <div className="text-xs text-slate-500 mb-2">{c.focusLength}</div>
             <div className="grid grid-cols-3 gap-2">
               {FOCUS_PRESETS.map((p) => (
                 <button
@@ -504,7 +590,7 @@ export default function Pomodoro() {
                       : "border-white/10 bg-white/5 text-slate-400 hover:text-white"
                   }`}
                 >
-                  {p} min
+                  {c.minutes(p)}
                 </button>
               ))}
             </div>
@@ -515,14 +601,14 @@ export default function Pomodoro() {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-sm font-bold text-white">
                 <Radio className="h-4 w-4 text-cyan-400" />
-                Study Radio
+                {c.studyRadio}
               </div>
               <button
                 onClick={() => setRadioOn((v) => !v)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
                   radioOn ? "bg-cyan-500" : "bg-white/15"
                 }`}
-                aria-label="Toggle study radio"
+                aria-label={c.toggleRadio}
                 aria-pressed={radioOn}
               >
                 <span
@@ -555,14 +641,14 @@ export default function Pomodoro() {
                           {r.name}
                         </span>
                         <span className="mt-1 block text-[10px] font-normal leading-3 text-slate-500">
-                          {r.desc}
+                          {r.desc[locale]}
                         </span>
                       </button>
                     );
                   })}
                 </div>
                 <div className="mt-3 flex items-center gap-3">
-                  <span className="text-xs text-slate-500">Volume</span>
+                  <span className="text-xs text-slate-500">{c.volume}</span>
                   <input
                     type="range"
                     min={0}
@@ -572,11 +658,11 @@ export default function Pomodoro() {
                     onChange={(e) => setRadioVol(Number(e.target.value))}
                     className="flex-1 accent-cyan-400"
                     dir="ltr"
-                    aria-label="Radio volume"
+                    aria-label={c.radioVolume}
                   />
                 </div>
                 <p className="mt-2 text-[10px] leading-4 text-slate-600">
-                  Live streams by{" "}
+                  {c.radioNote}
                   <a
                     href="https://somafm.com"
                     target="_blank"
@@ -584,9 +670,8 @@ export default function Pomodoro() {
                     className="underline hover:text-slate-400"
                   >
                     SomaFM
-                  </a>{" "}
-                  — free, listener-supported radio. Pick the one that gets you
-                  in the zone.
+                  </a>
+                  {c.radioNoteEnd}
                 </p>
               </div>
             )}
@@ -598,7 +683,7 @@ export default function Pomodoro() {
       <button
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 rounded-full border border-white/10 bg-ink-900/95 py-2 ps-2 pe-4 shadow-xl backdrop-blur hover:border-cyan-500/40 transition-colors"
-        aria-label={`${fmt(secondsLeft)} · Pomodoro timer`}
+        aria-label={`${fmt(secondsLeft)} · ${c.pomodoroTimer}`}
       >
         <span
           className={`flex h-9 w-9 items-center justify-center rounded-full ${

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
 import {
   ChevronDown,
   Clock,
@@ -13,15 +15,38 @@ import {
 import type { Stage } from "@/lib/types";
 import { useProgress, stageCompletion } from "@/lib/progress";
 
+const COPY = {
+  ar: {
+    meta: (courses: string, lessons: string) =>
+      `${courses} كورسات · ${lessons} دروس`,
+    startCourse: "ابدأ الكورس",
+    duration: (minutes: string) => `${minutes} دقيقة`,
+  },
+  en: {
+    meta: (courses: string, lessons: string) =>
+      `${courses} courses · ${lessons} lessons`,
+    startCourse: "Start course",
+    duration: (minutes: string) => `${minutes} min`,
+  },
+} as const;
+
+function durationMinutes(duration: string): number {
+  return parseInt(duration, 10) || 0;
+}
+
 export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
   const { map, ready, isDone } = useProgress();
   const [open, setOpen] = useState<string | null>(stages[0]?.id ?? null);
+  const locale = useLocale();
+  const c = useCopy(COPY);
+  const isAr = locale === "ar";
 
   return (
     <div className="space-y-5">
       {stages.map((stage) => {
         const comp = stageCompletion(map, stage);
         const isOpen = open === stage.id;
+        const stageName = isAr ? stage.name : stage.nameEn;
         return (
           <div
             key={stage.id}
@@ -29,7 +54,7 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
           >
             <button
               onClick={() => setOpen(isOpen ? null : stage.id)}
-              className="w-full flex items-center gap-4 px-6 py-5 text-right hover:bg-white/[0.03] transition-colors"
+              className="w-full flex items-center gap-4 px-6 py-5 text-start hover:bg-white/[0.03] transition-colors"
             >
               <span
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${stage.color} text-ink-950 font-black`}
@@ -38,12 +63,15 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
               </span>
               <span className="flex-1 min-w-0">
                 <span className="flex items-center gap-3">
-                  <span className="text-lg font-black text-white" dir="rtl">{stage.name}</span>
+                  <span className="text-lg font-black text-white">{stageName}</span>
                   <span className="text-xs font-semibold text-slate-500 bg-white/5 rounded-full px-2.5 py-0.5">
-                    {stage.courses.length} courses · {comp.total} lessons
+                    {c.meta(
+                      formatNumber(stage.courses.length),
+                      formatNumber(comp.total)
+                    )}
                   </span>
                 </span>
-                <span className="mt-1 block text-sm text-slate-400 truncate text-right" dir="rtl">
+                <span className="mt-1 block text-sm text-slate-400 truncate text-start" dir="rtl">
                   {stage.tagline}
                 </span>
                 <span className="mt-2.5 flex items-center gap-3">
@@ -54,7 +82,7 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
                     />
                   </span>
                   <span className="text-xs font-bold text-cyan-300 tabular-nums">
-                    {comp.percent}%
+                    {formatNumber(comp.percent)}%
                   </span>
                 </span>
               </span>
@@ -80,17 +108,19 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
                         <div>
                           <h3 className="font-bold text-white flex items-center gap-2">
                             <BookOpen className="h-4 w-4 text-cyan-400" />
-                            <span dir="rtl">{course.title}</span>
+                            <span>{isAr ? course.title : course.titleEn}</span>
                           </h3>
-                          <p className="mt-1 text-xs text-slate-500 font-mono">
-                            {course.titleEn}
-                          </p>
+                          {isAr && (
+                            <p className="mt-1 text-xs text-slate-500 font-mono">
+                              {course.titleEn}
+                            </p>
+                          )}
                         </div>
                         <Link
                           href={`/learn/${stage.id}/${course.id}/${course.lessons[0]?.id ?? ""}`}
                           className="rounded-lg bg-cyan-500/10 border border-cyan-500/30 px-4 py-2 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-colors"
                         >
-                          Start course
+                          {c.startCourse}
                         </Link>
                       </div>
                       <p className="mt-3 text-sm text-slate-400 leading-6" dir="rtl">
@@ -123,19 +153,22 @@ export default function CurriculumAccordion({ stages }: { stages: Stage[] }) {
                             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-white/5 transition-colors group"
                           >
                             <span className="text-slate-600 font-mono text-xs w-5 text-center shrink-0">
-                              {i + 1}
+                              {formatNumber(i + 1)}
                             </span>
                             {completed ? (
                               <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
                             ) : (
                               <Circle className="h-4 w-4 text-slate-700 shrink-0" />
                             )}
-                            <span className="flex-1 text-slate-300 group-hover:text-white transition-colors leading-6" dir="rtl">
-                              {lesson.title}
+                            <span
+                              className="flex-1 text-slate-300 group-hover:text-white transition-colors leading-6"
+                              dir={isAr ? "rtl" : undefined}
+                            >
+                              {isAr ? lesson.title : lesson.titleEn}
                             </span>
                             <span className="flex items-center gap-1 text-xs text-slate-600 shrink-0">
                               <Clock className="h-3 w-3" />
-                              {lesson.duration}
+                              {c.duration(formatNumber(durationMinutes(lesson.duration)))}
                             </span>
                           </Link>
                         );

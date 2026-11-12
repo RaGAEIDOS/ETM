@@ -2,11 +2,29 @@
 
 import { useMemo, useState } from "react";
 import { Search, BookMarked } from "lucide-react";
+import { useCopy } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
 import { glossaryTerms, GLOSSARY_CATEGORIES } from "@/lib/glossary";
+
+const COPY = {
+  ar: {
+    placeholder: "ابحث بمصطلح إنجليزي أو عربي... مثال: pointer, متغير",
+    terms: (n: number) => `${formatNumber(n)} مصطلح`,
+    all: "الكل",
+    noResults: "لا توجد نتائج مطابقة — جرّب كلمة أخرى",
+  },
+  en: {
+    placeholder: "Search by English or Arabic term... e.g. pointer, variable",
+    terms: (n: number) => `${formatNumber(n)} terms`,
+    all: "All",
+    noResults: "No matching results — try another word",
+  },
+} as const;
 
 export default function GlossarySearch() {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const c = useCopy(COPY);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -24,17 +42,17 @@ export default function GlossarySearch() {
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
+          <Search className="absolute end-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search by English or Arabic term... e.g. pointer, variable"
-            className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 pr-12 pl-4 text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
+            placeholder={c.placeholder}
+            className="w-full rounded-xl border border-white/10 bg-white/[0.04] py-3.5 ps-4 pe-12 text-white placeholder:text-slate-500 outline-none focus:border-cyan-500/50 focus:ring-2 focus:ring-cyan-500/20"
           />
         </div>
         <span className="text-sm text-slate-500 shrink-0">
-          {filtered.length} terms
+          {c.terms(filtered.length)}
         </span>
       </div>
 
@@ -47,19 +65,21 @@ export default function GlossarySearch() {
               : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
           }`}
         >
-          All
+          {c.all}
         </button>
-        {GLOSSARY_CATEGORIES.map((c) => (
+        {GLOSSARY_CATEGORIES.map((cOption) => (
           <button
-            key={c}
-            onClick={() => setCategory(category === c ? null : c)}
+            key={cOption}
+            onClick={() =>
+              setCategory(category === cOption ? null : cOption)
+            }
             className={`rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
-              category === c
+              category === cOption
                 ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
                 : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
             }`}
           >
-            <span dir="rtl">{c}</span>
+            <span dir="rtl">{cOption}</span>
           </button>
         ))}
       </div>
@@ -75,13 +95,17 @@ export default function GlossarySearch() {
                 <span className="font-mono font-bold text-cyan-300" dir="ltr">
                   {t.en}
                 </span>
-                <span className="mr-2 text-lg font-bold text-white" dir="rtl">{t.ar}</span>
+                <span className="ms-2 text-lg font-bold text-white" dir="rtl">
+                  {t.ar}
+                </span>
               </div>
               <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-xs text-slate-500">
                 <span dir="rtl">{t.category}</span>
               </span>
             </div>
-            <p className="mt-2 text-sm text-slate-400 leading-6" dir="rtl">{t.description}</p>
+            <p className="mt-2 text-sm text-slate-400 leading-6" dir="rtl">
+              {t.description}
+            </p>
           </div>
         ))}
       </div>
@@ -89,9 +113,7 @@ export default function GlossarySearch() {
       {filtered.length === 0 && (
         <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.02] py-16 text-center">
           <BookMarked className="h-10 w-10 text-slate-600" />
-          <p className="text-slate-400">
-            No matching results — try another word
-          </p>
+          <p className="text-slate-400">{c.noResults}</p>
         </div>
       )}
     </div>

@@ -1,19 +1,22 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
+import { formatNumber } from "@/lib/i18n/config";
 import { useAuth } from "@/lib/auth";
-import { useProgress } from "@/lib/progress";
 import { stageCompletion } from "@/lib/progress";
+import { useProgressStore } from "@/lib/progress/store";
+import { deriveSrs } from "@/lib/english/srs";
 import { stages, totalLessons } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
-import {
-  currentStreak,
-  elzeroProgress,
-  findNextLesson,
-  focusMinutesToday,
-  nextLessons,
-} from "@/lib/stats";
+import { nextLessons } from "@/lib/stats";
 import MikuAvatar from "./MikuAvatar";
+import ResumeCard from "./ResumeCard";
+import Heatmap from "./dash/Heatmap";
+import AccuracyTrend from "./dash/AccuracyTrend";
+import WeakTopics from "./dash/WeakTopics";
+import Badges from "./dash/Badges";
+import GoalAndData from "./dash/GoalAndData";
 import {
   BookOpen,
   Flame,
@@ -21,56 +24,162 @@ import {
   PlayCircle,
   ArrowLeft,
   Sparkles,
-  Target,
   CheckCircle2,
   Github,
   LayoutGrid,
+  Zap,
+  Trophy,
+  ClipboardList,
+  GraduationCap,
 } from "lucide-react";
 
+const COPY = {
+  ar: {
+    loading: "جارٍ التحميل...",
+    title: "لوحة التحكم",
+    welcomeUserBefore: "أهلًا بعودتك، ",
+    welcomeUserAfter: " 👋 — هذه رحلة تعلّمك.",
+    welcomeGuest: "أهلًا بعودتك 👋 — هذه رحلة تعلّمك.",
+    signInGithub: "الدخول بحساب GitHub",
+    lessonsCompleted: "الدروس المكتملة",
+    of: "من",
+    elzeroVideos: "فيديوهات ElZero",
+    focusToday: "تركيز اليوم",
+    minute: "دقيقة",
+    minutes: "دقيقة",
+    dayStreak: "سلسلة الأيام",
+    day: "يوم",
+    days: "أيام",
+    best: "الأفضل",
+    overallProgress: "التقدم الإجمالي",
+    overallPrefix: "أكملت",
+    overallLessons: "درسًا",
+    overallComplete: "مكتمل",
+    curriculum: "المنهج",
+    continueLearning: "تابع التعلم",
+    finishedTitle: "أنهيت المنهج بالكامل! 🎉",
+    finishedBody: "Miku فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
+    progressByStage: "التقدم حسب المستوى",
+    whatsRemaining: "ما تبقّى",
+    nothingLeft: "لا شيء متبقٍ — أنجزت كل شيء! 🏆",
+    playground: "المحرر",
+    projects: "المشاريع",
+    glossary: "المصطلحات",
+    weekSummary: "هذا الأسبوع",
+    activities: "نشاط",
+    xpShort: "XP",
+    level: "المستوى",
+    xpToNext: "نقطة للترقية",
+    xpThisWeek: "XP هذا الأسبوع",
+    quizAccuracy: "دقة الاختبارات",
+    attempts: "محاولة",
+    answered: "سؤال أُجيب",
+    reviewDue: "للمراجعة",
+    reviewDueBody: "أسئلة من آخر محاولة خاطئة — راجعها ثم أعد المحاولة.",
+    reviewCta: "راجع الآن",
+    enReviewDue: "مصطلحات الإنجليزية مستحقة",
+    enReviewBody: "تلخصها بطاقات المراجعة المتباعدة من قسم الإنجليزية.",
+  },
+  en: {
+    loading: "Loading...",
+    title: "Dashboard",
+    welcomeUserBefore: "Welcome back, ",
+    welcomeUserAfter: " 👋 — here is your learning journey.",
+    welcomeGuest: "Welcome back 👋 — here is your learning journey.",
+    signInGithub: "Sign in with GitHub",
+    lessonsCompleted: "Lessons completed",
+    of: "of",
+    elzeroVideos: "ElZero videos",
+    focusToday: "Focus today",
+    minute: "minute",
+    minutes: "minutes",
+    dayStreak: "Day streak",
+    day: "day",
+    days: "days",
+    best: "Best",
+    overallProgress: "Overall progress",
+    overallPrefix: "You completed",
+    overallLessons: "lessons",
+    overallComplete: "complete",
+    curriculum: "Curriculum",
+    continueLearning: "Continue learning",
+    finishedTitle: "You finished the whole curriculum! 🎉",
+    finishedBody: "Miku is proud of you. Check the projects page for your next challenge.",
+    progressByStage: "Progress by stage",
+    whatsRemaining: "What's remaining",
+    nothingLeft: "Nothing left — you did it all! 🏆",
+    playground: "Playground",
+    projects: "Projects",
+    glossary: "Glossary",
+    weekSummary: "This week",
+    activities: "activities",
+    xpShort: "XP",
+    level: "Level",
+    xpToNext: "XP to level up",
+    xpThisWeek: "XP this week",
+    quizAccuracy: "Quiz accuracy",
+    attempts: "attempts",
+    answered: "questions answered",
+    reviewDue: "To review",
+    reviewDueBody: "Questions missed in your latest attempt — review, then retry.",
+    reviewCta: "Review now",
+    enReviewDue: "English terms due",
+    enReviewBody: "Spaced-repetition cards waiting in the English section.",
+  },
+} as const;
+
 export default function DashboardClient() {
+  const c = useCopy(COPY);
+  const locale = useLocale();
+  const isAr = locale === "ar";
   const { user, ready: authReady } = useAuth();
-  const { map, ready } = useProgress();
+  const { ready, stats, grid, trend, todayKey, file } = useProgressStore();
 
   if (!ready || !authReady) {
-    return <div className="p-10 text-center text-slate-400">Loading...</div>;
+    return <div className="p-10 text-center text-slate-400">{c.loading}</div>;
   }
 
+  const map = { ...stats.map };
   const total = totalLessons();
-  const done = Object.keys(map).filter((k) => !k.startsWith("elzero-")).length;
-  const elzero = elzeroProgress(map, elzeroVideos.length);
-  const focusToday = focusMinutesToday();
-  const streak = currentStreak();
-  const next = findNextLesson(map, stages);
-  const upcoming = nextLessons(map, stages, 6);
+  const done = stats.doneLessonIds.length;
+  const videosDone = stats.doneVideoIds.length;
+  const videoPercent = elzeroVideos.length
+    ? Math.round((videosDone / elzeroVideos.length) * 100)
+    : 0;
+  const focusToday = stats.minutesByDay[todayKey] ?? 0;
+  const streak = stats.currentStreak;
   const overall = total ? Math.round((done / total) * 100) : 0;
+  const upcoming = nextLessons(map, stages, 6);
+  const xpInLevel = stats.xp % 100;
+  const enTermsDue = ready ? deriveSrs(file.events).dueCount : 0;
 
-  const stats = [
+  const cards = [
     {
       icon: BookOpen,
-      label: "Lessons completed",
-      value: `${done}`,
-      sub: `of ${total}`,
+      label: c.lessonsCompleted,
+      value: formatNumber(done),
+      sub: `${c.of} ${formatNumber(total)}`,
       color: "from-cyan-400 to-blue-500",
     },
     {
       icon: PlayCircle,
-      label: "ElZero videos",
-      value: `${elzero.done}`,
-      sub: `of ${elzero.total} · ${elzero.percent}%`,
+      label: c.elzeroVideos,
+      value: formatNumber(videosDone),
+      sub: `${c.of} ${formatNumber(elzeroVideos.length)} · ${formatNumber(videoPercent)}%`,
       color: "from-violet-400 to-fuchsia-500",
     },
     {
       icon: Clock,
-      label: "Focus today",
-      value: `${focusToday}`,
-      sub: focusToday === 1 ? "minute" : "minutes",
+      label: c.focusToday,
+      value: formatNumber(focusToday),
+      sub: c.minutes,
       color: "from-emerald-400 to-teal-500",
     },
     {
       icon: Flame,
-      label: "Day streak",
-      value: `${streak}`,
-      sub: streak === 1 ? "day" : "days",
+      label: c.dayStreak,
+      value: formatNumber(streak),
+      sub: `${streak === 1 ? c.day : c.days} · ${c.best} ${formatNumber(stats.longestStreak)}`,
       color: "from-amber-400 to-orange-500",
     },
   ];
@@ -83,11 +192,18 @@ export default function DashboardClient() {
           <MikuAvatar size={52} />
           <div>
             <h1 className="text-3xl sm:text-4xl font-black text-white">
-              Dashboard
+              {c.title}
             </h1>
             <p className="text-slate-400">
-              {user ? `Welcome back, ${user.name} 👋` : "Welcome back 👋"} — here is
-              your learning journey.
+              {user ? (
+                <>
+                  {c.welcomeUserBefore}
+                  {user.name}
+                  {c.welcomeUserAfter}
+                </>
+              ) : (
+                c.welcomeGuest
+              )}
             </p>
           </div>
         </div>
@@ -97,14 +213,14 @@ export default function DashboardClient() {
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-4 py-2.5 text-sm font-bold text-ink-950"
           >
             <Github className="h-4 w-4" />
-            Sign in with GitHub
+            {c.signInGithub}
           </Link>
         )}
       </div>
 
-      {/* stats */}
+      {/* primary stats */}
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((s) => (
+        {cards.map((s) => (
           <div
             key={s.label}
             className="rounded-2xl border border-white/10 bg-ink-900/60 p-5"
@@ -125,23 +241,123 @@ export default function DashboardClient() {
         ))}
       </div>
 
-      {/* overall progress */}
+      {/* level / quiz / review */}
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 text-ink-950">
+              <Zap className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.level}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.level)}
+                <span className="ms-2 text-xs font-medium text-slate-500 align-middle">
+                  {formatNumber(stats.xp)} {c.xpShort} · {formatNumber(stats.xpThisWeek)}{" "}
+                  {c.xpThisWeek}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-l from-amber-400 to-yellow-500 transition-all"
+              style={{ width: `${xpInLevel}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-[11px] text-slate-500">
+            {formatNumber(100 - xpInLevel)} {c.xpToNext}
+          </p>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 text-ink-950">
+              <Trophy className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.quizAccuracy}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.quiz.accuracy)}%
+                <span className="ms-2 text-xs font-medium text-slate-500 align-middle">
+                  {formatNumber(stats.quiz.correct)}/{formatNumber(stats.quiz.total)}{" "}
+                  {c.answered}
+                </span>
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] text-slate-500">
+            {formatNumber(stats.quiz.attempts)} {c.attempts}
+          </p>
+        </div>
+
+        <Link
+          href="/curriculum"
+          className="group rounded-2xl border border-white/10 bg-ink-900/60 p-5 hover:border-amber-500/30 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-pink-500 text-ink-950">
+              <ClipboardList className="h-5 w-5" />
+            </span>
+            <div>
+              <div className="text-xs text-slate-400">{c.reviewDue}</div>
+              <div className="text-2xl font-black text-white">
+                {formatNumber(stats.reviewDue)}
+              </div>
+            </div>
+          </div>
+          <p className="mt-3 text-[11px] leading-5 text-slate-500">{c.reviewDueBody}</p>
+          <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 group-hover:text-amber-200">
+            {c.reviewCta}
+            <ArrowLeft className="h-3.5 w-3.5 ltr:rotate-180" />
+          </span>
+        </Link>
+      </div>
+
+      {/* English spaced review — flat row linking to the English review hub */}
+      <Link
+        href="/english/review"
+        className="group mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-violet-500/20 bg-gradient-to-l from-violet-500/[0.08] to-emerald-500/[0.06] px-5 py-4 transition-colors hover:border-violet-500/35"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/15 text-violet-300">
+            <GraduationCap className="h-5 w-5" />
+          </span>
+          <div>
+            <span className="text-sm font-bold text-white">{c.enReviewDue}</span>
+            <span className="ms-2 font-black text-violet-200">{formatNumber(enTermsDue)}</span>
+            <p className="text-[11px] leading-5 text-slate-500">{c.enReviewBody}</p>
+          </div>
+        </div>
+        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-violet-300 group-hover:text-violet-200">
+          {c.reviewCta}
+          <ArrowLeft className="h-3.5 w-3.5 ltr:rotate-180" />
+        </span>
+      </Link>
+
+      {/* overall + weekly */}
       <div className="mt-6 rounded-2xl border border-white/10 bg-ink-900/60 p-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
             <h2 className="font-black text-white flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-cyan-400" />
-              Overall progress
+              {c.overallProgress}
             </h2>
             <p className="text-sm text-slate-400 mt-1">
-              {done} of {total} lessons · {overall}% complete
+              {c.overallPrefix} {formatNumber(done)} {c.of} {formatNumber(total)}{" "}
+              {c.overallLessons} · {formatNumber(overall)}% {c.overallComplete}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">
+              {c.weekSummary}: {formatNumber(stats.eventsThisWeek)} {c.activities} ·{" "}
+              {formatNumber(stats.minutesThisWeek)} {c.minutes} ·{" "}
+              {formatNumber(stats.xpThisWeek)} {c.xpShort}
             </p>
           </div>
           <Link
             href="/curriculum"
             className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white hover:bg-white/10"
           >
-            <LayoutGrid className="h-4 w-4" /> Curriculum
+            <LayoutGrid className="h-4 w-4" /> {c.curriculum}
           </Link>
         </div>
         <div className="mt-4 h-3 rounded-full bg-white/10 overflow-hidden">
@@ -152,60 +368,25 @@ export default function DashboardClient() {
         </div>
       </div>
 
+      {/* resume */}
+      <div className="mt-6">
+        <ResumeCard />
+      </div>
+
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        {/* continue learning */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
-            <h2 className="font-black text-white flex items-center gap-2">
-              <Target className="h-5 w-5 text-cyan-400" />
-              Continue learning
-            </h2>
-            {next ? (
-              <div className="mt-4 rounded-xl border border-cyan-500/20 bg-cyan-500/[0.06] p-5">
-                <div className="text-xs font-bold text-cyan-400">
-                  {next.stage.name} · {next.courseTitle}
-                </div>
-                <h3 className="mt-2 text-lg font-black text-white">
-                  {next.lesson.title}
-                </h3>
-                <p className="mt-2 text-sm text-slate-400 leading-6 line-clamp-2">
-                  {next.lesson.description}
-                </p>
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <Link
-                    href={`/learn/${next.stage.id}/${next.courseId}/${next.lesson.id}`}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-5 py-2.5 text-sm font-bold text-ink-950"
-                  >
-                    Start lesson <ArrowLeft className="h-4 w-4" />
-                  </Link>
-                  <span className="text-xs text-slate-500">
-                    {next.lesson.duration}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-5 text-center">
-                <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
-                <h3 className="mt-2 font-black text-white">
-                  You finished the whole curriculum! 🎉
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  Miku is proud of you. Check the projects page for your next
-                  challenge.
-                </p>
-              </div>
-            )}
-          </div>
+          <Heatmap grid={grid} />
+          <AccuracyTrend trend={trend} />
 
           {/* stages */}
           <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
             <h2 className="font-black text-white flex items-center gap-2">
               <LayoutGrid className="h-5 w-5 text-cyan-400" />
-              Progress by stage
+              {c.progressByStage}
             </h2>
             <div className="mt-4 space-y-4">
               {stages.map((stage) => {
-                const c = stageCompletion(map, stage);
+                const comp = stageCompletion(map, stage);
                 return (
                   <Link
                     key={stage.id}
@@ -214,19 +395,23 @@ export default function DashboardClient() {
                   >
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {stage.name}
-                        <span className="ms-2 text-xs font-medium text-slate-500" dir="ltr">
-                          {stage.nameEn}
+                        {locale === "en" ? stage.nameEn : stage.name}
+                        <span
+                          className="ms-2 text-xs font-medium text-slate-500"
+                          dir={locale === "en" ? "rtl" : "ltr"}
+                        >
+                          {locale === "en" ? stage.name : stage.nameEn}
                         </span>
                       </span>
                       <span className="text-slate-400">
-                        {c.done}/{c.total} · {c.percent}%
+                        {formatNumber(comp.done)}/{formatNumber(comp.total)} ·{" "}
+                        {formatNumber(comp.percent)}%
                       </span>
                     </div>
                     <div className="mt-2 h-2 rounded-full bg-white/10 overflow-hidden">
                       <div
                         className={`h-full bg-gradient-to-l ${stage.color}`}
-                        style={{ width: `${c.percent}%` }}
+                        style={{ width: `${comp.percent}%` }}
                       />
                     </div>
                   </Link>
@@ -236,68 +421,82 @@ export default function DashboardClient() {
           </div>
         </div>
 
-        {/* what's remaining */}
-        <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
-          <h2 className="font-black text-white flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-cyan-400" />
-            What&apos;s remaining
-          </h2>
-          {upcoming.length === 0 ? (
-            <p className="mt-4 text-sm text-slate-400">
-              Nothing left — you did it all! 🏆
-            </p>
-          ) : (
-            <ul className="mt-4 space-y-3">
-              {upcoming.map((n) => (
-                <li key={n.lesson.id}>
-                  <Link
-                    href={`/learn/${n.stage.id}/${n.courseId}/${n.lesson.id}`}
-                    className="group flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-colors"
-                  >
-                    <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-cyan-400">
-                      <BookOpen className="h-3.5 w-3.5" />
-                    </span>
-                    <span className="flex-1">
-                      <span className="block text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
-                        {n.lesson.title}
+        {/* what's remaining + weak topics */}
+        <div className="space-y-6">
+          <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6">
+            <h2 className="font-black text-white flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-cyan-400" />
+              {c.whatsRemaining}
+            </h2>
+            {upcoming.length === 0 ? (
+              <div className="mt-6 text-center">
+                <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto" />
+                <p className="mt-2 text-sm text-slate-400">{c.nothingLeft}</p>
+              </div>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {upcoming.map((n) => (
+                  <li key={n.lesson.id}>
+                    <Link
+                      href={`/learn/${n.stage.id}/${n.courseId}/${n.lesson.id}`}
+                      className="group flex items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-3 hover:border-cyan-500/30 hover:bg-white/[0.05] transition-colors"
+                    >
+                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-cyan-400">
+                        <BookOpen className="h-3.5 w-3.5" />
                       </span>
-                      <span className="block text-xs text-slate-500">
-                        {n.stage.name} · {n.courseTitle}
+                      <span className="flex-1">
+                        <span className="block text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
+                          {isAr ? n.lesson.title : n.lesson.titleEn}
+                        </span>
+                        <span className="block text-xs text-slate-500">
+                          {isAr ? n.stage.name : n.stage.nameEn} ·{" "}
+                          {isAr ? n.courseTitle : n.courseTitleEn}
+                        </span>
                       </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-          <div className="mt-6 grid grid-cols-2 gap-2">
-            <Link
-              href="/playground"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              Playground
-            </Link>
-            <Link
-              href="/elzero"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              ElZero videos
-            </Link>
-            <Link
-              href="/projects"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              Projects
-            </Link>
-            <Link
-              href="/glossary"
-              className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
-            >
-              Glossary
-            </Link>
+            <div className="mt-6 grid grid-cols-2 gap-2">
+              <Link
+                href="/playground"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.playground}
+              </Link>
+              <Link
+                href="/elzero"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.elzeroVideos}
+              </Link>
+              <Link
+                href="/projects"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.projects}
+              </Link>
+              <Link
+                href="/glossary"
+                className="rounded-xl border border-white/10 bg-white/5 p-3 text-center text-xs font-bold text-white hover:bg-white/10"
+              >
+                {c.glossary}
+              </Link>
+            </div>
           </div>
+
+          <WeakTopics weakTopics={stats.weakTopics} />
         </div>
+      </div>
+
+      <div className="mt-6">
+        <Badges stats={stats} />
+      </div>
+
+      <div className="mt-6">
+        <GoalAndData />
       </div>
     </div>
   );

@@ -9,6 +9,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:content": "node --experimental-strip-types scripts/validate-content.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/unit/*.test.ts",
     "test:e2e": "playwright test --config=playwright.config.ts",
     "lint": "next lint"
   },

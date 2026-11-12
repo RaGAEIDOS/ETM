@@ -1,8 +1,28 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/lib/i18n/navigation";
+import { useCopy, useLocale } from "@/lib/i18n/context";
 import { ArrowRight, ArrowLeft, CheckCircle2, Circle } from "lucide-react";
 import type { Lesson } from "@/lib/types";
+
+const COPY = {
+  ar: {
+    markComplete: "علّم الدرس كمكتمل",
+    completed: "مكتمل — اضغط للتراجع",
+    previous: "الدرس السابق",
+    next: "الدرس التالي",
+    courseFinished: "انتهى الكورس — تصفح المنهج",
+    fullCurriculum: "المنهج الكامل",
+  },
+  en: {
+    markComplete: "Mark lesson complete",
+    completed: "Completed — click to undo",
+    previous: "Previous lesson",
+    next: "Next lesson",
+    courseFinished: "Course finished — browse the curriculum",
+    fullCurriculum: "Full curriculum",
+  },
+} as const;
 
 export default function LessonNav({
   stageId,
@@ -22,6 +42,12 @@ export default function LessonNav({
   toggle: (id: string) => void;
 }) {
   const done = isDone(currentId);
+  const locale = useLocale();
+  const c = useCopy(COPY);
+  const isAr = locale === "ar";
+  const prevTitle = prev ? (isAr ? prev.title : prev.titleEn) : "";
+  const nextTitle = next ? (isAr ? next.title : next.titleEn) : "";
+
   return (
     <div className="mt-10 space-y-4">
       <button
@@ -37,7 +63,7 @@ export default function LessonNav({
         ) : (
           <Circle className="h-5 w-5" />
         )}
-        {done ? "Completed — click to undo" : "Mark lesson complete"}
+        {done ? c.completed : c.markComplete}
       </button>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -47,11 +73,14 @@ export default function LessonNav({
             className="group rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/25 transition-colors"
           >
             <span className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-cyan-400 transition-colors">
-              <ArrowRight className="h-4 w-4" />
-              Previous lesson
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
+              {c.previous}
             </span>
-            <span className="mt-1.5 block font-bold text-white text-sm leading-6">
-              {prev.title}
+            <span
+              className="mt-1.5 block font-bold text-white text-sm leading-6"
+              dir={isAr ? "rtl" : undefined}
+            >
+              {prevTitle}
             </span>
           </Link>
         ) : (
@@ -60,14 +89,17 @@ export default function LessonNav({
         {next ? (
           <Link
             href={`/learn/${stageId}/${courseId}/${next.id}`}
-            className="group rounded-xl border border-cyan-500/30 bg-cyan-500/[0.07] p-4 hover:bg-cyan-500/[0.12] transition-colors sm:text-left text-right"
+            className="group rounded-xl border border-cyan-500/30 bg-cyan-500/[0.07] p-4 hover:bg-cyan-500/[0.12] transition-colors text-start sm:text-end"
           >
             <span className="flex items-center gap-1.5 text-xs text-cyan-400">
-              Next lesson
-              <ArrowLeft className="h-4 w-4" />
+              {c.next}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </span>
-            <span className="mt-1.5 block font-bold text-white text-sm leading-6">
-              {next.title}
+            <span
+              className="mt-1.5 block font-bold text-white text-sm leading-6"
+              dir={isAr ? "rtl" : undefined}
+            >
+              {nextTitle}
             </span>
           </Link>
         ) : (
@@ -76,11 +108,11 @@ export default function LessonNav({
             className="group rounded-xl border border-white/10 bg-white/[0.03] p-4 hover:border-white/25 transition-colors"
           >
             <span className="flex items-center gap-1.5 text-xs text-slate-500 group-hover:text-cyan-400 transition-colors">
-              Course finished — browse the curriculum
-              <ArrowLeft className="h-4 w-4" />
+              {c.courseFinished}
+              <ArrowRight className="h-4 w-4 rtl:rotate-180" />
             </span>
             <span className="mt-1.5 block font-bold text-white text-sm leading-6">
-              Full curriculum
+              {c.fullCurriculum}
             </span>
           </Link>
         )}
