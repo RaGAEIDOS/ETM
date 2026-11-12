@@ -34,6 +34,7 @@ export const CS50X_CREDIT =
 export interface Cs50xKeyTerm {
   en: string;
   ar: string;
+  example?: { en: string; ar: string };
 }
 
 /** Practice items for the CS50x track. Exactly one correct answer each. */

@@ -2,7 +2,8 @@
  * English key-term spaced repetition (Phase 4.6).
  *
  * Leitner-style schedule derived by replaying the learner's `term_review`
- * events from the unified progress store (track "english"). Pure and
+ * events from the unified progress store (track "english" by default; pass
+ * `track` to derive another track's queue, e.g. "cs50x"). Pure and
  * import-free apart from the shared day-key helpers, so it runs on the
  * server, in the browser and in the node:test unit suite.
  *
@@ -13,7 +14,7 @@
  *   - after each review the term is due again after SRS_INTERVALS[box] days.
  */
 
-import { dayKeyOf, localDayKey, shiftDayKey, type ProgressEvent } from "../progress/core.ts";
+import { dayKeyOf, localDayKey, shiftDayKey, type ProgressEvent, type Track } from "../progress/core.ts";
 
 /** Days until the next review, indexed by box (0 = weakest). */
 export const SRS_INTERVALS = [1, 3, 7, 16, 35, 75] as const;
@@ -62,7 +63,7 @@ function sortTerms(a: SrsTermState, b: SrsTermState): number {
   return a.term.localeCompare(b.term);
 }
 
-export function deriveSrs(events: ProgressEvent[], todayKey?: string): SrsSummary {
+export function deriveSrs(events: ProgressEvent[], todayKey?: string, track: Track = "english"): SrsSummary {
   const today = todayKey ?? localDayKey(new Date());
   const sorted = [...events].sort((a, b) =>
     a.at === b.at ? a.id.localeCompare(b.id) : a.at.localeCompare(b.at),
@@ -70,7 +71,7 @@ export function deriveSrs(events: ProgressEvent[], todayKey?: string): SrsSummar
 
   const byTerm = new Map<string, SrsTermState>();
   for (const e of sorted) {
-    if (e.track !== "english" || e.type !== "term_review") continue;
+    if (e.track !== track || e.type !== "term_review") continue;
     const term = normalizeTerm(e.payload?.term);
     if (!term) continue;
     const known = e.payload?.known === true;
@@ -102,6 +103,6 @@ export function deriveSrs(events: ProgressEvent[], todayKey?: string): SrsSummar
   };
 }
 
-export function srsDueCount(events: ProgressEvent[], todayKey?: string): number {
-  return deriveSrs(events, todayKey).dueCount;
+export function srsDueCount(events: ProgressEvent[], todayKey?: string, track: Track = "english"): number {
+  return deriveSrs(events, todayKey, track).dueCount;
 }
