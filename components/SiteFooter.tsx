@@ -13,6 +13,8 @@ const COPY = {
     curriculum: "المنهج",
     elzero: "فيديوهات ElZero",
     english: "قسم الإنجليزية",
+    cs50x: "مسار CS50x",
+    leaderboard: "صدارة المتعلمين",
     playground: "محرر C++",
     projects: "المشاريع",
     glossary: "المصطلحات",
@@ -31,6 +33,8 @@ const COPY = {
     curriculum: "Curriculum",
     elzero: "ElZero Videos",
     english: "English Section",
+    cs50x: "CS50x Track",
+    leaderboard: "Front-Runners",
     playground: "C++ Playground",
     projects: "Projects",
     glossary: "Glossary",
@@ -81,6 +85,8 @@ export default function SiteFooter() {
               <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">{c.curriculum}</Link></li>
               <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">{c.elzero}</Link></li>
               <li><Link href="/english" className="hover:text-cyan-300 transition-colors">{c.english}</Link></li>
+              <li><Link href="/cs50x" className="hover:text-cyan-300 transition-colors">{c.cs50x}</Link></li>
+              <li><Link href="/leaderboard" className="hover:text-cyan-300 transition-colors">{c.leaderboard}</Link></li>
               <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">{c.playground}</Link></li>
               <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">{c.projects}</Link></li>
               <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">{c.glossary}</Link></li>

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
 import { englishCourses, englishVideos } from "@/lib/english-videos";
+import { CS50X_LECTURES } from "@/lib/cs50x";
 
 const BASE_URL = "https://etm-learning.vercel.app";
 
@@ -32,6 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/landing", "weekly", 0.9),
     entry("/curriculum", "weekly", 0.9),
     entry("/dashboard", "weekly", 0.8),
+    entry("/leaderboard", "weekly", 0.8),
     entry("/playground", "monthly", 0.7),
     entry("/glossary", "monthly", 0.6),
     entry("/projects", "monthly", 0.6),
@@ -50,6 +52,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
   englishVideos.forEach((video) => {
     entries.push(entry(`/english/${video.id}`, "monthly", 0.5));
+  });
+  entries.push(entry("/cs50x", "weekly", 0.9));
+  CS50X_LECTURES.forEach((lecture) => {
+    entries.push(entry(`/cs50x/${lecture.id}`, "monthly", 0.5));
   });
   stages.forEach((stage) => {
     entries.push(entry(`/learn/${stage.id}`, "weekly", 0.8));

@@ -145,6 +145,26 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
       body: "Free courses from @ZAmericanEnglish: Arabic summaries, key-term flashcards, drills and a pronunciation tab — and your position is saved automatically.",
     },
   },
+  cs50x: {
+    ar: {
+      title: "مسار CS50x 🎓",
+      body: "مقدمة علوم الحاسوب من Harvard — مجاني بالكامل: المحاضرات الـ 13 مدمجة هنا مع ملخص عربي وتمرين لكل محاضرة، ومعاك لحد ما تاخد شهادة CS50 المجانية.",
+    },
+    en: {
+      title: "CS50x track 🎓",
+      body: "Harvard's Introduction to Computer Science — completely free: all 13 lectures embedded here with an Arabic summary and a drill each, and your tracker toward the free CS50 Certificate.",
+    },
+  },
+  leaderboard: {
+    ar: {
+      title: "صدارة المتعلمين 🏆",
+      body: "لوحتك الشخصية للصدارة: نقاط الخبرة، مستواك، الـ Streak وسلّم المراتب — كل الأرقام محسوبة من تقدمك الحقيقي على جهازك.",
+    },
+    en: {
+      title: "Front-Runners 🏆",
+      body: "Your personal front-runners board: XP, level, streak and the milestone ladder — every number computed locally from your real progress.",
+    },
+  },
   dashboard: {
     ar: {
       title: "الداش بورد 📊",
@@ -264,6 +284,8 @@ export function tipForPath(pathname: string, locale: Locale): MikuTip {
   if (n.startsWith("/playground")) return PAGE_TIPS.playground[locale];
   if (n.startsWith("/elzero")) return PAGE_TIPS.elzero[locale];
   if (n.startsWith("/english")) return PAGE_TIPS.english[locale];
+  if (n.startsWith("/cs50x")) return PAGE_TIPS.cs50x[locale];
+  if (n.startsWith("/leaderboard")) return PAGE_TIPS.leaderboard[locale];
   if (n.startsWith("/dashboard")) return PAGE_TIPS.dashboard[locale];
   if (n.startsWith("/progress")) return PAGE_TIPS.progress[locale];
   if (n.startsWith("/projects")) return PAGE_TIPS.projects[locale];

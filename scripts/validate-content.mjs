@@ -285,10 +285,22 @@ await importEachLesson(async (m, f) => {
   }
 }
 
+// ---------- CS50x catalogue: hard integrity (lib/cs50x.ts) ----------
+{
+  const m = await importLib('lib/cs50x.ts');
+  const problems = typeof m.cs50xCatalogueProblems === 'function' ? m.cs50xCatalogueProblems() : ['cs50xCatalogueProblems() missing'];
+  for (const p of problems) fail('lib/cs50x.ts', -1, p);
+  const lectures = m.CS50X_LECTURES ?? [];
+  if (lectures.length !== 13) fail('lib/cs50x.ts', -1, `expected 13 lectures, got ${lectures.length}`);
+  console.log(`cs50x: ${lectures.length} lectures, ${problems.length} problem(s)`);
+}
+
 // ---------- internal links: app/ + components/ hrefs ----------
 {
   const { stageMetas } = await importLib('lib/stages.ts');
   const { elzeroVideos } = await importLib('lib/elzero-videos.ts');
+  const cs50xModule = await importLib('lib/cs50x.ts');
+  const cs50xLectureIds = new Set((cs50xModule.CS50X_LECTURES ?? []).map((l) => String(l.id)));
   const stageIds = new Set((stageMetas ?? []).map((s) => s.id));
   const courseStage = new Map();
   const courseIds = new Set();
@@ -329,7 +341,7 @@ await importEachLesson(async (m, f) => {
     stage: (v, segs) => stageIds.has(segs[1]),
     course: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
     lesson: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1] && Boolean(lessonsByCourse.get(segs[2])?.has(segs[3])),
-    video: (v, segs) => videoIds.has(segs[1]),
+    video: (v, segs) => (segs[0] === 'cs50x' ? cs50xLectureIds.has(segs[1]) : videoIds.has(segs[1])),
   };
   const resolves = (pathname) => {
     let segs = pathname.split('/').filter(Boolean);

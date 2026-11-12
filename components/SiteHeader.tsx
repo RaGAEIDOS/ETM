@@ -14,11 +14,13 @@ const NAV = [
   { href: "/curriculum", key: "curriculum" },
   { href: "/elzero", key: "elzero" },
   { href: "/english", key: "english" },
+  { href: "/cs50x", key: "cs50x" },
   { href: "/playground", key: "playground" },
   { href: "/projects", key: "projects" },
   { href: "/glossary", key: "glossary" },
   { href: "/books", key: "books" },
   { href: "/dashboard", key: "dashboard" },
+  { href: "/leaderboard", key: "leaderboard" },
 ] as const;
 
 const COPY = {
@@ -27,7 +29,9 @@ const COPY = {
     curriculum: "المنهج",
     elzero: "ElZero",
     english: "الإنجليزية",
+    cs50x: "CS50x من Harvard",
     playground: "المحرر",
+    leaderboard: "صدارة المتعلمين",
     projects: "المشاريع",
     glossary: "المصطلحات",
     books: "الكتب",
@@ -43,7 +47,9 @@ const COPY = {
     curriculum: "Curriculum",
     elzero: "ElZero",
     english: "English",
+    cs50x: "CS50x — Harvard",
     playground: "Playground",
+    leaderboard: "Front-Runners",
     projects: "Projects",
     glossary: "Glossary",
     books: "Books",
