@@ -48,7 +48,7 @@ npx playwright test --project=chromium-desktop   # 192/192 (الويبسايت �
 
 ### الـ CI (GitHub Actions — `.github/workflows/qa.yml`)
 - بيشتغل على **pull requests** وعلى **push لـ main و fix/qa-pass**. push لأي فرع تاني **مش هيعيد تشغيل الـ CI** (غير لو فتحت PR).
-- الـ runs الحالية: #1 (fix/qa-pass) ✓، #2/#3/#4 فاشلة (تسرّب layout font-swap)، **#5 على main قيد التشغيل وقت الكتابة** — تفقد: https://github.com/RaGAEIDOS/ETM/actions
+- الـ runs الحالية: #1 (fix/qa-pass) ✓، #2/#3/#4 فاشلة (تسرّب layout font-swap)، **#5 على main نجح ✓ في 2m30s** — التفاصيل: https://github.com/RaGAEIDOS/ETM/actions
 - السبب الجذري للفشل وتم إصلاحه في `380b475`: قياس `scrollWidth` أثناء `display=swap` لتبادل الخطوط. الإصلاح: هيدر بـ `px-2`/`13px` + `waitHydrated` بيستنى `document.fonts.ready`. على GitHub runners (فيها Google Fonts) النص أوسع — وكان ده بيقلب الـ overflow assertion على حافة 1280px.
 - **التاريخ الأحمر للـ commit القديم مش هيتمحى — اللي يهم هو الـ status على آخر commit.**
 - PR #2 (`feat/phase-1-content-review`) هيفضل فاشل لحد ما يعمل merge لـ main داخله أو rebase.
