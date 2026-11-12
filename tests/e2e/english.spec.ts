@@ -19,7 +19,7 @@ test.describe("English section (Phase 4)", () => {
     ).toContainText("English");
   });
 
-  test("/en/english hub renders courses, suggested path, sync notice and credit", async ({ page }) => {
+  test("/en/english hub renders courses, lessons, suggested path and credit", async ({ page }) => {
     seedMikuDone(page);
     await page.goto("/en/english", { waitUntil: "domcontentloaded" });
 
@@ -30,8 +30,9 @@ test.describe("English section (Phase 4)", () => {
     // Suggested path section (channel's own ordering)
     await expect(page.getByRole("heading", { name: /Suggested path/i })).toBeVisible();
 
-    // Videos have not been imported yet in this environment — the sync notice shows.
-    await expect(page.getByText(/syncing the videos/i)).toBeVisible();
+    // Batch 1 is imported: the lesson list links to the first lesson page.
+    await expect(page.getByRole("heading", { name: /Lessons in this course/i }).first()).toBeVisible();
+    await expect(page.locator('a[href="/en/english/001"]').first()).toBeVisible();
 
     // Course cards link to the known channel playlists.
     await expect(
@@ -45,12 +46,25 @@ test.describe("English section (Phase 4)", () => {
     await expect(page.locator('footer a[href="/en/english"]').first()).toBeVisible();
   });
 
-  test("/english hub (Arabic locale) renders Arabic labels and credit", async ({ page }) => {
+  test("/english hub (Arabic locale) renders Arabic labels, lessons and credit", async ({ page }) => {
     seedMikuDone(page);
     await page.goto("/english", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /قسم الإنجليزية/ })).toBeVisible();
-    await expect(page.getByText(/يتم الآن مزامنة/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /دروس هذه الدورة/ }).first()).toBeVisible();
+    await expect(page.locator('a[href="/english/001"]').first()).toBeVisible();
     await expect(page.getByText(/zAmericanEnglish on YouTube/).first()).toBeVisible();
+  });
+
+  test("lesson page renders the player facade, lesson panel and credit", async ({ page }) => {
+    seedMikuDone(page);
+    await page.goto("/en/english/001", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    // Tabs come from EnglishLessonPanel
+    for (const tab of ["Summary", "Key terms", "Practice", "Speaking", "My notes"]) {
+      await expect(page.getByRole("tab", { name: tab })).toBeVisible();
+    }
+    // 4.7 credit card links back to the original video/playlist
+    await expect(page.locator('a[href*="youtu.be/77IK9T45kiU"]').first()).toBeVisible();
   });
 
   test("/en/english/review renders the empty state when nothing is due", async ({ page }) => {

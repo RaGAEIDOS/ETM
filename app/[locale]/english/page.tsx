@@ -44,6 +44,7 @@ const COPY = {
       "يتم الآن مزامنة الفيديوهات من القناة — ستظهر الدورات والدروس هنا فور وصولها. يمكنك استكشاف مسارات القناة بالضغط على روابط القوائم بالأسفل.",
     whatToDo: ["ملخص عربي لكل فيديو", "مصطلحات + فلاش كارد", "تمارين ومحادثة", "تتبع تقدمك وحفظ الموضع"],
     coursesTitle: "الدورات من القناة",
+    lessonsTitle: "دروس هذه الدورة",
     videoCount: (n: number) => `${formatNumber(n)} فيديو`,
     openPlaylist: "افتح القائمة على YouTube",
     pathTitle: "المسار المقترح — ترتيب القناة الرسمي",
@@ -65,6 +66,7 @@ const COPY = {
       "We're syncing the videos from the channel right now — courses and lessons will appear here as soon as they land. Explore the channel playlists via the links below in the meantime.",
     whatToDo: ["Arabic summary per video", "Key terms + flashcards", "Drills & conversation", "Progress tracking & resume"],
     coursesTitle: "Courses from the channel",
+    lessonsTitle: "Lessons in this course",
     videoCount: (n: number) => `${formatNumber(n)} videos`,
     openPlaylist: "Open the playlist on YouTube",
     pathTitle: "Suggested path — the channel's own order",
@@ -81,6 +83,18 @@ const COURSE_ICONS = {
   volume: Volume2,
   messages: MessagesSquare,
 } as const;
+
+/** "PT8M36S" -> "8:36" (display only; the ISO string stays the source of truth). */
+function formatDuration(iso?: string): string {
+  if (!iso) return "";
+  const m = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+  if (!m) return "";
+  const h = Number(m[1] ?? 0);
+  const min = Number(m[2] ?? 0);
+  const s = Number(m[3] ?? 0);
+  if (h > 0) return `${h}:${String(min).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${min}:${String(s).padStart(2, "0")}`;
+}
 
 export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
   const locale = localeFromParams(params);
@@ -100,8 +114,7 @@ export default function EnglishHubPage({ params }: { params: { locale: string } 
   const totalVideos = englishCourses.reduce((sum, course) => sum + englishVideosOfCourse(course.id).length, 0);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-12">
-      {/* Hero */}
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 sm:py-12">      {/* Hero */}
       <div className="max-w-3xl mx-auto text-center mb-10">
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-bold text-emerald-300">
           <GraduationCap className="h-4 w-4" />
@@ -195,6 +208,48 @@ export default function EnglishHubPage({ params }: { params: { locale: string } 
           );
         })}
       </div>
+
+      {/* Lesson lists — only for courses with imported videos */}
+      {englishCourses.map((course) => {
+        const videos = englishVideosOfCourse(course.id);
+        if (videos.length === 0) return null;
+        return (
+          <section key={course.id} className="mt-12">
+            <h2 className="mb-4 flex flex-wrap items-center gap-2 text-2xl font-black text-white">
+              <ListChecks className="h-6 w-6 text-emerald-400" />
+              {c.lessonsTitle}
+              <span dir="auto" className="text-sm font-bold text-slate-500">
+                — {isAr ? course.title : course.titleEn}
+              </span>
+            </h2>
+            <ol className="grid gap-2 sm:grid-cols-2">
+              {videos.map((v) => (
+                <li key={v.id}>
+                  <Link
+                    href={localePath(locale, `/english/${v.id}`)}
+                    className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-colors hover:border-emerald-500/30 hover:bg-emerald-500/[0.06]"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 font-mono text-xs font-bold text-emerald-300">
+                      {v.id}
+                    </span>
+                    <span
+                      dir="auto"
+                      className="flex-1 truncate text-sm font-semibold text-slate-200 group-hover:text-white"
+                    >
+                      {isAr ? v.title : v.titleEn}
+                    </span>
+                    {v.duration && (
+                      <span className="shrink-0 font-mono text-xs text-slate-500" dir="ltr">
+                        {formatDuration(v.duration)}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </section>
+        );
+      })}
 
       {/* Suggested path */}
       <div className="mt-12">

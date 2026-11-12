@@ -11,11 +11,13 @@ const COPY = {
     of: (done: string, total: string) => `${done} من ${total} دروس`,
     all: "أنهيت كل الدروس المتاحة! 🎉",
     soon: "المحتوى قيد المزامنة — ستظهر الدروس هنا قريبًا",
+    progress: "تقدم الدورة",
   },
   en: {
     of: (done: string, total: string) => `${done} of ${total} lessons`,
     all: "You finished every available lesson! 🎉",
     soon: "Content is syncing — lessons will appear here soon",
+    progress: "Course progress",
   },
 } as const;
 
@@ -45,6 +47,7 @@ export default function EnglishCourseProgress({
       <div
         className="h-2 w-full overflow-hidden rounded-full bg-white/10"
         role="progressbar"
+        aria-label={c.progress}
         aria-valuenow={pct}
         aria-valuemin={0}
         aria-valuemax={100}
