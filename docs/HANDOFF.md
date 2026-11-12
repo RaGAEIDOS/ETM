@@ -10,12 +10,12 @@
 
 ## 1) الريبو والفروع (كلها push على GitHub)
 
-- **`main` @ `380b475`** — production. Vercel بيعمل deploy تلقائي على أي push لـ main. **أي push لـ main = نشر فوري للمستخدمين.**
+- **`main` @ `380b475`** — الفرع الرئيسي (CI أخضر بعد run #5). Vercel بيعمل deploy تلقائي على أي push لـ main **لكن راجع §6 — الدومين المتاح حاليًا بيقدم build أقدم/أحدث من main**. **أي push لـ main = نشر فوري محتمل للمستخدمين — ممنوع بدون موافقة.**
 - **`feat/phase-4-english-section` @ `c056a5d`** — الشغل الجاري: Phase 4 (قسم الإنجليزية) كاملة كبنية، **بدون فيديوهات** (CHECKPOINT 1 متحققش). **ما يندمجش لـ main لسه.**
 - `feat/phase-3-progress` @ `f387e9c` · `feat/phase-2-bilingual` @ `1bd72de` · `feat/phase-1-content-review` @ `dd34720` · `feat/phase-0-recon` @ `862562d`
 - `fix/ci-green` @ `380b475` (merged into main by fast-forward, user-approved)
 - فروع قديمة لم تُدمج وقرار مصيرها معلق (شاور المستخدم قبل أي خطوة): `feature/english-track` · `feature/lesson-playground` · `feature/books-refresh` · `fix/qa-pass`
-- **Vercel**: main → production auto. فروع/PRs → preview deploys (زر Vercel في الـ PR). ظهر الـ branch banner في صفحة الريبو لأن الـ phase-4 فرع معمولو push لكن مفيش PR لسه — افتح PR (الزر "Compare & pull request") لو عايز preview + CI أخضر من غير ما تمس البرودكشين.
+- **Vercel**: main → production auto. فروع/PRs → preview deploys (زر Vercel في الـ PR). ظهر الـ branch banner في صفحة الريبو لأن الـ phase-4 فرع معمولو push لكن مفيش PR لسه — افتح PR (الزر "Compare & pull request") لو عايز preview + CI أخضر من غير ما تمس البرودكشين. **⚠️ راجع §6 قبل الاعتماد على أي دومين — الفحص المتاح (2026-11-12) أثبت إن `etm-learning.vercel.app` بيقدم build الـ phase-4 مش `main`.**
 
 ## 2) هل كل اللي اتعمل منشور؟
 
@@ -105,7 +105,7 @@ npx playwright test --project=chromium-desktop   # 192/192 (الويبسايت �
 - **Google Fonts عبر `<link>` مع `display=swap`** — أي قياس layout (scrollWidth) لازم يسبق `document.fonts.ready`.
 - Wandbox (المترجم الخارجي للـ playground) بيرد HTTP 500 من هنا — اختبر في البيت.
 - GitHub sign-in ما اتحققش (مفيش test token) — الـ fallback فقط موجود.
-- موقع `etm-learning.vercel.app` لسا بديل old sitemap معطوب على `2ec0f4d` (deploy معلق). النطاق الحالي في About: `etm-one-ruddy.vercel.app`.
+- **Deployment facts (verified 2026-11-12)**: `etm-learning.vercel.app` is live and **serves the Phase-4 build** — `/english` and `/english/review` respond with the English hub/review page (empty-videos sync notice), while `main` @ `380b475` has no English/books/progress routes at all. So this domain is NOT tracking `main`; likely a manual `vercel --prod` from the phase-4 working tree or a Production Branch override. `etm-one-ruddy.vercel.app` returns HTTP 404 (no such project/alias). **Action at home**: Vercel dashboard → project → Settings → Git → Production Branch, and confirm which domain is canonical before trusting any "production" claim.
 - استعمال command `npm run test:content -- --strict` مش بدون `--strict` للتحقق الكامل من المحتوى.
 - وقت الاختبار: `waitUntil: "domcontentloaded"` + seed `etm-miku-onboarding-done=1` (الـ helper موجود في `tests/e2e/helpers/ui.ts`).
 - **لا تدفع إطلاقاً لـ `main`** بدون موافقة المستخدم — main ينشر برودكشين.
