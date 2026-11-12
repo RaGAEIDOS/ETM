@@ -7,6 +7,8 @@
  *   etm-progress-v2          JSON ProgressFile { version: 2, events, settings }
  *   etm-progress-v2-migrated ISO timestamp of the one-time legacy import
  *   etm-english-notes-v1     JSON map videoId -> { text, updatedAt } (Phase 4)
+ *   etm-cs50x-notes-v1       JSON map lectureId -> { text, updatedAt }
+ *   etm-cs50x-certificate-v1 JSON { done: string[], updatedAt: string }
  *
  * Legacy keys (etm-progress-v1, etm-progress-<uid>, etm-activity-days,
  * etm-focus-log) are READ ONCE during migration and never written again or
@@ -37,6 +39,14 @@ import {
   importEnglishNotes,
   loadEnglishNotes,
 } from "../english-notes";
+import {
+  CS50X_NOTES_KEY,
+  CS50X_CERT_KEY,
+  deleteCs50xNotes,
+  deleteCs50xCertificate,
+  importCs50xNotes,
+  loadCs50xNotes,
+} from "../cs50x-notes";
 
 const V2_KEY = "etm-progress-v2";
 const MIGRATED_KEY = "etm-progress-v2-migrated";
@@ -255,7 +265,9 @@ export function toggleCompletion(track: Track, itemId: string, topic?: string): 
       ? stats.doneVideoIds.includes(itemId)
       : track === "english"
         ? stats.doneEnglishVideoIds.includes(itemId)
-        : stats.doneLessonIds.includes(itemId);
+        : track === "cs50x"
+          ? stats.doneCs50xVideoIds.includes(itemId)
+          : stats.doneLessonIds.includes(itemId);
   trackEvent(track, done ? "lesson_uncompleted" : "lesson_completed", { itemId, topic });
   return !done;
 }
@@ -264,6 +276,7 @@ export function isItemDone(file: ProgressFile, track: Track, itemId: string): bo
   const stats = deriveProgress(file.events);
   if (track === "elzero") return stats.doneVideoIds.includes(itemId);
   if (track === "english") return stats.doneEnglishVideoIds.includes(itemId);
+  if (track === "cs50x") return stats.doneCs50xVideoIds.includes(itemId);
   return stats.doneLessonIds.includes(itemId);
 }
 
@@ -280,7 +293,13 @@ export function setDailyGoalMinutes(minutes: number): void {
 export function exportMyData(): string {
   const file = loadProgressFile();
   return JSON.stringify(
-    { app: "etm", exportedAt: new Date().toISOString(), ...file, englishNotes: loadEnglishNotes() },
+    {
+      app: "etm",
+      exportedAt: new Date().toISOString(),
+      ...file,
+      englishNotes: loadEnglishNotes(),
+      cs50xNotes: loadCs50xNotes(),
+    },
     null,
     2,
   );
@@ -292,6 +311,9 @@ export function importMyData(json: string): { ok: boolean; mergedEvents: number;
     // English notes (Phase 4) ride along as an optional extra section.
     const notes = (raw as { englishNotes?: unknown } | null)?.englishNotes;
     if (notes && typeof notes === "object") importEnglishNotes(notes);
+    // CS50x notes ride along the same way.
+    const cs50xNotes = (raw as { cs50xNotes?: unknown } | null)?.cs50xNotes;
+    if (cs50xNotes && typeof cs50xNotes === "object") importCs50xNotes(cs50xNotes);
     const parsed = parseProgressFile(raw);
     const current = loadProgressFile();
     const merged = mergeEvents(current.events, parsed.events);
@@ -321,7 +343,10 @@ export function deleteMyData(): void {
           k === LEGACY_ACTIVITY_KEY ||
           k === LEGACY_FOCUS_KEY ||
           k === ENGLISH_NOTES_KEY ||
+          k === CS50X_NOTES_KEY ||
+          k === CS50X_CERT_KEY ||
           k.startsWith(`${ENGLISH_NOTES_KEY}-corrupt-`) ||
+          k.startsWith(`${CS50X_NOTES_KEY}-corrupt-`) ||
           k.startsWith(`${V2_KEY}-corrupt-`) ||
           k.startsWith(USER_PREFIX) ||
           k.startsWith(LASTSYNC_PREFIX))
@@ -340,6 +365,8 @@ export function deleteMyData(): void {
     }
   }
   deleteEnglishNotes();
+  deleteCs50xNotes();
+  deleteCs50xCertificate();
   try {
     window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
   } catch {
