@@ -8,6 +8,7 @@ const PAGES = [
   ["elzero-index", "/elzero"],
   ["elzero-video", "/elzero/001"],
   ["english-index", "/english"],
+  ["english-course", "/english/course/en-zero"],
   ["english-review", "/english/review"],
   ["playground", "/playground"],
   ["books", "/books"],

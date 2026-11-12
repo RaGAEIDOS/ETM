@@ -19,7 +19,7 @@ test.describe("English section (Phase 4)", () => {
     ).toContainText("English");
   });
 
-  test("/en/english hub renders courses, lessons, suggested path and credit", async ({ page }) => {
+  test("/en/english hub groups every course by level and links to course pages", async ({ page }) => {
     seedMikuDone(page);
     await page.goto("/en/english", { waitUntil: "domcontentloaded" });
 
@@ -27,12 +27,16 @@ test.describe("English section (Phase 4)", () => {
       await expect(page.getByText(course, { exact: true }).first()).toBeVisible();
     }
 
+    // Full catalogue is grouped by curriculum level.
+    await expect(page.getByRole("heading", { name: /Level 1/i }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Specialised courses/i })).toBeVisible();
+    await expect(page.getByText(/\d+ courses · \d+ videos/).first()).toBeVisible();
+
     // Suggested path section (channel's own ordering)
     await expect(page.getByRole("heading", { name: /Suggested path/i })).toBeVisible();
 
-    // Batch 1 is imported: the lesson list links to the first lesson page.
-    await expect(page.getByRole("heading", { name: /Lessons in this course/i }).first()).toBeVisible();
-    await expect(page.locator('a[href="/en/english/001"]').first()).toBeVisible();
+    // Course cards open the dedicated course page instead of a 458-item list.
+    await expect(page.locator('a[href="/en/english/course/en-zero"]').first()).toBeVisible();
 
     // Course cards link to the known channel playlists.
     await expect(
@@ -46,12 +50,24 @@ test.describe("English section (Phase 4)", () => {
     await expect(page.locator('footer a[href="/en/english"]').first()).toBeVisible();
   });
 
-  test("/english hub (Arabic locale) renders Arabic labels, lessons and credit", async ({ page }) => {
+  test("/en/english/course/en-zero lists the course lessons", async ({ page }) => {
+    seedMikuDone(page);
+    await page.goto("/en/english/course/en-zero", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Course lessons/i })).toBeVisible();
+    await expect(page.getByText(/\d+ lessons/).first()).toBeVisible();
+    await expect(page.locator('a[href="/en/english/001"]').first()).toBeVisible();
+    // Credit card and a link back to the hub.
+    await expect(page.getByText(/zAmericanEnglish on YouTube/).first()).toBeVisible();
+    await expect(page.locator('a[href="/en/english"]').first()).toBeVisible();
+  });
+
+  test("/english hub (Arabic locale) renders Arabic labels, groups and credit", async ({ page }) => {
     seedMikuDone(page);
     await page.goto("/english", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /قسم الإنجليزية/ })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /دروس هذه الدورة/ }).first()).toBeVisible();
-    await expect(page.locator('a[href="/english/001"]').first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: /المستوى الأول/ }).first()).toBeVisible();
+    await expect(page.locator('a[href="/english/course/en-zero"]').first()).toBeVisible();
     await expect(page.getByText(/zAmericanEnglish on YouTube/).first()).toBeVisible();
   });
 
