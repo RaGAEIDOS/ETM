@@ -105,3 +105,65 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 - **Phase 4 full catalogue (2026-11-12)**: all 36 educational playlists on the @ZAmericanEnglish channel fetched via Invidious (`out/english-course-playlists.json`, 458 real videos / 427 unique ids) and generated into `lib/english-videos-bulk.ts` (31 new courses + 438 lessons, ids 021-458, `reviewed:false`, empty terms/practice by design; cross-playlist duplicates kept so each course is complete). `englishCourses` now carries a `group` (level1/level2/level3/special) and is sorted by curriculum level; the hub groups cards by level with a 36-course/458-video count and links to new `/english/course/[id]` pages (72 SSG pages) instead of listing 458 lessons inline. Sitemap gains the 36 course pages. E2E updated for the grouped hub + new course page + a11y route. Gates: typecheck/lint/`test:content --strict` clean, unit 39/39, build 1489 static pages (916 lesson pages), E2E 195/195 chromium-desktop (2026-11-12). Generated scripts: `scripts/fetch-english-courses.mjs`, `scripts/generate-english-catalogue.mjs`.
 - **CS50x + leaderboard (2026-11-13) @ `feature/cs50x` (base `main` @ `f557764`)**: new routes `/cs50x`, `/cs50x/[video]` (13 SSG ×2 locales), `/leaderboard` «صدارة المتعلمين». Components under `components/cs50x/` + `components/LeaderboardClient.tsx`; data in `lib/cs50x.ts` + `lib/cs50x-lectures-1/2.ts` + `lib/cs50x-notes.ts`; progress track `"cs50x"` (doneCs50xVideoIds) persisted in the v2 event store; export/import/delete covers it. Hub: resume card variant=cs50x, per-course progress line, per-lecture done state, links to official week pages/psets/notes, certificate card (10 psets + final project ≥70%, local tracker `etm-cs50x-certificate-v1`). Miku tips + header/footer + sitemap (`/cs50x` 0.9, `/leaderboard` 0.8, 13 lecture URLs) + `validate-content.mjs` hard cs50x catalogue check and cs50x-aware internal links. Gates: tsc clean, lint (pre-existing warnings only), `test:content --strict` clean (`cs50x: 13 lectures, 0 problem(s)`), unit 49/49, build green (new SSG routes listed). E2E chromium-desktop extended for the new routes (a11y + responsive). Push of `feature/cs50x` explicitly authorized (branch push only — NOT merged to `main`; production untouched). **Post-push fix (`0305b03`)**: first full E2E run failed 131/207 — root-caused to (a) new header nav items pushing the 1280px header 111px past the viewport (horizontal-scroll gate) and (b) i.ytimg thumbnails hanging networkidle in this offline environment. Both fixed (scrollable nav; locally generated posters in both facades); responsive + phase1-routes re-ran green (151/151); full suite re-run pending at push time.
 - **Linux course pilot (2026-11-12, branch `feature/linux-course`, merged into `fix/thumbnails-cs50-final-check`)**: one course added — «دورة تعلم نظام اللينكس 2021» by Linuxtopia (playlist PLAZ__zcDB1IaNaVNOckNpgEpjghSHr8Gg, 53 videos, all embeddable via noembed, 53/53 metadata via Invidious since YouTube hosts are unreachable here). Routes `/linux` (hub), `/linux/course/linux-2021` (section-grouped lesson index, 9 sections derived from titles), `/linux/[video]` (lnx-01..lnx-53, SSG), `/linux/review`. Components under `components/linux/` (facade, lesson panel w/ Summary/Terms/Practice/Terminal Lab/Notes tabs, key-terms flashcards, mixed-type practice engine, completion bar, review due-card + session, notes, course progress, credit). Terminal Lab = **simulated in-browser shell only** (`lib/linux/shell/*`: pure-TS parser/VFS/commands/pipes/chmod; 17 fresh-fixture-fail/solution-pass challenges) — never executes real commands. Progress layer extended with `track: "linux"` (`doneLinuxVideoIds`, export/import/delete incl. `etm-linux-notes-v1`); SRS parameterized by track; ResumeCard gains `variant="linux"`; nav groups ElZero/English/Linux under a «الدورات / Courses» dropdown (URLs unchanged); Miku tip + glossary «لينكس» category (12 referenced terms) + sitemap wired. Pilot = lessons 1–10 hand-curated; 11–53 ship `reviewed:false` with conservative Arabic summaries, empty terms/practice (generated `lib/linux-videos-bulk.ts`). Credit + non-affiliation line on every track page. Validator now scans Linux videos (lnx-NN ids, section coverage, exactly-one-correct-answer per practice type) and branches link params by locale-independent prefix; `out/` excluded from the stray-script scan.
+
+## Task: Programming Advices free courses (new prompt, 2026-11-12)
+
+Branch: `feature/programmingadvices-free-courses`. Prompt: add exactly two free courses by Dr. Mohammed Abu-Hadhoud, mirroring the ElZero/English pattern, with original (non-copied) Arabic content, YouTube embeds only, and credit on every page.
+
+### Phase status (this task)
+
+| Step | Status | Notes |
+|---|---|---|
+| 0 — Explore | **done** | ElZero page/lesson, English facade/panel/notes/progress/validator/nav read; plan below |
+| 1 — Collect & verify | **done (metadata)** | 20/50 playlist items fetched; see findings |
+| 1 — Content | in progress | Captions unavailable → `reviewed:false` conservative summaries from titles/descriptions |
+| 2 — Data model | doing | `lib/programmingadvices-videos.ts` next |
+| 3 — UI + learning features | todo | nav, hub, course pages, lesson pages, embedded player, tabs, notes, progress, review queue, Miku |
+| 4 — Rollout (pilot 10) | todo | STOP after first 10 of course 1 for approval |
+| 5 — Gates | todo | typecheck/lint/test:content/unit/build/E2E |
+
+### Step 0 findings (reused building blocks)
+
+- Route shape: `app/[locale]/elzero/page.tsx` (sections list) + `elzero/[video]/page.tsx` (summary/terms/quiz, `generateStaticParams` over `elzeroVideos`).
+- English track is the closer template for embedded video: `components/english/EnglishVideoFacade.tsx` (click-to-load, youtube-nocookie IFrame API, resume from `video_progress`, ~5 s upsert, rate buttons, error → YouTube link), `EnglishLessonPanel.tsx` (Summary/Terms/Practice/Speaking/Notes tabs), `EnglishNotes.tsx` + `lib/english-notes.ts` (`etm-english-notes-v1`, export/delete), `lib/english/srs.ts` (Leitner), `components/english/EnglishCredit.tsx`.
+- Progress: `lib/progress/core.ts` defines `Track` + `EventType` + `deriveProgress` (`doneVideoIds` for elzero, `doneEnglishVideoIds` for english); `store.ts` has `trackEvent/saveVideoProgress/toggleCompletion/isItemDone/exportMyData/importMyData`. New track = add `"programmingadvices"` to the union and the two done-arrays, or reuse `"elzero"`-style completion with a distinct track name.
+- Nav: `components/SiteHeader.tsx` `NAV` array (add one entry + Arabic/English label).
+- Validator: `scripts/validate-content.mjs` imports libs via `--experimental-strip-types`, checks stray scripts, duplicate ids, quiz answer keys, ElZero ≥2 questions/≥1 term, mixed Arabic/Latin glue, and (strict) internal hrefs. A Programming Advices block must be added with the same guarantees.
+- i18n: `lib/i18n/config.ts` (`localePath`, `formatNumber`), `lib/i18n/server.ts` (`localeFromParams`, `pageMetadata`), `lib/i18n/context.tsx` (`useCopy`). All routes live under `app/[locale]/`.
+
+### Step 1 findings (verified metadata)
+
+- Both playlists fetched via Invidious (`inv.nadeko.net`), the only working source; counts match: course 1 = 20, course 2 = 50 (no duplicates inside a playlist).
+- Source JSON: `out/programmingadvices/playlists.json` (ordered ids, titles, durations, per-video `problems`).
+- Embeddability probed with `noembed.com` (returns oEmbed only for public, embeddable videos). All fetched videos pass except:
+  - **`SKZyCrY6XEE` (course 2, position 37)** — `liveNow:true` on Invidious, `lengthSeconds:0`, no title/description, oEmbed 403. Needs a "Watch on YouTube" fallback lesson page (do not skip).
+  - Two duplicate-looking durations (course 1 #5 and #16 both 38:28; #1 and #20 both 4:55) — confirmed by the transcript service's own `lengthSeconds`; kept as published.
+- **No captions exist** for these videos (transcript service: `playabilityStatus: "OK", reason: "Transcript not available"` for 67/70; the 3 with captions are intro/update/lesson-12). Therefore every lesson stays `reviewed:false` with a conservative summary built from the **title + description only**; no transcript text is copied or published.
+- Official course pages confirm the topic lists (used only as a checklist, not copied):
+  - Course 1 `https://programmingadvices.com/p/00316b` — Data/Information/Knowledge/Wisdom → computers & components → binary/hex/octal → bytes/bits/nibbles → units of speed → programmer's calculator → networks → programming languages & translation → why C++ → operations → operator precedence → variables & constants.
+  - Course 2 `https://programmingadvices.com/p/00316b1` — 50 flow-chart problems (inputs, arithmetic, conditions, loops, validation, number/letter printing, date/time, finance, ATM PIN), no code.
+  - Terms of Use (read): personal non-commercial use only, no copying/mirroring/redistribution. Reinforces the prompt's legal boundaries: embed/link only, original content, credit + non-affiliation line.
+- Author descriptions sometimes contain the author's own per-video timestamps (e.g. `00:39 Data Vs. Information`). Using them as a *topic checklist* is fine, but I will not copy the description text verbatim into summaries; summaries are written in our own words and flagged `reviewed:false`.
+
+### Decisions for this task
+
+1. **Content origin**: conservative Arabic summaries derived from the *title* + the author's *public description topic lines* (no transcript copying), `reviewed:false`. Terms and practice are original, written by me.
+2. **Progress integration**: add `"programmingadvices"` as a new `Track` and `doneProgrammingAdvicesVideoIds` in `deriveProgress` (mirrors `doneEnglishVideoIds`); no existing URL or stored progress changes.
+3. **Notes**: separate key `etm-programmingadvices-notes-v1` (same shape as English), included in Export/Delete.
+4. **Video ids**: reuse the English track's scheme — course-prefixed stable ids; but since the prompt says "never break existing URLs", Programming Advices gets its own namespace (e.g. `pa1-01`…`pa1-20`, `pa2-01`…`pa2-50`) rather than continuing the English 021+ counter.
+5. **Pilot**: build infrastructure + first 10 of course 1, then STOP for approval (prompt's CHECKPOINT).
+
+### Files to add/change (plan)
+
+- `lib/programmingadvices-videos.ts` (courses, videos, types, credit constants, finders)
+- `lib/programmingadvices-notes.ts`
+- `app/[locale]/programmingadvices/page.tsx` (hub, 2 cards)
+- `app/[locale]/programmingadvices/[course]/page.tsx` (course page, grouped videos)
+- `app/[locale]/programmingadvices/[course]/[video]/page.tsx` (lesson)
+- `components/programmingadvices/` (video facade, lesson panel, terms, practice, notes, credit, completion)
+- `components/SiteHeader.tsx` (nav entry), `components/SiteFooter.tsx` (link)
+- `lib/progress/core.ts` + `store.ts` (new track + done array), `lib/progress` tests
+- `app/sitemap.ts` (course + lesson entries)
+- `scripts/validate-content.mjs` (Programming Advices block)
+- `tests/e2e/programmingadvices.spec.ts`
+- `docs/PROGRESS.md` (this section)
