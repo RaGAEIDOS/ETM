@@ -84,6 +84,7 @@ export default function Cs50xCertificateCard() {
           <div
             className="h-2.5 flex-1 overflow-hidden rounded-full bg-white/10"
             role="progressbar"
+            aria-label={c.title}
             aria-valuenow={pct}
             aria-valuemin={0}
             aria-valuemax={100}

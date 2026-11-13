@@ -271,7 +271,10 @@ export default function Cs50xVideoFacade({
           </span>
         </span>
         {ready && resumeSeconds > 10 && (
-          <span className="absolute bottom-3 start-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-emerald-300">
+          <span
+            aria-hidden="true"
+            className="absolute bottom-3 start-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-emerald-300"
+          >
             استئناف من {Math.floor(resumeSeconds / 60)}:{String(Math.floor(resumeSeconds % 60)).padStart(2, "0")}
           </span>
         )}
