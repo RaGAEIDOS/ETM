@@ -25,6 +25,7 @@ import Cs50xCourseProgress from "@/components/cs50x/Cs50xCourseProgress";
 import Cs50xLectureList from "@/components/cs50x/Cs50xLectureList";
 import Cs50xCertificateCard from "@/components/cs50x/Cs50xCertificateCard";
 import Cs50xCredit from "@/components/cs50x/Cs50xCredit";
+import Cs50xReviewDueCard from "@/components/cs50x/Cs50xReviewDueCard";
 
 const COPY = {
   ar: {
@@ -47,15 +48,17 @@ const COPY = {
     ],
     official: "الموقع الرسمي للدورة",
     playlist: "قائمة التشغيل الرسمية",
-    lecturesTitle: "المحاضرات — بترتيب المقرر الرسمي",
+    lecturesTitle: "١٢ أسبوعًا — ثم المشروع النهائي",
     continueTitle: "أكمل من حيث توقفت",
     certificateTitle: "شهادة CS50x المجانية",
     certificateIntro:
-      "كل ما تحتاجه للشهادة مجاني تمامًا. أكمل 10 تكاليف (Problem Sets) والمشروع النهائي بدرجة ≥ ٧٠٪ في كل منها، ثم قدّم طلب الشهادة. لن تأخذ ETM أي خطوة نيابة عنك — هذه متابعة شخصية لك.",
+      "أكمل كل التكاليف العشرة (10 Problem Sets) + المشروع النهائي ← سلّم عبر edX ← احصل على شهادة CS50 المجانية من https://cs50.harvard.edu/x/certificate/. التسجيل في الدورة عبر https://cs50.edx.org/. شهادة CS50 مجانية بالكامل، وشهادة edX الموثّقة اختيارية لمن يريدها. لن تأخذ ETM أي خطوة نيابة عنك — هذه متابعة شخصية لك.",
     notesTitle: "متى تستخدم CS50x ومتى تكتفي بالفيديوهات هنا؟",
     notesIntro:
       "الشهادات والتقدير الرسمي تمرّ حصرًا عبر منصة الدورة على edX وبيئة cs50.dev. فيديوهاتنا وملخصاتنا وأدوات التدريب هنا للمذاكرة والفهم؛ التكليفات تُسلّم وتُقيّم هناك.",
     free: "مجاني 100% — بلا بطاقة ائتمان",
+    pilot:
+      "الإصدار التجريبي الحالي: الأسبوعان 0 و1 كاملين (محاضرة + سكشن + شورتس + تكليف). بقية الأسابيع معروضة كخريطة المقرر الرسمية.",
   },
   en: {
     metaTitle: "CS50x — Harvard's Introduction to Computer Science (free)",
@@ -77,15 +80,17 @@ const COPY = {
     ],
     official: "The official course site",
     playlist: "Official playlist",
-    lecturesTitle: "The lectures — in the official syllabus order",
+    lecturesTitle: "12 weeks — then the Final Project",
     continueTitle: "Continue where you left off",
-    certificateTitle: "The free CS50 Certificate",
+    certificateTitle: "The free CS50x Certificate",
     certificateIntro:
-      "Everything you need for the certificate is 100% free. Complete 10 problem sets and the final project with ≥ 70% in each, then claim the certificate. ETM takes no step on your behalf — this is a personal tracker for you.",
+      "Complete all 10 problem sets + the Final Project → submit via edX → get your free CS50 Certificate at https://cs50.harvard.edu/x/certificate/. Enrol in the course at https://cs50.edx.org/. The CS50 certificate is completely free; the edX verified certificate is optional if you want one. ETM takes no step on your behalf — this is a personal tracker for you.",
     notesTitle: "When to use edX instead of these videos",
     notesIntro:
       "Official grading and the certificate happen exclusively on the course's edX page and cs50.dev. Our videos, summaries and drills are for learning and revision; assignments are submitted and graded there.",
     free: "100% free — no credit card",
+    pilot:
+      "Current pilot: weeks 0 and 1 end-to-end (lecture + section + shorts + problem set). The remaining weeks are shown as the official course map.",
   },
 } as const;
 
@@ -125,6 +130,9 @@ export default function Cs50xHubPage({ params }: { params: { locale: string } })
           <Sparkles className="h-3.5 w-3.5 text-amber-400" />
           {c.free}
         </div>
+        <p className="mx-auto mt-3 max-w-2xl rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-2 text-xs leading-6 text-amber-200/90">
+          {c.pilot}
+        </p>
         <ul className="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
           {c.whatToDo.map((item) => (
             <li key={item} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5">
@@ -172,8 +180,13 @@ export default function Cs50xHubPage({ params }: { params: { locale: string } })
       </div>
 
       {/* Overall progress */}
-      <div className="mb-12 max-w-3xl">
+      <div className="mb-8 max-w-3xl">
         <Cs50xCourseProgress videoIds={CS50X_LECTURES.map((l) => l.id)} />
+      </div>
+
+      {/* Review queue entry */}
+      <div className="mb-12">
+        <Cs50xReviewDueCard />
       </div>
 
       {/* Lecture list */}

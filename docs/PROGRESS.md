@@ -5,6 +5,24 @@ Update after every task. If a session is interrupted, resume from here.
 
 **Updated**: 2026-11-13 · **Branch**: `fix/thumbnails-cs50-final-check` (from `feature/cs50x` @ `0305b03`); ElZero Web catalogue merged; Linux pilot merged from `feature/linux-course` @ `40c2352`
 
+## Final check — thumbnails + CS50x pilot (2026-11-13, 15-line digest)
+
+1. Scope: `fix/thumbnails-cs50-final-check` based on `0305b03`; merges ElZero Web data, Linux pilot, ProgrammingAdvices docs and the audit report.
+2. Thumbnails: every wired card/page uses `https://i.ytimg.com/vi/{id}/hqdefault.jpg` with `mqdefault.jpg` fallback, `loading="lazy"` and a meaningful alt; no other image host.
+3. ElZero C++: PASS — 78/78 lesson cards, hub cards and lesson page thumbnails; existing content is `reviewed:true`.
+4. ElZero Web: BLOCKED (data only) — 6 courses / 390 lessons in `lib/elzero-web-*`, no routes/UI yet; the validator now checks the catalogue.
+5. English: PASS — 36 courses / 458 lessons, hub + course + lesson thumbnails; content `reviewed:false`.
+6. ProgrammingAdvices: BLOCKED — fetch plan + raw `out/` metadata only; no `lib/` data or routes, so there are no cards to wire or validate.
+7. Linux: PASS — hub + course + 53 lesson thumbnails; content `reviewed:false`.
+8. CS50x: PASS (pilot) — 12 weeks (0–10 + AI) + Final Project, with lecture → section → shorts → problem-set workflow; weeks 0–1 are the pilot.
+9. CS50x hub certificate card: 10 problem sets + Final Project → submit via edX → free certificate at `cs50.harvard.edu/x/certificate/`; enrolment `cs50.edx.org`; optional edX verified note; no payment wording.
+10. CS50x credit: exact required line + CC BY-NC-SA 4.0 license link on the hub, every lecture page and the review page.
+11. CS50x integration: progress track `cs50x` feeds stats/resume and the Leitner review queue (`/cs50x/review`); sitemap wired.
+12. Gates: `tsc --noEmit` clean; `lint` pre-existing warnings only; `test:content --strict` PASS (elzero-web 6/390, english 36/458, cs50x 13/0); unit 120/120.
+13. Build: `npm run build` PASS, 1633 static pages; final E2E chromium-desktop 219/219 passed.
+14. Fixes: ElZero lesson URLs backfilled with real video IDs via Invidious so all 78 hub cards get thumbnails; thumbnail helpers moved to `lib/youtube.ts` (client-module export crashed prerender); facade alts/badges trimmed for axe `label-content-name-mismatch`; `networkidle` replaced with bounded `waitHydrated` and `i.ytimg.com` noise tolerance.
+15. Blockers/stop: `i.ytimg.com` is unreachable here, so thumbnails render black locally and YouTube playlists cannot be live-checked; remaining `reviewed:false` = 914 (ElZero Web 390, English 458, Linux 53, CS50x 13); STOP after pilot weeks 0–1 screenshots.
+
 ## Phase status
 
 | Phase | Status | Notes |

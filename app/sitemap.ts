@@ -56,6 +56,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
   entries.push(entry("/english/review", "monthly", 0.4));
   entries.push(entry("/cs50x", "weekly", 0.9));
+  entries.push(entry("/cs50x/review", "monthly", 0.4));
   CS50X_LECTURES.forEach((lecture) => {
     entries.push(entry(`/cs50x/${lecture.id}`, "monthly", 0.5));
   });

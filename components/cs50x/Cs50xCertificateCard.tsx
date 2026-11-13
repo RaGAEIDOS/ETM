@@ -15,7 +15,6 @@ import {
   CS50X_PSETS,
   CS50X_EDX_URL,
   CS50X_GRADEBOOK_URL,
-  CS50X_CERTIFICATE_URL,
   CS50X_CERTIFICATE_INFO_URL,
 } from "@/lib/cs50x";
 import { loadCs50xCertificate, toggleCs50xCertificateItem, type Cs50xPsetId } from "@/lib/cs50x-notes";
@@ -23,30 +22,32 @@ import { CheckCircle2, Circle, ExternalLink, GraduationCap, Info } from "lucide-
 
 const COPY = {
   ar: {
-    title: "رحلة الشهادة — CS50 Certificate (مجانية)",
+    title: "شهادة CS50 المجانية — رحلة الشهادة",
     subtitle:
-      "أشّر التكليفات التي أنهيتها بدرجة ≥ ٧٠٪ — تُحفظ العلامات على هذا الجهاز فقط ولا تُرسل إلى Harvard.",
+      "أكمل كل التكاليف العشرة (10 Problem Sets) + المشروع النهائي، سلّم عبر edX، ثم احصل على شهادة CS50 المجانية من cs50.harvard.edu/x/certificate/. أشّر ما أنهيته هنا — تُحفظ العلامات على هذا الجهاز فقط ولا تُرسل إلى Harvard.",
     done: "أُنجز",
     progress: (done: string, total: string) => `${done} من ${total}`,
-    ready: "أكملت كل شيء (١٠ تكاليف + المشروع النهائي)! الخطوة الأخيرة: قدّم طلب الشهادة.",
-    claim: "قدّم طلب الشهادة على cs50.harvard.edu/certificates",
+    ready:
+      "أكملت كل شيء (١٠ تكاليف + المشروع النهائي)! الخطوة الأخيرة: سلّم عبر edX ثم اطلب شهادتك المجانية.",
+    claim: "الشهادة المجانية على cs50.harvard.edu/x/certificate/",
     verify: "تحقق من درجاتك في cs50.me/cs50x",
-    edx: "منصة الدورة على edX",
+    edx: "سجّل في الدورة على cs50.edx.org",
     info: "شروط الشهادة الرسمية",
-    note: "هذه قائمة متابعة شخصية — التقدير الفعلي يتم عبر edX و cs50.dev، والشهادة تصدرها Harvard.",
+    note: "شهادة CS50 مجانية بالكامل. شهادة edX الموثّقة اختيارية لمن يريدها. هذه قائمة متابعة شخصية — التقدير الفعلي يتم عبر edX و cs50.dev، والشهادة تصدرها Harvard.",
   },
   en: {
-    title: "Certificate journey — free CS50 Certificate",
+    title: "The free CS50 Certificate — your journey",
     subtitle:
-      "Tick the assignments you finished with ≥ 70% — marks are saved on this device only and never sent to Harvard.",
+      "Complete all 10 problem sets + the Final Project, submit via edX, then get your free CS50 Certificate at cs50.harvard.edu/x/certificate/. Tick what you finished here — marks are saved on this device only and never sent to Harvard.",
     done: "Done",
     progress: (done: string, total: string) => `${done} of ${total}`,
-    ready: "Everything is done (10 psets + final project)! Final step: claim the certificate.",
-    claim: "Claim the certificate at cs50.harvard.edu/certificates",
+    ready:
+      "Everything is done (10 psets + final project)! Final step: submit via edX, then claim your free certificate.",
+    claim: "Free certificate at cs50.harvard.edu/x/certificate/",
     verify: "Check your scores at cs50.me/cs50x",
-    edx: "Course on edX",
+    edx: "Enrol on cs50.edx.org",
     info: "Official certificate requirements",
-    note: "This is a personal tracker — grading happens via edX & cs50.dev; Harvard issues the certificate.",
+    note: "The CS50 certificate is completely free. The optional edX verified certificate is available if you want one. This is a personal tracker — grading happens via edX & cs50.dev; Harvard issues the certificate.",
   },
 } as const;
 
@@ -157,7 +158,7 @@ export default function Cs50xCertificateCard() {
         )}
         <div className="flex flex-wrap items-center gap-2">
           <a
-            href={CS50X_CERTIFICATE_URL}
+            href={CS50X_CERTIFICATE_INFO_URL}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-rose-400 to-orange-500 px-4 py-2.5 text-sm font-black text-ink-950 hover:opacity-90"

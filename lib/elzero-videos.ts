@@ -14,10 +14,35 @@ export interface ElzeroVideo {
   example?: { title: string; code: string };
 }
 
-const PLAYLIST = "https://www.youtube.com/playlist?list=PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS";
+const PLAYLIST_ID = "PLDoPjvoNmBAwy-rS6WKudwVeb_x63EzgS";
+
+/**
+ * Real video ids in official playlist order (verified via the Invidious
+ * playlist endpoint on 2026-11-13). The old data used playlist URLs with
+ * &index=N for most lessons, which carry no video id and therefore cannot
+ * produce a thumbnail.
+ */
+const VIDEO_IDS = [
+  "XDuWyYxksXU", "jOUb09iiO20", "R-Hu5rdn-vc", "RWtT07Id-n4", "FVV4kTy0dJg",
+  "1K1sET8dDrI", "NeHu899_uYA", "6UoFcvARKI4", "R2zqj_52WwU", "A6B4tlaPapo",
+  "J_vnlD5Ca-U", "HHl6YF6GUhw", "zBhT544Xy0o", "cS0tbixHmdI", "7hM-MBheZ-w",
+  "BibCqAo5ZsQ", "MrwqesK64aU", "739Wvc6XqDM", "8efyLVOfd4E", "BIQplCgmB2o",
+  "rqXv-mKqw5Y", "ZX2DLrnCR3w", "N68m5IxR_zw", "AQyni1r43T0", "nCO0KZ67b1Q",
+  "RWVrMQpvVxU", "xpznDlbgQPM", "41v0w8BjJms", "e0Gz1_ceuMU", "QmUR0ZIrXQA",
+  "l67qWVYe-xo", "Ps0xSAXmULA", "Ang11UuVE30", "8ptGpQ_2Np8", "KWRFfCToxiY",
+  "OK1uu-axN0E", "w8WnxLZmctg", "NWP1cTeDFVY", "4DkdiXp5rYw", "4v5hDgUDK9Q",
+  "2pG43LVr_Sw", "dNCryC9CzQQ", "lylQR-hFV-M", "Ne7RthIdaok", "oyYC2dOekeU",
+  "PJeNjjQcrG8", "_eYTdzypBIY", "p0pCO7gPfmQ", "DoY-G3Fwy4g", "ykpDu3swciM",
+  "pbu11F6X9Yg", "3ESx17kVUKo", "5rtyV-WOIpA", "q2BVplB0RgI", "Gkg8NmfUCjg",
+  "MBvixzJw2sQ", "wOBMuQUlKNY", "qBojueEZxjs", "kApYul6wN3A", "2NPd8KgneBQ",
+  "ErBDovJ3eTk", "wyFLcNCCaas", "AU_wSvenbI8", "bpXRvo4IH-0", "I_AzDYyhlMU",
+  "djgs6PnNl2w", "55MRxgVOkMo", "OIJsJrNJKUc", "QSmQylbugAg", "JrPhJtFuwqU",
+  "_RE-naCqphE", "DgJqgq5Is0Y", "RoKGZi4ArFo", "Qm14ePexV10", "s6sb23dglxs",
+  "9ALw6qoCvk8", "9ZE8HAHyp4I", "Mlo7_fUG4N0",
+] as const;
 
 function yt(index: number) {
-  return `${PLAYLIST}&index=${index}`;
+  return `https://www.youtube.com/watch?v=${VIDEO_IDS[index - 1]}&list=${PLAYLIST_ID}`;
 }
 
 export const sectionsList = [

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMikuDone, waitHydrated } from "./helpers/ui";
 
 const V2_KEY = "etm-progress-v2";
 const ENGLISH_NOTES_KEY = "etm-english-notes-v1";
@@ -39,7 +39,7 @@ test.describe("Progress persistence", () => {
       waitUntil: "domcontentloaded",
     });
     expect(response?.status()).toBeLessThan(400);
-    await page.waitForLoadState("networkidle");
+    await waitHydrated(page);
     await expect(page.locator("body")).toBeVisible();
     expect(errors, `page errors: ${errors.join(" || ")}`).toEqual([]);
     await ctx.close();

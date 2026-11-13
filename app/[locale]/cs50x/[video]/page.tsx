@@ -14,12 +14,14 @@ import {
   CS50X_LECTURES,
   findCs50xLecture,
   cs50xLectureIndex,
+  cs50xWeekForLecture,
   shortDuration,
 } from "@/lib/cs50x";
 import Cs50xVideoFacade from "@/components/cs50x/Cs50xVideoFacade";
 import Cs50xCompletionBar from "@/components/cs50x/Cs50xCompletionBar";
 import Cs50xLessonPanel from "@/components/cs50x/Cs50xLessonPanel";
 import Cs50xCredit from "@/components/cs50x/Cs50xCredit";
+import Cs50xWeekWorkflow from "@/components/cs50x/Cs50xWeekWorkflow";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 
@@ -92,6 +94,7 @@ export default function Cs50xLecturePage({
   const prev = idx > 0 ? CS50X_LECTURES[idx - 1] : null;
   const next = idx >= 0 && idx < CS50X_LECTURES.length - 1 ? CS50X_LECTURES[idx + 1] : null;
   const durationMinutes = Math.max(1, Math.round(lecture.durationSeconds / 60));
+  const week = cs50xWeekForLecture(lecture.id);
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
@@ -193,6 +196,13 @@ export default function Cs50xLecturePage({
       <div className="mt-4">
         <Cs50xCompletionBar videoId={lecture.id} courseId="cs50x" />
       </div>
+
+      {/* This week's workflow */}
+      {week && (
+        <div className="mt-6">
+          <Cs50xWeekWorkflow week={week} locale={locale} />
+        </div>
+      )}
 
       {/* Interactive panel */}
       <Cs50xLessonPanel lecture={lecture} />

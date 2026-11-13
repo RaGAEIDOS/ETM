@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, AlertCircle, ExternalLink, Loader2 } from "lucide-react";
 import { useProgressStore } from "@/lib/progress/store";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
 
 type YTPlayer = {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
@@ -246,18 +247,22 @@ export default function Cs50xVideoFacade({
         aria-label={`شغّل الفيديو: ${title}`}
         className="group relative block aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black text-start focus:outline-none focus:ring-2 focus:ring-emerald-400"
       >
-        {/* Local poster — nothing is requested from YouTube until the learner clicks. */}
+        {/* Official YouTube thumbnail; nothing is requested from YouTube's player until the learner clicks. */}
+        <YouTubeThumbnail
+          youtubeId={youtubeId}
+          alt={title}
+          width={640}
+          height={360}
+          className="absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+        />
         <span
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(circle_at_30%_15%,rgba(251,113,133,0.22),transparent_55%),radial-gradient(circle_at_78%_85%,rgba(251,146,60,0.18),transparent_55%),linear-gradient(160deg,#0b0f19_0%,#1d0f14_100%)]"
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10"
         />
-        <span aria-hidden className="absolute inset-0 flex flex-col justify-between p-4 sm:p-6">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-rose-400/30 bg-rose-500/10 px-3 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest text-rose-300">
-            Harvard University · CS50x
-          </span>
+        <span aria-hidden className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6">
           <span
             dir="auto"
-            className="max-w-[85%] text-start text-sm sm:text-base font-semibold leading-6 text-slate-300 line-clamp-2 opacity-80"
+            className="max-w-[85%] text-start text-sm sm:text-base font-semibold leading-6 text-slate-200 line-clamp-2"
           >
             {title}
           </span>

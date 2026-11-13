@@ -15,6 +15,8 @@ import { elzeroVideos, findVideo, videoIndex } from "@/lib/elzero-videos";
 import Quiz from "@/components/Quiz";
 import CodeBlock from "@/components/CodeBlock";
 import ElzeroCompleteButton from "@/components/ElzeroCompleteButton";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
+import { youtubeIdFromUrl } from "@/lib/youtube";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 
@@ -105,6 +107,7 @@ export default function ElzeroVideoPage({
   const videoSubtitle = locale === "en" ? v.title : v.titleEn;
   const sectionLabel = locale === "en" ? v.sectionEn : v.section;
   const sectionSub = locale === "en" ? v.section : v.sectionEn;
+  const youtubeId = youtubeIdFromUrl(v.youtube);
 
   return (
     <div className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-10">
@@ -150,6 +153,22 @@ export default function ElzeroVideoPage({
         >
           {videoSubtitle} — {sectionSub}
         </p>
+        {youtubeId && (
+          <a
+            href={v.youtube}
+            target="_blank"
+            rel="noreferrer"
+            className="group mt-5 block max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-black"
+          >
+            <YouTubeThumbnail
+              youtubeId={youtubeId}
+              alt={videoTitle}
+              width={640}
+              height={360}
+              className="aspect-video w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+            />
+          </a>
+        )}
         <a
           href={v.youtube}
           target="_blank"

@@ -3,7 +3,9 @@ import { ALL_ROUTES, LESSON_ROUTES } from "./helpers/routes";
 import { instrument, horizontallyScrollable, waitHydrated } from "./helpers/ui";
 
 // Network noise tolerated (no live connection to fonts.googleapis / CDNs).
-const NOISE = [/fonts\.g/i, /fonts\.gstatic/i, /font.*(load|css)/i, /gstatic/i];
+// YouTube thumbnails live on i.ytimg.com and may be unreachable in offline
+// environments; they are decorative and fail over to mqdefault/black.
+const NOISE = [/fonts\.g/i, /fonts\.gstatic/i, /font.*(load|css)/i, /gstatic/i, /ytimg\.com/i];
 
 for (const route of [...ALL_ROUTES, ...LESSON_ROUTES]) {
   test(`route ${route} loads, hydrates, and shows no console errors`, async ({ page }) => {

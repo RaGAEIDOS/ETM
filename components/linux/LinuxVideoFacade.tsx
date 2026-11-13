@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Play, AlertCircle, ExternalLink, Loader2 } from "lucide-react";
 import { useProgressStore } from "@/lib/progress/store";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
 
 type YTPlayer = {
   seekTo: (seconds: number, allowSeekAhead: boolean) => void;
@@ -244,27 +245,17 @@ export default function LinuxVideoFacade({
         type="button"
         onClick={start}
         aria-label={`شغّل الفيديو: ${title}`}
-        className="group relative block w-full overflow-hidden rounded-2xl border border-white/10 bg-black text-start focus:outline-none focus:ring-2 focus:ring-emerald-400"
+        className="group relative block aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black text-start focus:outline-none focus:ring-2 focus:ring-emerald-400"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`https://i.ytimg.com/vi/${youtubeId}/maxresdefault.jpg`}
-          alt=""
-          width={1280}
-          height={720}
-          className="aspect-video w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
-          onError={(event) => {
-            // Some ids only have the SD/HQ thumbnail; e.g. offline networks
-            // fail both — hide the img so the black bg + play button carry the facade.
-            const img = event.currentTarget;
-            if (!img.dataset.fallback) {
-              img.dataset.fallback = "1";
-              img.src = `https://i.ytimg.com/vi/${youtubeId}/hqdefault.jpg`;
-              return;
-            }
-            img.style.visibility = "hidden";
-          }}
+        {/* Official YouTube thumbnail; nothing is requested from YouTube's player until the learner clicks. */}
+        <YouTubeThumbnail
+          youtubeId={youtubeId}
+          alt={title}
+          width={640}
+          height={360}
+          className="absolute inset-0 h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
         />
+        <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/5" />
         <span
           aria-hidden
           className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/60 via-black/10 to-transparent"

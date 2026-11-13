@@ -16,6 +16,7 @@ import {
 } from "@/lib/linux-videos";
 import LinuxCourseProgress from "@/components/linux/LinuxCourseProgress";
 import LinuxCredit from "@/components/linux/LinuxCredit";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 
@@ -166,6 +167,15 @@ export default function LinuxCoursePage({
                       href={localePath(locale, `/linux/${v.id}`)}
                       className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-colors hover:border-amber-500/30 hover:bg-amber-500/[0.06]"
                     >
+                      <span className="h-10 w-16 shrink-0 overflow-hidden rounded-lg border border-white/10 bg-black">
+                        <YouTubeThumbnail
+                          youtubeId={v.youtubeId}
+                          alt={v.title}
+                          width={160}
+                          height={90}
+                          className="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+                        />
+                      </span>
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 font-mono text-xs font-bold text-amber-300">
                         {formatNumber(v.number)}
                       </span>

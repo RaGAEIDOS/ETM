@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { AxeBuilder } from "@axe-core/playwright";
+import { waitHydrated } from "./helpers/ui";
 
 const PAGES = [
   ["home", "/"],
@@ -12,6 +13,7 @@ const PAGES = [
   ["english-review", "/english/review"],
   ["cs50x-index", "/cs50x"],
   ["cs50x-lecture", "/cs50x/intro"],
+  ["cs50x-review", "/cs50x/review"],
   ["leaderboard", "/leaderboard"],
   ["playground", "/playground"],
   ["books", "/books"],
@@ -22,7 +24,7 @@ const PAGES = [
 for (const [name, route] of PAGES) {
   test(`axe: ${name} has no critical violations`, async ({ page }) => {
     await page.goto(route, { waitUntil: "domcontentloaded" });
-    await page.waitForLoadState("networkidle");
+    await waitHydrated(page);
     const results = await new AxeBuilder({ page }).analyze();
     const critical = results.violations.filter((v) => v.impact === "critical" || v.impact === "serious");
     const criticalList = critical.map((v) => `${v.id} (${v.impact}): ${v.nodes.length} node(s)`);

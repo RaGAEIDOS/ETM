@@ -25,6 +25,7 @@ import {
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import ResumeCard from "@/components/ResumeCard";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
 import EnglishCourseProgress from "@/components/english/EnglishCourseProgress";
 import EnglishReviewDueCard from "@/components/english/EnglishReviewDueCard";
 import EnglishCredit from "@/components/english/EnglishCredit";
@@ -192,11 +193,21 @@ export default function EnglishHubPage({ params }: { params: { locale: string } 
               {courses.map((course) => {
                 const Icon = COURSE_ICONS[course.icon];
                 const videos = englishVideosOfCourse(course.id);
+                const cover = videos[0];
                 return (
                   <div
                     key={course.id}
                     className="group flex flex-col rounded-2xl border border-white/10 bg-ink-900/60 p-5 transition-all hover:-translate-y-0.5 hover:border-emerald-500/25"
                   >
+                    {cover && (
+                      <div className="-mx-5 -mt-5 mb-4 overflow-hidden rounded-t-2xl border-b border-white/5 bg-black">
+                        <YouTubeThumbnail
+                          youtubeId={cover.youtubeId}
+                          alt={isAr ? course.title : course.titleEn}
+                          className="aspect-video w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+                        />
+                      </div>
+                    )}
                     <span className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${course.color} text-ink-950`}>
                       <Icon className="h-6 w-6" />
                     </span>

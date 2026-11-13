@@ -28,8 +28,15 @@ export const CS50X_EDX_URL = "https://cs50.edx.org/";
 export const CS50X_GRADEBOOK_URL = "https://cs50.me/cs50x";
 export const CS50X_CERTIFICATE_URL = "https://cs50.harvard.edu/certificates";
 export const CS50X_CERTIFICATE_INFO_URL = "https://cs50.harvard.edu/x/certificate/";
+export const CS50X_PSETS_URL = "https://cs50.harvard.edu/x/psets/";
+export const CS50X_PROJECT_URL = "https://cs50.harvard.edu/x/project/";
+export const CS50X_GALLERY_URL = "https://cs50.harvard.edu/x/gallery/";
+/** The official CS50 Shorts playlist. CS50 publishes shorts as topic pages per week (no per-week playlist). */
+export const CS50X_SHORTS_PLAYLIST_URL =
+  "https://www.youtube.com/playlist?list=PLhQjrBD2T381k8ul4WQ8SQ165XqY149WW";
+export const CS50X_SHORTS_URL = "https://cs50.harvard.edu/x/shorts/";
 export const CS50X_CREDIT =
-  "CS50's Introduction to Computer Science (CS50x) by Harvard University and the CS50 staff, licensed under CC BY-NC-SA 4.0. Lecture videos are embedded unmodified from the official CS50 YouTube channel. This platform is not affiliated with Harvard University or CS50.";
+  "CS50x by Harvard University / David J. Malan. Licensed CC BY-NC-SA 4.0. This platform is not affiliated with Harvard or CS50.";
 
 export interface Cs50xKeyTerm {
   en: string;
@@ -104,6 +111,74 @@ import { CS50X_LECTURES_8_13 } from "./cs50x-lectures-2.ts";
 /** All 13 official CS50x lecture videos, in official playlist order. */
 export const CS50X_LECTURES: Cs50xLecture[] = [...CS50X_LECTURES_1_7, ...CS50X_LECTURES_8_13];
 
+/**
+ * The 12 CS50x weeks in official syllabus order (week 0 through week 10 + AI).
+ * The opening "Introduction" video is a welcome lecture, not a week, so it is
+ * not part of this list. Each week's workflow is: lecture → section → shorts →
+ * problem set, all on official CS50 properties.
+ */
+export interface Cs50xWeek {
+  /** Matches the lecture id for the week ("week-0" … "week-10", "ai"). */
+  id: string;
+  /** Display label ("Week 0" / "AI"). */
+  label: string;
+  /** Week topic, as on cs50.harvard.edu/x. */
+  title: string;
+  lectureId: string;
+  weekUrl: string;
+  sectionUrl?: string;
+  psetUrl?: string;
+}
+
+const CS50X_WEEK_DEFS = [
+  ["week-0", "Week 0", "Scratch"],
+  ["week-1", "Week 1", "C"],
+  ["week-2", "Week 2", "Arrays"],
+  ["week-3", "Week 3", "Algorithms"],
+  ["week-4", "Week 4", "Memory"],
+  ["week-5", "Week 5", "Data Structures"],
+  ["week-6", "Week 6", "Python"],
+  ["week-7", "Week 7", "SQL"],
+  ["ai", "AI", "Artificial Intelligence"],
+  ["week-8", "Week 8", "HTML, CSS, JavaScript"],
+  ["week-9", "Week 9", "Flask"],
+  ["week-10", "Week 10", "The End"],
+] as const;
+
+export const CS50X_WEEKS: Cs50xWeek[] = CS50X_WEEK_DEFS.map(([id, label, title]) => {
+  const lecture = CS50X_LECTURES.find((l) => l.id === id);
+  return {
+    id,
+    label,
+    title,
+    lectureId: id,
+    weekUrl: lecture?.weekUrl ?? CS50X_OFFICIAL_SITE,
+    // CS50 has no section page for week 0; the workflow falls back to the week page.
+    sectionUrl: id === "week-0" ? undefined : lecture?.sectionUrl,
+    psetUrl: lecture?.psetUrl ?? CS50X_PSETS_URL,
+  };
+});
+
+/** The final project closes the track after week 10. */
+export const CS50X_FINAL_PROJECT = {
+  id: "final-project",
+  label: "Final Project",
+  title: "Final Project",
+  projectUrl: CS50X_PROJECT_URL,
+  galleryUrl: CS50X_GALLERY_URL,
+} as const;
+
+export function cs50xWeekForLecture(lectureId: string): Cs50xWeek | undefined {
+  return CS50X_WEEKS.find((w) => w.lectureId === lectureId);
+}
+
+/** The pilot release covers week 0 and week 1 end-to-end. */
+export const CS50X_PILOT_WEEKS = ["week-0", "week-1"] as const;
+
+export function isCs50xPilotWeek(id: string): boolean {
+  return (CS50X_PILOT_WEEKS as readonly string[]).includes(id);
+}
+
 /** The ten problem sets + final project on the official psets page. */
 export const CS50X_PSETS = [
   { id: "pset-0", title: "Problem Set 0 — Scratch", url: "https://cs50.harvard.edu/x/psets/0/" },
@@ -173,5 +248,15 @@ export function cs50xCatalogueProblems(): string[] {
     if (l.reviewed) problems.push(`${l.id}: reviewed=true but nothing has been human-reviewed yet`);
   }
   if ((CS50X_PSETS as readonly { id: string }[]).length !== 11) problems.push("expected 10 psets + final project");
+  if (CS50X_WEEKS.length !== 12) problems.push(`expected 12 weeks, got ${CS50X_WEEKS.length}`);
+  const weekIds = new Set<string>();
+  for (const w of CS50X_WEEKS) {
+    if (weekIds.has(w.id)) problems.push(`duplicate week id ${w.id}`);
+    weekIds.add(w.id);
+    if (!CS50X_LECTURES.some((l) => l.id === w.lectureId)) problems.push(`${w.id}: no matching lecture`);
+    if (!w.weekUrl.startsWith("https://cs50.harvard.edu/x/")) problems.push(`${w.id}: bad official week url`);
+    if (w.psetUrl && !w.psetUrl.startsWith("https://cs50.harvard.edu/x/")) problems.push(`${w.id}: bad pset url`);
+    if (w.sectionUrl && !w.sectionUrl.startsWith("https://cs50.harvard.edu/x/")) problems.push(`${w.id}: bad section url`);
+  }
   return problems;
 }

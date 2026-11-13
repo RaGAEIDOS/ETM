@@ -4,6 +4,8 @@ import { PlayCircle, BookMarked, ListChecks, GraduationCap } from "lucide-react"
 import { elzeroVideos, sectionsList } from "@/lib/elzero-videos";
 import { formatNumber, localePath } from "@/lib/i18n/config";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
+import { youtubeIdFromUrl } from "@/lib/youtube";
 
 const COPY = {
   ar: {
@@ -156,12 +158,23 @@ export default function ElzeroPage({ params }: { params: { locale: string } }) {
                 </span>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {vids.map((v) => (
+                {vids.map((v) => {
+                  const youtubeId = youtubeIdFromUrl(v.youtube);
+                  return (
                   <Link
                     key={v.id}
                     href={localePath(locale, `/elzero/${v.id}`)}
                     className="group rounded-2xl border border-white/10 bg-ink-900/60 p-5 hover:border-cyan-500/30 transition-all hover:-translate-y-0.5 block"
                   >
+                    {youtubeId && (
+                      <div className="-mx-5 -mt-5 mb-4 overflow-hidden rounded-t-2xl border-b border-white/5 bg-black">
+                        <YouTubeThumbnail
+                          youtubeId={youtubeId}
+                          alt={`${v.title} — ${v.titleEn}`}
+                          className="aspect-video w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
+                        />
+                      </div>
+                    )}
                     <div className="flex items-start justify-between gap-3">
                       <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs font-mono text-cyan-300">
                         #{v.id}
@@ -199,7 +212,8 @@ export default function ElzeroPage({ params }: { params: { locale: string } }) {
                       </span>
                     </div>
                   </Link>
-                ))}
+                  );
+                })}
               </div>
             </section>
           );

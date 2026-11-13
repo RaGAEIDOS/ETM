@@ -18,7 +18,7 @@
  * "content sync pending" state instead of fabricated content.
  */
 
-import { englishCoursesBulk, englishVideosBulk } from "./english-videos-bulk";
+import { englishCoursesBulk, englishVideosBulk } from "./english-videos-bulk.ts";
 
 export interface EnglishKeyTerm {
   en: string;

@@ -198,9 +198,8 @@ await importEachLesson(async (m, f) => {
       if (new Set(opts).size !== opts.length) fail('lib/elzero-videos.ts', -1, `${tag}: duplicate option strings`);
     });
     const yt = String(v.youtube ?? '');
-    if (yt.includes('watch?v=')) {
-      const mid = yt.match(/watch\?v=([A-Za-z0-9_-]{11})/);
-      if (!mid) fail('lib/elzero-videos.ts', -1, `video #${vid}: youtube URL "${yt.slice(0, 80)}" has no valid v= id`);
+    if (!/^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}/.test(yt)) {
+      fail('lib/elzero-videos.ts', -1, `video #${vid}: youtube URL "${yt.slice(0, 80)}" has no valid v= id`);
     }
   }
   const sorted = [...seenNums].sort((a, b) => a - b);
@@ -217,6 +216,174 @@ await importEachLesson(async (m, f) => {
     const sec = sections.find((s) => v.number >= s.lo && v.number <= s.hi);
     if (sec && sec.ar !== v.section) warn('lib/elzero-videos.ts', -1, `video #${String(v.id).padStart(3, '0')}: section "${v.section}" but lies in range of "${sec.ar}"`);
   }
+}
+
+// ---------- ElZero Web catalogue: integrity ----------
+{
+  const m = await importLib('lib/elzero-web-videos.ts');
+  const videos = m.elzeroWebVideos ?? [];
+  const courses = m.ELZERO_WEB_COURSES ?? [];
+  const sections = m.ELZERO_WEB_SECTIONS ?? [];
+  const courseIds = new Set(courses.map((c) => c.id));
+  const sectionKeys = new Set(sections.map((s) => `${s.course}::${s.id}`));
+  const sectionListed = new Set();
+  for (const s of sections) {
+    if (!courseIds.has(s.course)) fail('lib/elzero-web-videos.ts', -1, `section "${s.course}/${s.id}": unknown course`);
+    for (const n of s.videos ?? []) {
+      if (!Number.isInteger(n) || n < 1) fail('lib/elzero-web-videos.ts', -1, `section "${s.course}/${s.id}": bad video number ${n}`);
+      sectionListed.add(`${s.course}::${n}`);
+    }
+  }
+  const seenIds = new Set();
+  const seenNumbers = new Set();
+  const counts = new Map();
+  for (const v of videos) {
+    const vid = String(v?.id ?? '');
+    if (!vid) fail('lib/elzero-web-videos.ts', -1, 'video with empty id');
+    else if (seenIds.has(vid)) fail('lib/elzero-web-videos.ts', -1, `duplicate video id "${vid}"`);
+    seenIds.add(vid);
+    if (!courseIds.has(v.course)) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": unknown course "${v.course}"`);
+    if (!sectionKeys.has(`${v.course}::${v.section}`)) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": unknown section "${v.course}/${v.section}"`);
+    if (!Number.isInteger(v.number) || v.number < 1) {
+      fail('lib/elzero-web-videos.ts', -1, `video "${vid}": bad number ${v.number}`);
+    } else {
+      const key = `${v.course}::${v.number}`;
+      if (seenNumbers.has(key)) fail('lib/elzero-web-videos.ts', -1, `duplicate number ${v.number} in course "${v.course}"`);
+      seenNumbers.add(key);
+      if (!sectionListed.has(key)) fail('lib/elzero-web-videos.ts', -1, `video "${vid}" (#${v.number}): not listed in any ELZERO_WEB_SECTIONS entry`);
+      counts.set(v.course, (counts.get(v.course) ?? 0) + 1);
+    }
+    if (!/^[A-Za-z0-9_-]{11}$/.test(String(v.youtubeId ?? ''))) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": invalid youtubeId "${v.youtubeId}"`);
+    if (!String(v.youtube ?? '').startsWith('https://www.youtube.com/watch?v=')) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": unexpected youtube URL "${String(v.youtube ?? '').slice(0, 80)}"`);
+    if (!String(v.title ?? '').trim() || !String(v.summary ?? '').trim()) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": empty title/summary`);
+    checkMixed('lib/elzero-web-videos.ts', `video "${vid}" summary`, v.summary);
+    if (typeof v.reviewed !== 'boolean') fail('lib/elzero-web-videos.ts', -1, `video "${vid}": reviewed flag not boolean`);
+    const terms = v.terms ?? [];
+    const practice = v.practice ?? [];
+    if (terms.length > 5) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": ${terms.length} terms (max 5)`);
+    if (practice.length > 5) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": ${practice.length} practice items (max 5)`);
+    if (terms.length > 0 || practice.length > 0) {
+      if (terms.length < 1) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": has practice but zero terms`);
+      if (practice.length < 2) fail('lib/elzero-web-videos.ts', -1, `video "${vid}": only ${practice.length} practice item(s) (need >= 2)`);
+      for (const [ti, t] of terms.entries()) {
+        if (!String(t?.en ?? '').trim() || !String(t?.ar ?? '').trim()) fail('lib/elzero-web-videos.ts', -1, `video "${vid}" term ${ti}: empty en or ar`);
+        checkMixed('lib/elzero-web-videos.ts', `video "${vid}" term ${ti}`, t.ar);
+      }
+      practice.forEach((p, pi) => {
+        const tag = `video "${vid}" practice ${pi} (${p?.type})`;
+        if (!String(p?.prompt ?? '').trim() && p?.type !== 'match') fail('lib/elzero-web-videos.ts', -1, `${tag}: empty prompt`);
+        checkMixed('lib/elzero-web-videos.ts', `${tag} prompt`, p?.prompt);
+        checkMixed('lib/elzero-web-videos.ts', `${tag} explanation`, p?.explanation);
+        if (!String(p?.explanation ?? '').trim()) fail('lib/elzero-web-videos.ts', -1, `${tag}: empty explanation`);
+        if (p.type === 'mcq') {
+          const opts = (p.options ?? []).map((o) => String(o ?? '').trim());
+          if (opts.length < 2) fail('lib/elzero-web-videos.ts', -1, `${tag}: fewer than 2 options`);
+          if (opts.some((o) => !o)) fail('lib/elzero-web-videos.ts', -1, `${tag}: empty option`);
+          if (new Set(opts).size !== opts.length) fail('lib/elzero-web-videos.ts', -1, `${tag}: duplicate option strings`);
+          if (!Number.isInteger(p.answer) || p.answer < 0 || p.answer >= opts.length) fail('lib/elzero-web-videos.ts', -1, `${tag}: invalid answer key ${p.answer}`);
+        } else if (p.type === 'fill') {
+          if (!String(p.answer ?? '').trim()) fail('lib/elzero-web-videos.ts', -1, `${tag}: empty answer`);
+        } else if (p.type === 'order') {
+          const steps = (p.steps ?? []).map((s) => String(s ?? '').trim());
+          if (steps.length < 2) fail('lib/elzero-web-videos.ts', -1, `${tag}: fewer than 2 steps`);
+          if (steps.some((s) => !s)) fail('lib/elzero-web-videos.ts', -1, `${tag}: empty step`);
+          if (new Set(steps).size !== steps.length) fail('lib/elzero-web-videos.ts', -1, `${tag}: duplicate steps`);
+        } else if (p.type === 'match') {
+          const pairs = p.pairs ?? [];
+          if (pairs.length < 2) fail('lib/elzero-web-videos.ts', -1, `${tag}: fewer than 2 pairs`);
+          const lefts = pairs.map((pr) => String(pr?.left ?? '').trim());
+          const rights = pairs.map((pr) => String(pr?.right ?? '').trim());
+          if (lefts.some((x) => !x) || rights.some((x) => !x)) fail('lib/elzero-web-videos.ts', -1, `${tag}: empty pair side`);
+          if (new Set(lefts).size !== lefts.length) fail('lib/elzero-web-videos.ts', -1, `${tag}: duplicate left side`);
+          if (new Set(rights).size !== rights.length) fail('lib/elzero-web-videos.ts', -1, `${tag}: duplicate right side`);
+        } else {
+          fail('lib/elzero-web-videos.ts', -1, `${tag}: unknown type "${p?.type}"`);
+        }
+      });
+    }
+  }
+  for (const c of courses) {
+    const actual = counts.get(c.id) ?? 0;
+    if (actual !== c.lessons) fail('lib/elzero-web-videos.ts', -1, `course "${c.id}": declares ${c.lessons} lessons, found ${actual}`);
+    if (!String(c.playlistUrl ?? '').startsWith('https://www.youtube.com/playlist?list=')) fail('lib/elzero-web-videos.ts', -1, `course "${c.id}": invalid playlistUrl`);
+    if (!String(c.courseUrl ?? '').startsWith('https://elzero.org/')) fail('lib/elzero-web-videos.ts', -1, `course "${c.id}": invalid courseUrl`);
+  }
+  console.log(`elzero-web: ${courses.length} courses, ${videos.length} videos`);
+}
+
+// ---------- English catalogue: integrity ----------
+{
+  const m = await importLib('lib/english-videos.ts');
+  const videos = m.englishVideos ?? [];
+  const courses = m.englishCourses ?? [];
+  const courseIds = new Set(courses.map((c) => c.id));
+  const seenIds = new Set();
+  const seenNumbers = new Set();
+  for (const c of courses) {
+    if (!String(c.id ?? '').trim()) fail('lib/english-videos.ts', -1, 'course with empty id');
+    if (!String(c.playlistUrl ?? '').startsWith('https://www.youtube.com/playlist?list=')) fail('lib/english-videos.ts', -1, `course "${c.id}": invalid playlistUrl`);
+    if (!String(c.title ?? '').trim() || !String(c.titleEn ?? '').trim()) fail('lib/english-videos.ts', -1, `course "${c.id}": empty title/titleEn`);
+  }
+  for (const v of videos) {
+    const vid = String(v?.id ?? '');
+    if (!vid) fail('lib/english-videos.ts', -1, 'video with empty id');
+    else if (seenIds.has(vid)) fail('lib/english-videos.ts', -1, `duplicate video id "${vid}"`);
+    seenIds.add(vid);
+    if (!Number.isInteger(v.number) || v.number < 1) fail('lib/english-videos.ts', -1, `video "${vid}": bad number ${v.number}`);
+    else if (seenNumbers.has(v.number)) fail('lib/english-videos.ts', -1, `duplicate video number ${v.number}`);
+    seenNumbers.add(v.number);
+    if (!courseIds.has(v.courseId)) fail('lib/english-videos.ts', -1, `video "${vid}": unknown courseId "${v.courseId}"`);
+    if (!/^[A-Za-z0-9_-]{11}$/.test(String(v.youtubeId ?? ''))) fail('lib/english-videos.ts', -1, `video "${vid}": invalid youtubeId "${v.youtubeId}"`);
+    if (!/^https:\/\/(www\.youtube\.com\/watch\?v=|youtu\.be\/)[A-Za-z0-9_-]{11}/.test(String(v.youtube ?? ''))) fail('lib/english-videos.ts', -1, `video "${vid}": unexpected youtube URL "${String(v.youtube ?? '').slice(0, 80)}"`);
+    if (!String(v.title ?? '').trim() || !String(v.titleEn ?? '').trim() || !String(v.summary ?? '').trim()) fail('lib/english-videos.ts', -1, `video "${vid}": empty title/titleEn/summary`);
+    if (!String(v.section ?? '').trim() || !String(v.sectionEn ?? '').trim()) fail('lib/english-videos.ts', -1, `video "${vid}": empty section/sectionEn`);
+    checkMixed('lib/english-videos.ts', `video "${vid}" summary`, v.summary);
+    if (typeof v.reviewed !== 'boolean') fail('lib/english-videos.ts', -1, `video "${vid}": reviewed flag not boolean`);
+    const terms = v.terms ?? [];
+    const practice = v.practice ?? [];
+    if (terms.length > 5) fail('lib/english-videos.ts', -1, `video "${vid}": ${terms.length} terms (max 5)`);
+    if (practice.length > 5) fail('lib/english-videos.ts', -1, `video "${vid}": ${practice.length} practice items (max 5)`);
+    if (terms.length > 0 || practice.length > 0) {
+      if (terms.length < 1) fail('lib/english-videos.ts', -1, `video "${vid}": has practice but zero terms`);
+      if (practice.length < 2) fail('lib/english-videos.ts', -1, `video "${vid}": only ${practice.length} practice item(s) (need >= 2)`);
+      for (const [ti, t] of terms.entries()) {
+        if (!String(t?.en ?? '').trim() || !String(t?.ar ?? '').trim()) fail('lib/english-videos.ts', -1, `video "${vid}" term ${ti}: empty en or ar`);
+        checkMixed('lib/english-videos.ts', `video "${vid}" term ${ti}`, t.ar);
+      }
+      practice.forEach((p, pi) => {
+        const tag = `video "${vid}" practice ${pi} (${p?.type})`;
+        if (!String(p?.prompt ?? '').trim() && p?.type !== 'match') fail('lib/english-videos.ts', -1, `${tag}: empty prompt`);
+        checkMixed('lib/english-videos.ts', `${tag} prompt`, p?.prompt);
+        checkMixed('lib/english-videos.ts', `${tag} explanation`, p?.explanation);
+        if (p.type === 'mcq') {
+          const opts = (p.options ?? []).map((o) => String(o ?? '').trim());
+          if (opts.length < 2) fail('lib/english-videos.ts', -1, `${tag}: fewer than 2 options`);
+          if (opts.some((o) => !o)) fail('lib/english-videos.ts', -1, `${tag}: empty option`);
+          if (new Set(opts).size !== opts.length) fail('lib/english-videos.ts', -1, `${tag}: duplicate option strings`);
+          if (!Number.isInteger(p.answer) || p.answer < 0 || p.answer >= opts.length) fail('lib/english-videos.ts', -1, `${tag}: invalid answer key ${p.answer}`);
+        } else if (p.type === 'fill' || p.type === 'dictation') {
+          if (!String(p.answer ?? '').trim()) fail('lib/english-videos.ts', -1, `${tag}: empty answer`);
+          if (p.type === 'dictation' && !String(p.say ?? '').trim()) fail('lib/english-videos.ts', -1, `${tag}: empty dictation text`);
+        } else if (p.type === 'order') {
+          const words = (p.words ?? []).map((w) => String(w ?? '').trim());
+          if (words.length < 2) fail('lib/english-videos.ts', -1, `${tag}: fewer than 2 words`);
+          if (words.some((w) => !w)) fail('lib/english-videos.ts', -1, `${tag}: empty word`);
+          if (!String(p.answer ?? '').trim()) fail('lib/english-videos.ts', -1, `${tag}: empty answer`);
+        } else if (p.type === 'match') {
+          const pairs = p.pairs ?? [];
+          if (pairs.length < 2) fail('lib/english-videos.ts', -1, `${tag}: fewer than 2 pairs`);
+          const lefts = pairs.map((pr) => String(pr?.left ?? '').trim());
+          const rights = pairs.map((pr) => String(pr?.right ?? '').trim());
+          if (lefts.some((x) => !x) || rights.some((x) => !x)) fail('lib/english-videos.ts', -1, `${tag}: empty pair side`);
+          if (new Set(lefts).size !== lefts.length) fail('lib/english-videos.ts', -1, `${tag}: duplicate left side`);
+          if (new Set(rights).size !== rights.length) fail('lib/english-videos.ts', -1, `${tag}: duplicate right side`);
+        } else {
+          fail('lib/english-videos.ts', -1, `${tag}: unknown type "${p?.type}"`);
+        }
+      });
+    }
+  }
+  console.log(`english: ${courses.length} courses, ${videos.length} videos`);
 }
 
 // ---------- linux videos: integrity ----------

@@ -24,6 +24,7 @@ import ResumeCard from "@/components/ResumeCard";
 import LinuxCourseProgress from "@/components/linux/LinuxCourseProgress";
 import LinuxReviewDueCard from "@/components/linux/LinuxReviewDueCard";
 import LinuxCredit from "@/components/linux/LinuxCredit";
+import YouTubeThumbnail from "@/components/YouTubeThumbnail";
 
 const COPY = {
   ar: {
@@ -159,6 +160,15 @@ export default function LinuxHubPage({ params }: { params: { locale: string } })
       {/* The course card */}
       <h2 className="mb-5 text-2xl font-black text-white">{c.coursesTitle}</h2>
       <div className="rounded-2xl border border-white/10 bg-ink-900/60 p-6 transition-all hover:border-amber-500/25">
+        {linuxVideos[0] && (
+          <div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-2xl border-b border-white/5 bg-black">
+            <YouTubeThumbnail
+              youtubeId={linuxVideos[0].youtubeId}
+              alt={course.title}
+              className="aspect-video w-full object-cover opacity-90 transition-opacity hover:opacity-100"
+            />
+          </div>
+        )}
         <div className="flex flex-wrap items-start gap-4">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-ink-950">
             <Terminal className="h-7 w-7" />
