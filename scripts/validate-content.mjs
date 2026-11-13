@@ -77,7 +77,7 @@ const STRAY_RANGES = [
   [0xac00, 0xd7af, 'Hangul syllables'],
   [0xff00, 0xffef, 'Fullwidth forms'],
 ];
-const SCAN_EXCLUDE = new Set(['node_modules', '.next', '.git', 'test-results', 'playwright-report']);
+const SCAN_EXCLUDE = new Set(['node_modules', '.next', '.git', 'test-results', 'playwright-report', 'out']);
 const SCAN_EXT = new Set(['.ts', '.tsx', '.md', '.json', '.mjs', '.yml', '.css', '.html']);
 function scanStray(dir) {
   for (const entry of fs.readdirSync(dir)) {
@@ -215,6 +215,90 @@ await importEachLesson(async (m, f) => {
   }
 }
 
+// ---------- linux videos: integrity ----------
+{
+  const m = await importLib('lib/linux-videos.ts');
+  const videos = m.linuxVideos ?? [];
+  const sections = m.LINUX_SECTIONS ?? [];
+  const sectionIds = new Set(sections.map((s) => s.id));
+  const sectionVideos = new Set();
+  for (const s of sections) {
+    for (const n of s.videos ?? []) sectionVideos.add(Number(n));
+    const badIds = (s.videos ?? []).filter((n) => !Number.isInteger(n) || n < 1 || n > 53);
+    if (badIds.length) fail('lib/linux-videos.ts', -1, `section "${s.id}": video numbers out of 1..53: ${badIds.join(', ')}`);
+  }
+  const seenIds = new Set();
+  const seenNums = new Set();
+  for (const v of videos) {
+    const vid = String(v?.id ?? '');
+    if (!/^lnx-\d{2}$/.test(vid)) fail('lib/linux-videos.ts', -1, `video id "${vid}" not matching lnx-NN`);
+    else if (seenIds.has(vid)) fail('lib/linux-videos.ts', -1, `duplicate video id "${vid}"`);
+    seenIds.add(vid);
+    if (!Number.isInteger(v.number) || v.number < 1 || v.number > 53) fail('lib/linux-videos.ts', -1, `video "${vid}": number ${v.number} out of 1..53`);
+    else if (seenNums.has(v.number)) fail('lib/linux-videos.ts', -1, `duplicate video number ${v.number}`);
+    seenNums.add(v.number);
+    if (vid !== `lnx-${String(v.number).padStart(2, '0')}`) fail('lib/linux-videos.ts', -1, `video id "${vid}" != number ${v.number}`);
+    if (!sectionIds.has(v.section)) fail('lib/linux-videos.ts', -1, `video "${vid}": unknown section "${v.section}"`);
+    if (!String(v.title ?? '').trim() || !String(v.summary ?? '').trim()) fail('lib/linux-videos.ts', -1, `video "${vid}": empty title/summary`);
+    checkMixed('lib/linux-videos.ts', `video "${vid}" title`, v.title);
+    checkMixed('lib/linux-videos.ts', `video "${vid}" summary`, v.summary);
+    if (!sectionVideos.has(Number(v.number))) fail('lib/linux-videos.ts', -1, `video "${vid}" (#${v.number}): not listed in any LINUX_SECTIONS entry`);
+    const yt = String(v.youtube ?? '');
+    const embedOk = /^[A-Za-z0-9_-]{11}$/.test(String(v.youtubeId ?? ''));
+    if (!embedOk) fail('lib/linux-videos.ts', -1, `video "${vid}": invalid youtubeId "${v.youtubeId}"`);
+    if (!yt.startsWith('https://www.youtube.com/watch?v=')) fail('lib/linux-videos.ts', -1, `video "${vid}": youtube URL "${yt.slice(0, 80)}" unexpected`);
+    if (typeof v.reviewed !== 'boolean') fail('lib/linux-videos.ts', -1, `video "${vid}": reviewed flag not boolean`);
+    const terms = v.terms ?? [];
+    const practice = v.practice ?? [];
+    // Bulk lessons (11-53) ship empty terms/practice until curated — that is
+    // allowed; lessons WITH content must be complete.
+    if (terms.length > 0 || practice.length > 0) {
+      if (terms.length < 1) fail('lib/linux-videos.ts', -1, `video "${vid}": has practice but zero terms`);
+      if (practice.length < 2) fail('lib/linux-videos.ts', -1, `video "${vid}": only ${practice.length} practice item(s) (need >= 2)`);
+      for (const [ti, t] of terms.entries()) {
+        if (!String(t?.en ?? '').trim() || !String(t?.ar ?? '').trim()) fail('lib/linux-videos.ts', -1, `video "${vid}" term ${ti}: empty en or ar`);
+        checkMixed('lib/linux-videos.ts', `video "${vid}" term ${ti}`, t.ar);
+      }
+      if (terms.length > 5) fail('lib/linux-videos.ts', -1, `video "${vid}": ${terms.length} terms (max 5)`);
+      if (practice.length > 5) fail('lib/linux-videos.ts', -1, `video "${vid}": ${practice.length} practice items (max 5)`);
+      practice.forEach((p, pi) => {
+        const tag = `video "${vid}" practice ${pi} (${p?.type})`;
+        if (!String(p?.prompt ?? '').trim() && p?.type !== 'match') fail('lib/linux-videos.ts', -1, `${tag}: empty prompt`);
+        checkMixed('lib/linux-videos.ts', `${tag} prompt`, p?.prompt);
+        checkMixed('lib/linux-videos.ts', `${tag} explanation`, p?.explanation);
+        if (!String(p?.explanation ?? '').trim()) fail('lib/linux-videos.ts', -1, `${tag}: empty explanation`);
+        if (p.type === 'mcq') {
+          const opts = (p.options ?? []).map((o) => String(o ?? '').trim());
+          if (opts.length < 2) fail('lib/linux-videos.ts', -1, `${tag}: fewer than 2 options`);
+          if (opts.some((o) => !o)) fail('lib/linux-videos.ts', -1, `${tag}: empty option`);
+          if (new Set(opts).size !== opts.length) fail('lib/linux-videos.ts', -1, `${tag}: duplicate option strings`);
+          if (!Number.isInteger(p.answer) || p.answer < 0 || p.answer >= opts.length) fail('lib/linux-videos.ts', -1, `${tag}: invalid answer key ${p.answer}`);
+        } else if (p.type === 'cmd' || p.type === 'chmod') {
+          if (!String(p.answer ?? '').trim()) fail('lib/linux-videos.ts', -1, `${tag}: empty answer`);
+          if (!Array.isArray(p.accept) || p.accept.length === 0) fail('lib/linux-videos.ts', -1, `${tag}: empty accept list`);
+          else if (p.accept.some((a) => !String(a ?? '').trim())) fail('lib/linux-videos.ts', -1, `${tag}: empty accept entry`);
+        } else if (p.type === 'order') {
+          const steps = (p.steps ?? []).map((s) => String(s ?? '').trim());
+          if (steps.length < 2) fail('lib/linux-videos.ts', -1, `${tag}: fewer than 2 steps`);
+          if (steps.some((s) => !s)) fail('lib/linux-videos.ts', -1, `${tag}: empty step`);
+          if (new Set(steps).size !== steps.length) fail('lib/linux-videos.ts', -1, `${tag}: duplicate steps`);
+        } else if (p.type === 'match') {
+          const pairs = p.pairs ?? [];
+          if (pairs.length < 2) fail('lib/linux-videos.ts', -1, `${tag}: fewer than 2 pairs`);
+          const lefts = pairs.map((pr) => String(pr?.left ?? '').trim());
+          const rights = pairs.map((pr) => String(pr?.right ?? '').trim());
+          if (lefts.some((x) => !x) || rights.some((x) => !x)) fail('lib/linux-videos.ts', -1, `${tag}: empty pair side`);
+          if (new Set(lefts).size !== lefts.length) fail('lib/linux-videos.ts', -1, `${tag}: duplicate left side`);
+          if (new Set(rights).size !== rights.length) fail('lib/linux-videos.ts', -1, `${tag}: duplicate right side`);
+        } else {
+          fail('lib/linux-videos.ts', -1, `${tag}: unknown type "${p?.type}"`);
+        }
+      });
+    }
+  }
+  for (let i = 1; i <= 53; i++) if (!seenNums.has(i)) fail('lib/linux-videos.ts', -1, `missing video number ${i}`);
+}
+
 // ---------- glossary: schema + curated-coverage advisory ----------
 {
   const m = await importLib('lib/glossary.ts');
@@ -236,6 +320,9 @@ await importEachLesson(async (m, f) => {
     for (const l of m2.lessons ?? [])
       for (const t of l.terms ?? []) referenced.add(String(t.en).toLowerCase());
   });
+  const linuxGlossary = await importLib('lib/linux-videos.ts');
+  for (const v of linuxGlossary.linuxVideos ?? [])
+    for (const t of v.terms ?? []) referenced.add(String(t.en).toLowerCase());
   for (const t of terms) {
     if (!referenced.has(String(t.en).toLowerCase())) warn('lib/glossary.ts', -1, `glossary term "${t.en}" not referenced by any lesson term (informational)`);
   }
@@ -337,11 +424,26 @@ await importEachLesson(async (m, f) => {
     return segs;
   });
   const videoIds = new Set(elzeroVideos.map((v) => String(v.id)));
+  const { linuxVideos: linuxVideosRaw, linuxCourses: linuxCoursesRaw } = await importLib('lib/linux-videos.ts');
+  const linuxVideoIds = new Set((linuxVideosRaw ?? []).map((v) => String(v.id)));
+  const linuxCourseIds = new Set((linuxCoursesRaw ?? []).map((c) => String(c.id)));
   const paramChecks = {
-    stage: (v, segs) => stageIds.has(segs[1]),
-    course: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
-    lesson: (v, segs) => courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1] && Boolean(lessonsByCourse.get(segs[2])?.has(segs[3])),
-    video: (v, segs) => (segs[0] === 'cs50x' ? cs50xLectureIds.has(segs[1]) : videoIds.has(segs[1])),
+    stage: (v, segs) => segs[0] === 'learn' && stageIds.has(segs[1]),
+    course: (v, segs) =>
+      segs[0] === 'linux'
+        ? linuxCourseIds.has(segs[2])
+        : courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
+    lesson: (v, segs) =>
+      segs[0] === 'learn' &&
+      courseIds.has(segs[2]) &&
+      courseStage.get(segs[2]) === segs[1] &&
+      Boolean(lessonsByCourse.get(segs[2])?.has(segs[3])),
+    video: (v, segs) =>
+      segs[0] === 'cs50x'
+        ? cs50xLectureIds.has(segs[1])
+        : segs[0] === 'linux'
+          ? linuxVideoIds.has(segs[1])
+          : videoIds.has(segs[1]),
   };
   const resolves = (pathname) => {
     let segs = pathname.split('/').filter(Boolean);

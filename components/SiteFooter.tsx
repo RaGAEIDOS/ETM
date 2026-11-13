@@ -15,6 +15,7 @@ const COPY = {
     english: "قسم الإنجليزية",
     cs50x: "مسار CS50x",
     leaderboard: "صدارة المتعلمين",
+    linux: "قسم لينكس",
     playground: "محرر C++",
     projects: "المشاريع",
     glossary: "المصطلحات",
@@ -35,6 +36,7 @@ const COPY = {
     english: "English Section",
     cs50x: "CS50x Track",
     leaderboard: "Front-Runners",
+    linux: "Linux Section",
     playground: "C++ Playground",
     projects: "Projects",
     glossary: "Glossary",
@@ -87,6 +89,7 @@ export default function SiteFooter() {
               <li><Link href="/english" className="hover:text-cyan-300 transition-colors">{c.english}</Link></li>
               <li><Link href="/cs50x" className="hover:text-cyan-300 transition-colors">{c.cs50x}</Link></li>
               <li><Link href="/leaderboard" className="hover:text-cyan-300 transition-colors">{c.leaderboard}</Link></li>
+              <li><Link href="/linux" className="hover:text-cyan-300 transition-colors">{c.linux}</Link></li>
               <li><Link href="/playground" className="hover:text-cyan-300 transition-colors">{c.playground}</Link></li>
               <li><Link href="/projects" className="hover:text-cyan-300 transition-colors">{c.projects}</Link></li>
               <li><Link href="/glossary" className="hover:text-cyan-300 transition-colors">{c.glossary}</Link></li>

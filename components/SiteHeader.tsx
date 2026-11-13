@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Terminal, Menu, X, Flame, User } from "lucide-react";
+
+import { useEffect, useRef, useState } from "react";
+import { Terminal, Menu, X, Flame, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import Link from "@/lib/i18n/navigation";
 import { useCanonicalPathname } from "@/lib/i18n/navigation";
@@ -12,8 +12,6 @@ import LanguageSwitcher from "./LanguageSwitcher";
 const NAV = [
   { href: "/", key: "home" },
   { href: "/curriculum", key: "curriculum" },
-  { href: "/elzero", key: "elzero" },
-  { href: "/english", key: "english" },
   { href: "/cs50x", key: "cs50x" },
   { href: "/playground", key: "playground" },
   { href: "/projects", key: "projects" },
@@ -23,13 +21,22 @@ const NAV = [
   { href: "/leaderboard", key: "leaderboard" },
 ] as const;
 
+/** Course tracks grouped under the "Courses" dropdown (URLs unchanged). */
+const COURSE_LINKS = [
+  { href: "/elzero", key: "elzero" },
+  { href: "/english", key: "english" },
+  { href: "/linux", key: "linux" },
+] as const;
+
 const COPY = {
   ar: {
     home: "الرئيسية",
     curriculum: "المنهج",
+    courses: "الدورات",
     elzero: "ElZero",
     english: "الإنجليزية",
     cs50x: "CS50x من Harvard",
+    linux: "لينكس",
     playground: "المحرر",
     leaderboard: "صدارة المتعلمين",
     projects: "المشاريع",
@@ -45,9 +52,11 @@ const COPY = {
   en: {
     home: "Home",
     curriculum: "Curriculum",
+    courses: "Courses",
     elzero: "ElZero",
     english: "English",
     cs50x: "CS50x — Harvard",
+    linux: "Linux",
     playground: "Playground",
     leaderboard: "Front-Runners",
     projects: "Projects",
@@ -63,18 +72,48 @@ const COPY = {
 } as const;
 
 export default function SiteHeader() {
-  const pathname = usePathname();
   const canonical = useCanonicalPathname();
   const [open, setOpen] = useState(false);
+  const [coursesOpen, setCoursesOpen] = useState(false);
+  const coursesRef = useRef<HTMLDivElement>(null);
   const { user, ready } = useAuth();
   const c = useCopy(COPY);
   // Guest-only marketing landing: no app navigation tabs at all
   const bare = canonical === "/landing";
 
+  // Close menus on navigation
+  useEffect(() => {
+    setOpen(false);
+    setCoursesOpen(false);
+  }, [canonical]);
+
+  // Close the courses dropdown on outside click / Escape
+  useEffect(() => {
+    if (!coursesOpen) return;
+    const onClickOutside = (e: MouseEvent) => {
+      if (coursesRef.current && !coursesRef.current.contains(e.target as Node)) {
+        setCoursesOpen(false);
+      }
+    };
+    const onEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCoursesOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onEscape);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onEscape);
+    };
+  }, [coursesOpen]);
+
   const isActive = (href: string) =>
     href === "/"
       ? canonical === "/"
       : canonical === href || canonical.startsWith(`${href}/`);
+
+  const coursesActive = COURSE_LINKS.some((l) => isActive(l.href));
+  const navBeforeCourses = NAV.slice(0, 2); // home + curriculum
+  const navAfterCourses = NAV.slice(2);
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
@@ -97,7 +136,67 @@ export default function SiteHeader() {
               aria-label={c.menu}
               className="hidden lg:flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
-              {NAV.map((item) => {
+              {navBeforeCourses.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                      active
+                        ? "text-cyan-300 bg-cyan-500/10"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    {c[item.key]}
+                  </Link>
+                );
+              })}
+              <div className="relative" ref={coursesRef}>
+                <button
+                  type="button"
+                  onClick={() => setCoursesOpen((v) => !v)}
+                  aria-expanded={coursesOpen}
+                  aria-haspopup="menu"
+                  className={`flex items-center gap-1 px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                    coursesActive
+                      ? "text-cyan-300 bg-cyan-500/10"
+                      : "text-slate-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  {c.courses}
+                  <ChevronDown
+                    className={`h-3.5 w-3.5 transition-transform ${coursesOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {coursesOpen && (
+                  <div
+                    role="menu"
+                    aria-label={c.courses}
+                    className="absolute start-0 top-full z-50 mt-2 w-52 rounded-2xl border border-white/10 bg-ink-900/95 p-2 shadow-xl backdrop-blur"
+                  >
+                    {COURSE_LINKS.map((item) => {
+                      const active = isActive(item.href);
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          role="menuitem"
+                          aria-current={active ? "page" : undefined}
+                          className={`block rounded-xl px-3 py-2.5 text-sm transition-colors ${
+                            active
+                              ? "font-bold text-cyan-300 bg-cyan-500/10"
+                              : "font-semibold text-slate-300 hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          {c[item.key]}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              {navAfterCourses.map((item) => {
                 const active = isActive(item.href);
                 return (
                   <Link
@@ -177,7 +276,47 @@ export default function SiteHeader() {
           <div className="px-3 pb-2 sm:hidden">
             <LanguageSwitcher />
           </div>
-          {NAV.map((item) => {
+          {navBeforeCourses.map((item) => {
+            const active = isActive(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className={`px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center ${
+                  active
+                    ? "text-cyan-300 bg-cyan-500/10"
+                    : "text-slate-300 hover:bg-white/5"
+                }`}
+              >
+                {c[item.key]}
+              </Link>
+            );
+          })}
+          <p className="px-3 pt-2 pb-1 text-[10px] font-black uppercase tracking-widest text-slate-600">
+            {c.courses}
+          </p>
+          <div className="ms-3 border-s border-white/10 ps-3 space-y-1">
+            {COURSE_LINKS.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  aria-current={active ? "page" : undefined}
+                  className={`px-3 py-3 rounded-lg text-base font-semibold min-h-[48px] flex items-center ${
+                    active
+                      ? "text-cyan-300 bg-cyan-500/10"
+                      : "text-slate-300 hover:bg-white/5"
+                  }`}
+                >
+                  {c[item.key]}
+                </Link>
+              );
+            })}
+          </div>
+          {navAfterCourses.map((item) => {
             const active = isActive(item.href);
             return (
               <Link

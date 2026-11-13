@@ -165,6 +165,16 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
       body: "Your personal front-runners board: XP, level, streak and the milestone ladder — every number computed locally from your real progress.",
     },
   },
+  linux: {
+    ar: {
+      title: "قسم لينكس 🐧",
+      body: "دورة Linuxtopia العربية «تعلم نظام اللينكس 2021»: ملخص عربي وأسئلة لكل فيديو، فلاش كارد، ومعمل طرفية محاكاة — تجرّب كل حاجة بأمان من غير ما تبوظ جهازك.",
+    },
+    en: {
+      title: "Linux section 🐧",
+      body: "Linuxtopia's Arabic Linux course (2021): Arabic summaries, flashcards, quizzes and a fully simulated browser terminal — nothing real ever runs, you learn by understanding.",
+    },
+  },
   dashboard: {
     ar: {
       title: "الداش بورد 📊",
@@ -286,6 +296,7 @@ export function tipForPath(pathname: string, locale: Locale): MikuTip {
   if (n.startsWith("/english")) return PAGE_TIPS.english[locale];
   if (n.startsWith("/cs50x")) return PAGE_TIPS.cs50x[locale];
   if (n.startsWith("/leaderboard")) return PAGE_TIPS.leaderboard[locale];
+  if (n.startsWith("/linux")) return PAGE_TIPS.linux[locale];
   if (n.startsWith("/dashboard")) return PAGE_TIPS.dashboard[locale];
   if (n.startsWith("/progress")) return PAGE_TIPS.progress[locale];
   if (n.startsWith("/projects")) return PAGE_TIPS.projects[locale];

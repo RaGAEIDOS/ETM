@@ -9,6 +9,7 @@
  *   etm-english-notes-v1     JSON map videoId -> { text, updatedAt } (Phase 4)
  *   etm-cs50x-notes-v1       JSON map lectureId -> { text, updatedAt }
  *   etm-cs50x-certificate-v1 JSON { done: string[], updatedAt: string }
+ *   etm-linux-notes-v1       JSON map videoId -> { text, updatedAt } (Linux)
  *
  * Legacy keys (etm-progress-v1, etm-progress-<uid>, etm-activity-days,
  * etm-focus-log) are READ ONCE during migration and never written again or
@@ -47,6 +48,12 @@ import {
   importCs50xNotes,
   loadCs50xNotes,
 } from "../cs50x-notes";
+import {
+  LINUX_NOTES_KEY,
+  deleteLinuxNotes,
+  importLinuxNotes,
+  loadLinuxNotes,
+} from "../linux-notes";
 
 const V2_KEY = "etm-progress-v2";
 const MIGRATED_KEY = "etm-progress-v2-migrated";
@@ -267,7 +274,9 @@ export function toggleCompletion(track: Track, itemId: string, topic?: string): 
         ? stats.doneEnglishVideoIds.includes(itemId)
         : track === "cs50x"
           ? stats.doneCs50xVideoIds.includes(itemId)
-          : stats.doneLessonIds.includes(itemId);
+          : track === "linux"
+            ? stats.doneLinuxVideoIds.includes(itemId)
+            : stats.doneLessonIds.includes(itemId);
   trackEvent(track, done ? "lesson_uncompleted" : "lesson_completed", { itemId, topic });
   return !done;
 }
@@ -277,6 +286,7 @@ export function isItemDone(file: ProgressFile, track: Track, itemId: string): bo
   if (track === "elzero") return stats.doneVideoIds.includes(itemId);
   if (track === "english") return stats.doneEnglishVideoIds.includes(itemId);
   if (track === "cs50x") return stats.doneCs50xVideoIds.includes(itemId);
+  if (track === "linux") return stats.doneLinuxVideoIds.includes(itemId);
   return stats.doneLessonIds.includes(itemId);
 }
 
@@ -299,6 +309,7 @@ export function exportMyData(): string {
       ...file,
       englishNotes: loadEnglishNotes(),
       cs50xNotes: loadCs50xNotes(),
+      linuxNotes: loadLinuxNotes(),
     },
     null,
     2,
@@ -308,12 +319,14 @@ export function exportMyData(): string {
 export function importMyData(json: string): { ok: boolean; mergedEvents: number; error?: string } {
   try {
     const raw = JSON.parse(json) as unknown;
-    // English notes (Phase 4) ride along as an optional extra section.
+    // English + Linux notes ride along as optional extra sections.
     const notes = (raw as { englishNotes?: unknown } | null)?.englishNotes;
     if (notes && typeof notes === "object") importEnglishNotes(notes);
     // CS50x notes ride along the same way.
     const cs50xNotes = (raw as { cs50xNotes?: unknown } | null)?.cs50xNotes;
     if (cs50xNotes && typeof cs50xNotes === "object") importCs50xNotes(cs50xNotes);
+    const linuxNotes = (raw as { linuxNotes?: unknown } | null)?.linuxNotes;
+    if (linuxNotes && typeof linuxNotes === "object") importLinuxNotes(linuxNotes);
     const parsed = parseProgressFile(raw);
     const current = loadProgressFile();
     const merged = mergeEvents(current.events, parsed.events);
@@ -347,6 +360,8 @@ export function deleteMyData(): void {
           k === CS50X_CERT_KEY ||
           k.startsWith(`${ENGLISH_NOTES_KEY}-corrupt-`) ||
           k.startsWith(`${CS50X_NOTES_KEY}-corrupt-`) ||
+          k === LINUX_NOTES_KEY ||
+          k.startsWith(`${LINUX_NOTES_KEY}-corrupt-`) ||
           k.startsWith(`${V2_KEY}-corrupt-`) ||
           k.startsWith(USER_PREFIX) ||
           k.startsWith(LASTSYNC_PREFIX))
@@ -367,6 +382,7 @@ export function deleteMyData(): void {
   deleteEnglishNotes();
   deleteCs50xNotes();
   deleteCs50xCertificate();
+  deleteLinuxNotes();
   try {
     window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
   } catch {
@@ -430,7 +446,9 @@ export function useProgressStore(): ProgressStore {
         ? stats.doneVideoIds.includes(itemId)
         : track === "english"
           ? stats.doneEnglishVideoIds.includes(itemId)
-          : stats.doneLessonIds.includes(itemId),
+          : track === "linux"
+            ? stats.doneLinuxVideoIds.includes(itemId)
+            : stats.doneLessonIds.includes(itemId),
     [stats]
   );
 
