@@ -61,9 +61,9 @@ const COPY = {
       " — راديو مجاني يدعمه المستمعون. اختر المحطة التي تضعك في منطقة التركيز.",
     lofiTitle: "لوفي هادئ للتركيز",
     lofiNote:
-      "يفتح في نافذة جديدة (YouTube أو Spotify) — لا تشغيل تلقائي هنا أبدًا.",
+      "يوتيوب يفتح في نافذة جديدة — سبوتيفاي يعمل هنا مباشرة. لا تشغيل تلقائي أبدًا.",
     lofiYoutube: "Lofi Girl · YouTube",
-    lofiSpotify: "قائمة Spotify",
+    spotifyEmbedTitle: "قائمة Spotify — لوفي للتركيز",
     pomodoroTimer: "مؤقّت Pomodoro",
   },
   en: {
@@ -90,9 +90,9 @@ const COPY = {
       " - free, listener-supported radio. Pick the one that gets you in the zone.",
     lofiTitle: "Calm lofi for focus",
     lofiNote:
-      "Opens in a new tab (YouTube or Spotify) — nothing ever autoplays here.",
+      "YouTube opens in a new tab — Spotify plays inline here. Nothing ever autoplays.",
     lofiYoutube: "Lofi Girl · YouTube",
-    lofiSpotify: "Spotify playlist",
+    spotifyEmbedTitle: "Spotify playlist — focus lofi",
     pomodoroTimer: "Pomodoro timer",
   },
 } as const;
@@ -695,16 +695,16 @@ export default function Pomodoro() {
                       <Radio className="h-3 w-3 text-rose-400" />
                       {c.lofiYoutube}
                     </a>
-                    <a
-                      href="https://open.spotify.com/playlist/2lbGxqs4WSMxVmMuIsolNr"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:bg-white/10"
-                    >
-                      <Radio className="h-3 w-3 text-emerald-400" />
-                      {c.lofiSpotify}
-                    </a>
                   </div>
+                  <iframe
+                    src="https://open.spotify.com/embed/playlist/2lbGxqs4WSMxVmMuIsolNr?utm_source=generator&theme=0"
+                    width="100%"
+                    height="152"
+                    className="mt-2 rounded-xl border-0"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                    title={c.spotifyEmbedTitle}
+                  />
                   <p className="mt-2 text-[10px] leading-4 text-slate-500">{c.lofiNote}</p>
                 </div>
               </div>

@@ -53,7 +53,7 @@ export default function AdBanners() {
             rails.current[i] = el;
           }}
           aria-hidden="true"
-          className={`hidden xl:block fixed top-1/2 z-40 h-[100px] w-[300px] -translate-y-1/2 ${
+          className={`hidden xl:block fixed top-1/2 z-30 h-[100px] w-[300px] -translate-y-1/2 overflow-hidden rounded-xl ${
             zone.side === "right" ? "right-2" : "left-2"
           }`}
         />

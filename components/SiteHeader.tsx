@@ -137,7 +137,7 @@ export default function SiteHeader() {
             <div className="hidden lg:flex min-w-0 flex-1 items-center justify-start gap-0.5">
               <nav
                 aria-label={c.menu}
-                className="flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="flex shrink-0 items-center justify-start gap-0.5"
               >
                 {navBeforeCourses.map((item) => {
                   const active = isActive(item.href);
@@ -145,7 +145,7 @@ export default function SiteHeader() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                      className={`px-1.5 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
                         active
                           ? "text-cyan-300 bg-cyan-500/10"
                           : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -213,7 +213,7 @@ export default function SiteHeader() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                      className={`px-1.5 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
                         active
                           ? "text-cyan-300 bg-cyan-500/10"
                           : "text-slate-400 hover:text-white hover:bg-white/5"
