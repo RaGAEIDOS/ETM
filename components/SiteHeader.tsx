@@ -136,27 +136,32 @@ export default function SiteHeader() {
           </Link>
 
           {!bare && (
-            <nav
-              aria-label={c.menu}
-              className="hidden lg:flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {navBeforeCourses.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
-                      active
-                        ? "text-cyan-300 bg-cyan-500/10"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {c[item.key]}
-                  </Link>
-                );
-              })}
-              <div className="relative" ref={coursesRef}>
+            <div className="hidden lg:flex min-w-0 flex-1 items-center justify-start gap-0.5">
+              <nav
+                aria-label={c.menu}
+                className="flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {navBeforeCourses.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                        active
+                          ? "text-cyan-300 bg-cyan-500/10"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {c[item.key]}
+                    </Link>
+                  );
+                })}
+              </nav>
+              {/* The dropdown lives OUTSIDE the overflow-x-auto nav so its
+                  menu is not clipped vertically (overflow-x:auto forces
+                  overflow-y to clip). */}
+              <div className="relative shrink-0" ref={coursesRef}>
                 <button
                   type="button"
                   onClick={() => setCoursesOpen((v) => !v)}
@@ -200,23 +205,28 @@ export default function SiteHeader() {
                   </div>
                 )}
               </div>
-              {navAfterCourses.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
-                      active
-                        ? "text-cyan-300 bg-cyan-500/10"
-                        : "text-slate-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    {c[item.key]}
-                  </Link>
-                );
-              })}
-            </nav>
+              <nav
+                aria-label={c.menu}
+                className="flex min-w-0 flex-1 items-center justify-start gap-0.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              >
+                {navAfterCourses.map((item) => {
+                  const active = isActive(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                        active
+                          ? "text-cyan-300 bg-cyan-500/10"
+                          : "text-slate-400 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      {c[item.key]}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
           )}
 
           <div className="flex items-center gap-2 shrink-0">
