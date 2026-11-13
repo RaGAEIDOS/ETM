@@ -6,6 +6,7 @@ import { formatNumber } from "@/lib/i18n/config";
 import { ArrowLeft, Target } from "lucide-react";
 import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
+import { ELZERO_WEB_COURSES } from "@/lib/elzero-web-videos";
 import type { DerivedProgress } from "@/lib/progress/core";
 
 const COPY = {
@@ -36,6 +37,9 @@ function topicLabel(topic: string, isAr: boolean): string {
       return isAr ? v.section : v.sectionEn;
     }
   }
+  for (const course of ELZERO_WEB_COURSES) {
+    if (course.id === topic) return isAr ? course.title : course.titleEn;
+  }
   return topic;
 }
 
@@ -44,6 +48,9 @@ function topicHref(topic: string): string {
     for (const c of s.courses) {
       if (c.id === topic) return `/learn/${s.id}/${c.id}`;
     }
+  }
+  if (ELZERO_WEB_COURSES.some((course) => course.id === topic)) {
+    return `/elzero-web/course/${topic}`;
   }
   return "/elzero";
 }

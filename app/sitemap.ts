@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
+import { ELZERO_WEB_COURSES, elzeroWebVideos } from "@/lib/elzero-web-videos";
 import { englishCourses, englishVideos } from "@/lib/english-videos";
 import { CS50X_LECTURES } from "@/lib/cs50x";
 import { linuxVideos } from "@/lib/linux-videos";
@@ -47,6 +48,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   entries.push(entry("/elzero", "weekly", 0.9));
   elzeroVideos.forEach((video) => {
     entries.push(entry(`/elzero/${video.id}`, "monthly", 0.5));
+  });
+  entries.push(entry("/elzero-web", "weekly", 0.9));
+  ELZERO_WEB_COURSES.forEach((course) => {
+    entries.push(entry(`/elzero-web/course/${course.id}`, "monthly", 0.6));
+  });
+  elzeroWebVideos.forEach((video) => {
+    entries.push(entry(`/elzero-web/${video.id}`, "monthly", 0.5));
   });
   entries.push(entry("/english", "weekly", 0.9));
   englishCourses.forEach((course) => {

@@ -4,10 +4,11 @@ import { useEffect, useRef } from "react";
 
 /**
  * HilltopAds banner rails — desktop (>=1280px) only.
- * Two 300x100 fixed side rails (physical right/left). The zone loaders are
- * injected on the client inside their rail so any inline-rendered creative
- * lands in place; below 1280px nothing is injected and nothing renders.
- * Codes provided by the site owner (their HilltopAds dashboard).
+ * Both banners are stacked vertically on the physical right edge and render
+ * at their creatives' natural size (no fixed-height clipping). The zone
+ * loaders are injected on the client inside their rail so any inline-rendered
+ * creative lands in place; below 1280px nothing is injected and nothing
+ * renders. Codes provided by the site owner (their HilltopAds dashboard).
  */
 const AD_ZONES = [
   {
@@ -45,7 +46,7 @@ export default function AdBanners() {
   }, []);
 
   return (
-    <>
+    <div className="hidden xl:flex fixed top-1/2 right-2 z-30 -translate-y-1/2 flex-col items-end gap-4">
       {AD_ZONES.map((zone, i) => (
         <div
           key={zone.side}
@@ -53,11 +54,9 @@ export default function AdBanners() {
             rails.current[i] = el;
           }}
           aria-hidden="true"
-          className={`hidden xl:block fixed top-1/2 z-30 h-[100px] w-[300px] -translate-y-1/2 overflow-hidden rounded-xl ${
-            zone.side === "right" ? "right-2" : "left-2"
-          }`}
+          className="shrink-0"
         />
       ))}
-    </>
+    </div>
   );
 }

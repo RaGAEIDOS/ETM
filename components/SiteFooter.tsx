@@ -11,6 +11,7 @@ const COPY = {
     platform: "المنصة",
     curriculum: "المنهج",
     elzero: "فيديوهات ElZero",
+    elzeroWeb: "مسار الويب ElZero",
     english: "قسم الإنجليزية",
     programmingadvices: "Programming Advices",
     cs50x: "مسار CS50x",
@@ -32,6 +33,7 @@ const COPY = {
     platform: "Platform",
     curriculum: "Curriculum",
     elzero: "ElZero Videos",
+    elzeroWeb: "ElZero Web Track",
     english: "English Section",
     programmingadvices: "Programming Advices",
     cs50x: "CS50x Track",
@@ -85,6 +87,7 @@ export default function SiteFooter() {
             <ul className="space-y-2.5 text-sm text-slate-400">
               <li><Link href="/curriculum" className="hover:text-cyan-300 transition-colors">{c.curriculum}</Link></li>
               <li><Link href="/elzero" className="hover:text-cyan-300 transition-colors">{c.elzero}</Link></li>
+              <li><Link href="/elzero-web" className="hover:text-cyan-300 transition-colors">{c.elzeroWeb}</Link></li>
               <li><Link href="/english" className="hover:text-cyan-300 transition-colors">{c.english}</Link></li>
               <li><Link href="/programmingadvices" className="hover:text-cyan-300 transition-colors">{c.programmingadvices}</Link></li>
               <li><Link href="/cs50x" className="hover:text-cyan-300 transition-colors">{c.cs50x}</Link></li>

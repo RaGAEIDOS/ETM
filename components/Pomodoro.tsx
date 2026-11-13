@@ -14,6 +14,12 @@ import {
   Moon,
   ChevronDown,
   ChevronUp,
+  AudioLines,
+  CloudRain,
+  MoonStar,
+  Waves,
+  Rocket,
+  Flame,
 } from "lucide-react";
 import { useMiku } from "./Miku";
 import { trackEvent } from "@/lib/progress/store";
@@ -21,6 +27,12 @@ import { POMODORO_MESSAGES } from "@/lib/miku";
 import { useLocale, useCopy } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
+import {
+  AMBIENTS,
+  AmbientEngine,
+  isAmbientKind,
+  type AmbientKind,
+} from "@/lib/ambient-sounds";
 
 type Mode = "focus" | "short" | "long";
 
@@ -34,6 +46,14 @@ const MODE_ICONS: Record<Mode, typeof Brain> = {
   focus: Brain,
   short: Coffee,
   long: Moon,
+};
+
+const AMBIENT_ICONS: Record<AmbientKind, typeof Brain> = {
+  rain: CloudRain,
+  night: MoonStar,
+  ocean: Waves,
+  space: Rocket,
+  fire: Flame,
 };
 
 const COPY = {
@@ -64,6 +84,10 @@ const COPY = {
       "يوتيوب يفتح في نافذة جديدة — سبوتيفاي يعمل هنا مباشرة. لا تشغيل تلقائي أبدًا.",
     lofiYoutube: "Lofi Girl · YouTube",
     spotifyEmbedTitle: "قائمة Spotify — لوفي للتركيز",
+    ambientTitle: "أصوات محيطة",
+    ambientVolume: "مستوى صوت المحيط",
+    ambientNote:
+      "تُولَّد هذه الأصوات في متصفحك مباشرة — لا ملفات خارجية ولا تحميل.",
     pomodoroTimer: "مؤقّت Pomodoro",
   },
   en: {
@@ -93,12 +117,17 @@ const COPY = {
       "YouTube opens in a new tab — Spotify plays inline here. Nothing ever autoplays.",
     lofiYoutube: "Lofi Girl · YouTube",
     spotifyEmbedTitle: "Spotify playlist — focus lofi",
+    ambientTitle: "Ambient sounds",
+    ambientVolume: "Ambient volume",
+    ambientNote:
+      "These sounds are generated live in your browser - no external files, no downloads.",
     pomodoroTimer: "Pomodoro timer",
   },
 } as const;
 
 const STORAGE_KEY = "etm-pomodoro-v1";
 const RADIO_KEY = "etm-radio-v1";
+const AMBIENT_KEY = "etm-ambient-v1";
 const FOCUS_PRESETS = [15, 25, 50];
 
 interface RadioStation {
@@ -232,9 +261,12 @@ export default function Pomodoro() {
   const [radioOn, setRadioOn] = useState(false);
   const [radioVol, setRadioVol] = useState(0.5);
   const [radioId, setRadioId] = useState(RADIOS[0].id);
+  const [ambId, setAmbId] = useState<AmbientKind | null>(null);
+  const [ambVol, setAmbVol] = useState(0.5);
   const [mounted, setMounted] = useState(false);
 
   const radioRef = useRef<HTMLAudioElement | null>(null);
+  const ambRef = useRef<AmbientEngine | null>(null);
   const modeRef = useRef<Mode>("focus");
   const focusLenRef = useRef(25);
   const hiddenAtRef = useRef<number | null>(null);
@@ -288,6 +320,15 @@ export default function Pomodoro() {
           if (s.on) setRadioOn(true);
         }
       } catch {}
+      try {
+        const savedAmb = localStorage.getItem(AMBIENT_KEY);
+        if (savedAmb) {
+          const s = JSON.parse(savedAmb) as { id?: unknown; vol?: number };
+          if (isAmbientKind(s.id)) setAmbId(s.id);
+          if (typeof s.vol === "number")
+            setAmbVol(Math.min(1, Math.max(0, s.vol)));
+        }
+      } catch {}
     } catch {}
   }, []);
 
@@ -311,6 +352,16 @@ export default function Pomodoro() {
       );
     } catch {}
   }, [mounted, radioOn, radioId, radioVol]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    try {
+      localStorage.setItem(
+        AMBIENT_KEY,
+        JSON.stringify({ id: ambId, vol: ambVol })
+      );
+    } catch {}
+  }, [mounted, ambId, ambVol]);
 
   const duration =
     mode === "focus" ? focusLen * 60 : MODE_DURATIONS[mode];
@@ -413,10 +464,27 @@ export default function Pomodoro() {
     if (radioRef.current) radioRef.current.volume = radioVol;
   }, [radioVol]);
 
+  // ---- ambient sound engine ----
+  useEffect(() => {
+    if (!mounted) return;
+    if (ambId) {
+      if (!ambRef.current) ambRef.current = new AmbientEngine();
+      ambRef.current.start(ambId);
+    } else {
+      ambRef.current?.stop();
+    }
+  }, [mounted, ambId]);
+
+  useEffect(() => {
+    ambRef.current?.setVolume(ambVol);
+  }, [ambVol]);
+
   useEffect(() => {
     return () => {
       radioRef.current?.pause();
       radioRef.current = null;
+      ambRef.current?.dispose();
+      ambRef.current = null;
     };
   }, []);
 
@@ -709,6 +777,60 @@ export default function Pomodoro() {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* ambient sounds */}
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+            <div className="flex items-center gap-2 text-sm font-bold text-white">
+              <AudioLines className="h-4 w-4 text-cyan-400" />
+              {c.ambientTitle}
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {AMBIENTS.map((s) => {
+                const AmbIcon = AMBIENT_ICONS[s.id];
+                const active = ambId === s.id;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => setAmbId((cur) => (cur === s.id ? null : s.id))}
+                    className={`flex items-center gap-2 rounded-lg border px-2.5 py-2 text-start transition-colors ${
+                      active
+                        ? "border-cyan-500/40 bg-cyan-500/10"
+                        : "border-white/10 bg-white/5 hover:bg-white/10"
+                    }`}
+                    aria-pressed={active}
+                    aria-label={s.name[locale]}
+                  >
+                    <AmbIcon
+                      className={`h-4 w-4 shrink-0 ${
+                        active ? "text-cyan-300" : "text-slate-400"
+                      }`}
+                    />
+                    <span className="text-[11px] font-bold leading-4 text-white">
+                      {s.name[locale]}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {ambId && (
+              <div className="mt-3 flex items-center gap-3">
+                <span className="text-xs text-slate-500">{c.volume}</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.05}
+                  value={ambVol}
+                  onChange={(e) => setAmbVol(Number(e.target.value))}
+                  className="flex-1 accent-cyan-400"
+                  dir="ltr"
+                  aria-label={c.ambientVolume}
+                />
+              </div>
+            )}
+            <p className="mt-2 text-[10px] leading-4 text-slate-600">{c.ambientNote}</p>
           </div>
         </div>
       )}

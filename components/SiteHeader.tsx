@@ -25,6 +25,7 @@ const NAV = [
 /** Course tracks grouped under the "Courses" dropdown (URLs unchanged). */
 const COURSE_LINKS = [
   { href: "/elzero", key: "elzero" },
+  { href: "/elzero-web", key: "elzeroWeb" },
   { href: "/english", key: "english" },
   { href: "/linux", key: "linux" },
   { href: "/programmingadvices", key: "programmingadvices" },
@@ -36,6 +37,7 @@ const COPY = {
     curriculum: "المنهج",
     courses: "الدورات",
     elzero: "ElZero",
+    elzeroWeb: "ElZero Web",
     english: "الإنجليزية",
     cs50x: "CS50x من Harvard",
     linux: "لينكس",
@@ -57,6 +59,7 @@ const COPY = {
     curriculum: "Curriculum",
     courses: "Courses",
     elzero: "ElZero",
+    elzeroWeb: "ElZero Web",
     english: "English",
     cs50x: "CS50x — Harvard",
     linux: "Linux",
