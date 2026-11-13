@@ -8,6 +8,7 @@ import Link from "@/lib/i18n/navigation";
 import { useCanonicalPathname } from "@/lib/i18n/navigation";
 import { useCopy } from "@/lib/i18n/context";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 const NAV = [
   { href: "/", key: "home" },
@@ -26,6 +27,7 @@ const COURSE_LINKS = [
   { href: "/elzero", key: "elzero" },
   { href: "/english", key: "english" },
   { href: "/linux", key: "linux" },
+  { href: "/programmingadvices", key: "programmingadvices" },
 ] as const;
 
 const COPY = {
@@ -37,6 +39,7 @@ const COPY = {
     english: "الإنجليزية",
     cs50x: "CS50x من Harvard",
     linux: "لينكس",
+    programmingadvices: "Programming Advices",
     playground: "المحرر",
     leaderboard: "صدارة المتعلمين",
     projects: "المشاريع",
@@ -57,6 +60,7 @@ const COPY = {
     english: "English",
     cs50x: "CS50x — Harvard",
     linux: "Linux",
+    programmingadvices: "Programming Advices",
     playground: "Playground",
     leaderboard: "Front-Runners",
     projects: "Projects",
@@ -216,6 +220,7 @@ export default function SiteHeader() {
           )}
 
           <div className="flex items-center gap-2 shrink-0">
+            <ThemeSwitcher className="hidden sm:block" />
             <LanguageSwitcher className="hidden sm:inline-flex" />
             {ready && user ? (
               <Link
@@ -275,6 +280,9 @@ export default function SiteHeader() {
         <nav className="lg:hidden border-t border-white/5 bg-ink-900/95 px-4 py-3 space-y-1 max-h-[70vh] overflow-y-auto">
           <div className="px-3 pb-2 sm:hidden">
             <LanguageSwitcher />
+          </div>
+          <div className="px-3 pb-2 sm:hidden">
+            <ThemeSwitcher />
           </div>
           {navBeforeCourses.map((item) => {
             const active = isActive(item.href);

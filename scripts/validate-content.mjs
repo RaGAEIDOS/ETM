@@ -386,6 +386,163 @@ await importEachLesson(async (m, f) => {
   console.log(`english: ${courses.length} courses, ${videos.length} videos`);
 }
 
+// ---------- Programming Advices: integrity + legal boundaries ----------
+{
+  const m = await importLib('lib/programmingadvices-videos.ts');
+  const videos = m.paVideos ?? [];
+  const courses = m.paCourses ?? [];
+  const courseIds = new Set(courses.map((c) => c.id));
+  const expectedCourses = new Map([
+    ['pa-foundations', { number: 1, playlistId: 'PL3X--QIIK-OHgMV2yBz3GLfM5d_5BxOSj', count: 20 }],
+    ['pa-algorithms', { number: 2, playlistId: 'PL3X--QIIK-OEUIwbQU79V76RHelBUQKiz', count: 50 }],
+  ]);
+  if (courses.length !== 2) fail('lib/programmingadvices-videos.ts', -1, `expected exactly 2 courses, got ${courses.length}`);
+  const seenCourseIds = new Set();
+  for (const c of courses) {
+    const expected = expectedCourses.get(c.id);
+    if (!expected) fail('lib/programmingadvices-videos.ts', -1, `unexpected course "${c.id}" (only the two approved courses are allowed)`);
+    else if (seenCourseIds.has(c.id)) fail('lib/programmingadvices-videos.ts', -1, `duplicate course id "${c.id}"`);
+    seenCourseIds.add(c.id);
+    if (!expected) continue;
+    if (c.number !== expected.number) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": number ${c.number} != ${expected.number}`);
+    if (c.playlistId !== expected.playlistId) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": wrong playlistId "${c.playlistId}"`);
+    if (c.videoCount !== expected.count) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": videoCount ${c.videoCount} != ${expected.count}`);
+    if (!String(c.title ?? '').trim() || !String(c.titleEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": empty title/titleEn`);
+    if (!String(c.shortTitle ?? '').trim() || !String(c.shortTitleEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": empty shortTitle/shortTitleEn`);
+    if (!String(c.description ?? '').trim() || !String(c.descriptionEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": empty description/descriptionEn`);
+    if (c.playlistUrl !== `https://www.youtube.com/playlist?list=${expected.playlistId}`) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": unexpected playlistUrl`);
+    if (!/^https:\/\/programmingadvices\.com\/p\/[A-Za-z0-9]+$/.test(String(c.officialPageUrl ?? ''))) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": invalid officialPageUrl`);
+    if (!/^from-[a-z]+-\d+ to-[a-z]+-\d+$/.test(String(c.color ?? ''))) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": invalid color "${c.color}"`);
+    if (c.icon !== 'foundations' && c.icon !== 'algorithms') fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": invalid icon "${c.icon}"`);
+  }
+  if (m.externalContent?.permissionGranted !== false) fail('lib/programmingadvices-videos.ts', -1, 'externalContent.permissionGranted must stay false');
+  const requiredCredit =
+    'Content by Dr. Mohammed Abu-Hadhoud / Programming Advices on YouTube. This platform is not affiliated with Programming Advices.';
+  if (m.ETM_PA_CREDIT !== requiredCredit) fail('lib/programmingadvices-videos.ts', -1, 'ETM_PA_CREDIT differs from the required credit line');
+  if (!/Programming Advices/.test(String(m.ETM_PA_CREDIT_AR ?? ''))) fail('lib/programmingadvices-videos.ts', -1, 'ETM_PA_CREDIT_AR must name Programming Advices');
+  if (!/^https:\/\/www\.youtube\.com\/c\/ProgrammingAdvices$/.test(String(m.ETM_PA_CHANNEL ?? ''))) fail('lib/programmingadvices-videos.ts', -1, 'invalid ETM_PA_CHANNEL');
+  if (!/^https:\/\/programmingadvices\.com\//.test(String(m.ETM_PA_TERMS ?? ''))) fail('lib/programmingadvices-videos.ts', -1, 'invalid ETM_PA_TERMS');
+
+  const sentences = (text) => (String(text).match(/[.!?؟]/g) ?? []).length;
+  const seenIds = new Set();
+  const seenNumbers = new Map();
+  const perCourse = new Map();
+  for (const v of videos) {
+    const vid = String(v?.id ?? '');
+    const match = vid.match(/^pa([12])-(\d{2})$/);
+    if (!match) fail('lib/programmingadvices-videos.ts', -1, `video id "${vid}" not matching pa1-NN / pa2-NN`);
+    else if (seenIds.has(vid)) fail('lib/programmingadvices-videos.ts', -1, `duplicate video id "${vid}"`);
+    seenIds.add(vid);
+    if (!courseIds.has(v.courseId)) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": unknown courseId "${v.courseId}"`);
+    const expectedCourse = match?.[1] === '1' ? 'pa-foundations' : 'pa-algorithms';
+    if (v.courseId !== expectedCourse) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": prefix/courseId mismatch (${v.courseId})`);
+    const course = courses.find((c) => c.id === v.courseId);
+    if (!Number.isInteger(v.number) || v.number < 1 || v.number > (course?.videoCount ?? 0)) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": number ${v.number} out of 1..${course?.videoCount ?? 0}`);
+    if (match && Number(match[2]) !== v.number) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": id suffix != number ${v.number}`);
+    const key = `${v.courseId}:${v.number}`;
+    if (seenNumbers.has(key)) fail('lib/programmingadvices-videos.ts', -1, `duplicate number ${v.number} in course "${v.courseId}"`);
+    seenNumbers.set(key, vid);
+    perCourse.set(v.courseId, (perCourse.get(v.courseId) ?? 0) + 1);
+    if (!/^[A-Za-z0-9_-]{11}$/.test(String(v.youtubeId ?? ''))) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": invalid youtubeId "${v.youtubeId}"`);
+    if (!/^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}&list=[A-Za-z0-9_-]+$/.test(String(v.youtube ?? ''))) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": unexpected youtube URL`);
+    if (!String(v.youtube ?? '').includes(`v=${v.youtubeId}`)) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": youtube URL does not carry its video id`);
+    if (!course?.playlistId || !String(v.youtube).includes(`list=${course.playlistId}`)) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": youtube URL does not carry the course playlist`);
+    if (!/^PT(?:\d+H)?(?:\d+M)?(?:\d+S)?$/.test(String(v.duration ?? ''))) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": invalid ISO duration "${v.duration}"`);
+    if (!String(v.title ?? '').trim() || !String(v.titleEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": empty title/titleEn`);
+    if (!String(v.summary ?? '').trim() || !String(v.summaryEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": empty summary/summaryEn`);
+    if (!String(v.section ?? '').trim() || !String(v.sectionEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": empty section/sectionEn`);
+    checkMixed('lib/programmingadvices-videos.ts', `video "${vid}" summary`, v.summary);
+    checkMixed('lib/programmingadvices-videos.ts', `video "${vid}" section`, v.section);
+    const arSentences = sentences(v.summary);
+    if (arSentences < 2 || arSentences > 4) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": Arabic summary has ${arSentences} sentences (need 2..4)`);
+    if (typeof v.reviewed !== 'boolean') fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": reviewed flag not boolean`);
+    if (v.embeddable !== undefined && typeof v.embeddable !== 'boolean') fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": embeddable flag not boolean`);
+    const terms = v.terms ?? [];
+    const practice = v.practice ?? [];
+    if (terms.length < 1) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": zero key terms`);
+    if (terms.length > 5) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": ${terms.length} terms (max 5)`);
+    if (practice.length < 3) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": ${practice.length} practice item(s) (need >= 3)`);
+    if (practice.length > 5) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}": ${practice.length} practice items (max 5)`);
+    for (const [ti, t] of terms.entries()) {
+      if (!String(t?.en ?? '').trim() || !String(t?.ar ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}" term ${ti}: empty en or ar`);
+      checkMixed('lib/programmingadvices-videos.ts', `video "${vid}" term ${ti}`, t.ar);
+      if (t.example) {
+        if (!String(t.example.en ?? '').trim() || !String(t.example.ar ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `video "${vid}" term ${ti}: incomplete example`);
+        checkMixed('lib/programmingadvices-videos.ts', `video "${vid}" term ${ti} example`, t.example.ar);
+      }
+    }
+    practice.forEach((p, pi) => {
+      const tag = `video "${vid}" practice ${pi} (${p?.type})`;
+      if (!String(p?.hint ?? '').trim() || !String(p?.hintEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty hint/hintEn`);
+      if (!String(p?.explanation ?? '').trim() || !String(p?.explanationEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty explanation/explanationEn`);
+      checkMixed('lib/programmingadvices-videos.ts', `${tag} hint`, p?.hint);
+      checkMixed('lib/programmingadvices-videos.ts', `${tag} explanation`, p?.explanation);
+      if (p?.type !== 'match') {
+        if (!String(p?.prompt ?? '').trim() || !String(p?.promptEn ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty prompt/promptEn`);
+        checkMixed('lib/programmingadvices-videos.ts', `${tag} prompt`, p?.prompt);
+      }
+      if (p.type === 'mcq') {
+        const opts = (p.options ?? []).map((o) => String(o ?? '').trim());
+        if (opts.length < 2) fail('lib/programmingadvices-videos.ts', -1, `${tag}: fewer than 2 options`);
+        if (opts.some((o) => !o)) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty option`);
+        if (new Set(opts).size !== opts.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: duplicate option strings`);
+        if (!Number.isInteger(p.answer) || p.answer < 0 || p.answer >= opts.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: invalid answer key ${p.answer}`);
+        if (p.optionsEn !== undefined) {
+          if (!Array.isArray(p.optionsEn) || p.optionsEn.length !== opts.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: optionsEn length mismatch`);
+          if (p.optionsEn.some((o) => !String(o ?? '').trim())) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty English option`);
+        }
+      } else if (p.type === 'fill' || p.type === 'trace' || p.type === 'pseudocode') {
+        if (!String(p.answer ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty answer`);
+        if ((p.type === 'trace' || p.type === 'pseudocode') && !String(p.code ?? '').trim()) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty code snippet`);
+        if (p.accept !== undefined && (!Array.isArray(p.accept) || p.accept.some((a) => !String(a ?? '').trim()))) fail('lib/programmingadvices-videos.ts', -1, `${tag}: invalid accept list`);
+      } else if (p.type === 'match') {
+        const pairs = p.pairs ?? [];
+        if (pairs.length < 2) fail('lib/programmingadvices-videos.ts', -1, `${tag}: fewer than 2 pairs`);
+        const lefts = pairs.map((pr) => String(pr?.left ?? '').trim());
+        const rights = pairs.map((pr) => String(pr?.right ?? '').trim());
+        if (lefts.some((x) => !x) || rights.some((x) => !x)) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty pair side`);
+        if (new Set(lefts).size !== lefts.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: duplicate left side`);
+        if (new Set(rights).size !== rights.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: duplicate right side`);
+        if (pairs.some((pr) => pr.rightEn !== undefined && !String(pr.rightEn).trim())) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty rightEn`);
+      } else if (p.type === 'order') {
+        const steps = (p.steps ?? []).map((s) => String(s ?? '').trim());
+        if (steps.length < 2) fail('lib/programmingadvices-videos.ts', -1, `${tag}: fewer than 2 steps`);
+        if (steps.some((s) => !s)) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty step`);
+        if (new Set(steps).size !== steps.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: duplicate steps`);
+        if (p.stepsEn !== undefined) {
+          if (!Array.isArray(p.stepsEn) || p.stepsEn.length !== steps.length) fail('lib/programmingadvices-videos.ts', -1, `${tag}: stepsEn length mismatch`);
+          if (p.stepsEn.some((s) => !String(s ?? '').trim())) fail('lib/programmingadvices-videos.ts', -1, `${tag}: empty English step`);
+        }
+      } else {
+        fail('lib/programmingadvices-videos.ts', -1, `${tag}: unknown type "${p?.type}"`);
+      }
+    });
+  }
+  for (const c of courses) {
+    const count = perCourse.get(c.id) ?? 0;
+    if (count > c.videoCount) fail('lib/programmingadvices-videos.ts', -1, `course "${c.id}": ${count} videos exceeds declared ${c.videoCount}`);
+  }
+  // The roadmap CTA is allowed at most once across the whole PA UI.
+  let roadmapLinks = 0;
+  for (const dir of ['app', 'components']) {
+    const walk = (d) => {
+      for (const entry of fs.readdirSync(d)) {
+        const p = path.join(d, entry);
+        const st = fs.statSync(p);
+        if (st.isDirectory()) walk(p);
+        else if (p.endsWith('.tsx')) {
+          const src = fs.readFileSync(p, 'utf8');
+          roadmapLinks += (src.match(/https:\/\/programmingadvices\.com\/courses/g) ?? []).length;
+          roadmapLinks += (src.match(/href=\{ETM_PA_ROADMAP\}/g) ?? []).length;
+        }
+      }
+    };
+    walk(path.join(cwd, dir));
+  }
+  if (roadmapLinks > 1) fail('components/', -1, `roadmap link appears ${roadmapLinks} times (max 1)`);
+  console.log(`programmingadvices: ${courses.length} courses, ${videos.length} videos`);
+}
+
 // ---------- linux videos: integrity ----------
 {
   const m = await importLib('lib/linux-videos.ts');
@@ -598,12 +755,17 @@ await importEachLesson(async (m, f) => {
   const { linuxVideos: linuxVideosRaw, linuxCourses: linuxCoursesRaw } = await importLib('lib/linux-videos.ts');
   const linuxVideoIds = new Set((linuxVideosRaw ?? []).map((v) => String(v.id)));
   const linuxCourseIds = new Set((linuxCoursesRaw ?? []).map((c) => String(c.id)));
+  const { paVideos: paVideosRaw, paCourses: paCoursesRaw } = await importLib('lib/programmingadvices-videos.ts');
+  const paVideoIds = new Set((paVideosRaw ?? []).map((v) => String(v.id)));
+  const paCourseIds = new Set((paCoursesRaw ?? []).map((c) => String(c.id)));
   const paramChecks = {
     stage: (v, segs) => segs[0] === 'learn' && stageIds.has(segs[1]),
     course: (v, segs) =>
       segs[0] === 'linux'
         ? linuxCourseIds.has(segs[2])
-        : courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
+        : segs[0] === 'programmingadvices'
+          ? paCourseIds.has(segs[2])
+          : courseIds.has(segs[2]) && courseStage.get(segs[2]) === segs[1],
     lesson: (v, segs) =>
       segs[0] === 'learn' &&
       courseIds.has(segs[2]) &&
@@ -614,7 +776,9 @@ await importEachLesson(async (m, f) => {
         ? cs50xLectureIds.has(segs[1])
         : segs[0] === 'linux'
           ? linuxVideoIds.has(segs[1])
-          : videoIds.has(segs[1]),
+          : segs[0] === 'programmingadvices'
+            ? paVideoIds.has(segs[1])
+            : videoIds.has(segs[1]),
   };
   const resolves = (pathname) => {
     let segs = pathname.split('/').filter(Boolean);

@@ -59,6 +59,11 @@ const COPY = {
     radioNote: "بثوث حية من ",
     radioNoteEnd:
       " — راديو مجاني يدعمه المستمعون. اختر المحطة التي تضعك في منطقة التركيز.",
+    lofiTitle: "لوفي هادئ للتركيز",
+    lofiNote:
+      "يفتح في نافذة جديدة (YouTube أو Spotify) — لا تشغيل تلقائي هنا أبدًا.",
+    lofiYoutube: "Lofi Girl · YouTube",
+    lofiSpotify: "قائمة Spotify",
     pomodoroTimer: "مؤقّت Pomodoro",
   },
   en: {
@@ -82,7 +87,12 @@ const COPY = {
     radioVolume: "Radio volume",
     radioNote: "Live streams by ",
     radioNoteEnd:
-      " — free, listener-supported radio. Pick the one that gets you in the zone.",
+      " - free, listener-supported radio. Pick the one that gets you in the zone.",
+    lofiTitle: "Calm lofi for focus",
+    lofiNote:
+      "Opens in a new tab (YouTube or Spotify) — nothing ever autoplays here.",
+    lofiYoutube: "Lofi Girl · YouTube",
+    lofiSpotify: "Spotify playlist",
     pomodoroTimer: "Pomodoro timer",
   },
 } as const;
@@ -673,6 +683,30 @@ export default function Pomodoro() {
                   </a>
                   {c.radioNoteEnd}
                 </p>
+                <div className="mt-3 rounded-lg border border-violet-500/20 bg-violet-500/[0.06] p-2.5">
+                  <p className="text-[11px] font-bold text-violet-200">{c.lofiTitle}</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <a
+                      href="https://www.youtube.com/watch?v=jfKfPfyJRdk"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:bg-white/10"
+                    >
+                      <Radio className="h-3 w-3 text-rose-400" />
+                      {c.lofiYoutube}
+                    </a>
+                    <a
+                      href="https://open.spotify.com/playlist/2lbGxqs4WSMxVmMuIsolNr"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:bg-white/10"
+                    >
+                      <Radio className="h-3 w-3 text-emerald-400" />
+                      {c.lofiSpotify}
+                    </a>
+                  </div>
+                  <p className="mt-2 text-[10px] leading-4 text-slate-500">{c.lofiNote}</p>
+                </div>
               </div>
             )}
           </div>

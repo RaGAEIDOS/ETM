@@ -10,6 +10,7 @@
  *   etm-cs50x-notes-v1       JSON map lectureId -> { text, updatedAt }
  *   etm-cs50x-certificate-v1 JSON { done: string[], updatedAt: string }
  *   etm-linux-notes-v1       JSON map videoId -> { text, updatedAt } (Linux)
+ *   etm-programmingadvices-notes-v1 JSON map lessonId -> { text, updatedAt }
  *
  * Legacy keys (etm-progress-v1, etm-progress-<uid>, etm-activity-days,
  * etm-focus-log) are READ ONCE during migration and never written again or
@@ -54,6 +55,12 @@ import {
   importLinuxNotes,
   loadLinuxNotes,
 } from "../linux-notes";
+import {
+  PA_NOTES_KEY,
+  deletePANotes,
+  importPANotes,
+  loadPANotes,
+} from "../programmingadvices-notes";
 
 const V2_KEY = "etm-progress-v2";
 const MIGRATED_KEY = "etm-progress-v2-migrated";
@@ -272,7 +279,9 @@ export function toggleCompletion(track: Track, itemId: string, topic?: string): 
       ? stats.doneVideoIds.includes(itemId)
       : track === "english"
         ? stats.doneEnglishVideoIds.includes(itemId)
-        : track === "cs50x"
+        : track === "programmingadvices"
+          ? stats.doneProgrammingAdvicesVideoIds.includes(itemId)
+          : track === "cs50x"
           ? stats.doneCs50xVideoIds.includes(itemId)
           : track === "linux"
             ? stats.doneLinuxVideoIds.includes(itemId)
@@ -285,6 +294,7 @@ export function isItemDone(file: ProgressFile, track: Track, itemId: string): bo
   const stats = deriveProgress(file.events);
   if (track === "elzero") return stats.doneVideoIds.includes(itemId);
   if (track === "english") return stats.doneEnglishVideoIds.includes(itemId);
+  if (track === "programmingadvices") return stats.doneProgrammingAdvicesVideoIds.includes(itemId);
   if (track === "cs50x") return stats.doneCs50xVideoIds.includes(itemId);
   if (track === "linux") return stats.doneLinuxVideoIds.includes(itemId);
   return stats.doneLessonIds.includes(itemId);
@@ -310,6 +320,7 @@ export function exportMyData(): string {
       englishNotes: loadEnglishNotes(),
       cs50xNotes: loadCs50xNotes(),
       linuxNotes: loadLinuxNotes(),
+      programmingadvicesNotes: loadPANotes(),
     },
     null,
     2,
@@ -327,6 +338,8 @@ export function importMyData(json: string): { ok: boolean; mergedEvents: number;
     if (cs50xNotes && typeof cs50xNotes === "object") importCs50xNotes(cs50xNotes);
     const linuxNotes = (raw as { linuxNotes?: unknown } | null)?.linuxNotes;
     if (linuxNotes && typeof linuxNotes === "object") importLinuxNotes(linuxNotes);
+    const paNotes = (raw as { programmingadvicesNotes?: unknown } | null)?.programmingadvicesNotes;
+    if (paNotes && typeof paNotes === "object") importPANotes(paNotes);
     const parsed = parseProgressFile(raw);
     const current = loadProgressFile();
     const merged = mergeEvents(current.events, parsed.events);
@@ -362,6 +375,8 @@ export function deleteMyData(): void {
           k.startsWith(`${CS50X_NOTES_KEY}-corrupt-`) ||
           k === LINUX_NOTES_KEY ||
           k.startsWith(`${LINUX_NOTES_KEY}-corrupt-`) ||
+          k === PA_NOTES_KEY ||
+          k.startsWith(`${PA_NOTES_KEY}-corrupt-`) ||
           k.startsWith(`${V2_KEY}-corrupt-`) ||
           k.startsWith(USER_PREFIX) ||
           k.startsWith(LASTSYNC_PREFIX))
@@ -383,6 +398,7 @@ export function deleteMyData(): void {
   deleteCs50xNotes();
   deleteCs50xCertificate();
   deleteLinuxNotes();
+  deletePANotes();
   try {
     window.dispatchEvent(new Event(PROGRESS_CHANGE_EVENT));
   } catch {
@@ -446,9 +462,11 @@ export function useProgressStore(): ProgressStore {
         ? stats.doneVideoIds.includes(itemId)
         : track === "english"
           ? stats.doneEnglishVideoIds.includes(itemId)
-          : track === "linux"
-            ? stats.doneLinuxVideoIds.includes(itemId)
-            : stats.doneLessonIds.includes(itemId),
+          : track === "programmingadvices"
+            ? stats.doneProgrammingAdvicesVideoIds.includes(itemId)
+            : track === "linux"
+              ? stats.doneLinuxVideoIds.includes(itemId)
+              : stats.doneLessonIds.includes(itemId),
     [stats]
   );
 

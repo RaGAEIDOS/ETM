@@ -3,7 +3,7 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-13 · **Branch**: `fix/thumbnails-cs50-final-check` (from `feature/cs50x` @ `0305b03`); ElZero Web catalogue merged; Linux pilot merged from `feature/linux-course` @ `40c2352`
+**Updated**: 2026-11-13 · **Branch**: `feature/programmingadvices-free-courses` (from `fix/thumbnails-cs50-final-check`); Programming Advices pilot + site themes + Pomodoro lofi; all uncommitted on this branch
 
 ## Final check — thumbnails + CS50x pilot (2026-11-13, 15-line digest)
 
@@ -122,6 +122,7 @@ node scripts/recon-screenshots.mjs            # needs server on :3100
 - **Phase 4 published to production (2026-11-12)**: user approved ("انشر"). Merged `feat/phase-4-english-section` into `main` → merge commit `1b5719f` (no conflicts; `git merge-tree` pre-checked), re-ran typecheck/lint/`test:content --strict`/build on the merge result (all green), pushed `main`. Vercel production is live: `etm-learning.vercel.app/english` now shows the 20-lesson list, `/english/002` renders tabs + `reviewed:false` banner, `/en/english` shows the English lesson list; the old "sync pending" notice is gone. CI run #6 on `main` triggered by the push (full gates on `main`). Home handoff ZIP @ `8a57a8e` remains available; `main` is now ahead of it.
 - **Phase 4 full catalogue (2026-11-12)**: all 36 educational playlists on the @ZAmericanEnglish channel fetched via Invidious (`out/english-course-playlists.json`, 458 real videos / 427 unique ids) and generated into `lib/english-videos-bulk.ts` (31 new courses + 438 lessons, ids 021-458, `reviewed:false`, empty terms/practice by design; cross-playlist duplicates kept so each course is complete). `englishCourses` now carries a `group` (level1/level2/level3/special) and is sorted by curriculum level; the hub groups cards by level with a 36-course/458-video count and links to new `/english/course/[id]` pages (72 SSG pages) instead of listing 458 lessons inline. Sitemap gains the 36 course pages. E2E updated for the grouped hub + new course page + a11y route. Gates: typecheck/lint/`test:content --strict` clean, unit 39/39, build 1489 static pages (916 lesson pages), E2E 195/195 chromium-desktop (2026-11-12). Generated scripts: `scripts/fetch-english-courses.mjs`, `scripts/generate-english-catalogue.mjs`.
 - **CS50x + leaderboard (2026-11-13) @ `feature/cs50x` (base `main` @ `f557764`)**: new routes `/cs50x`, `/cs50x/[video]` (13 SSG ×2 locales), `/leaderboard` «صدارة المتعلمين». Components under `components/cs50x/` + `components/LeaderboardClient.tsx`; data in `lib/cs50x.ts` + `lib/cs50x-lectures-1/2.ts` + `lib/cs50x-notes.ts`; progress track `"cs50x"` (doneCs50xVideoIds) persisted in the v2 event store; export/import/delete covers it. Hub: resume card variant=cs50x, per-course progress line, per-lecture done state, links to official week pages/psets/notes, certificate card (10 psets + final project ≥70%, local tracker `etm-cs50x-certificate-v1`). Miku tips + header/footer + sitemap (`/cs50x` 0.9, `/leaderboard` 0.8, 13 lecture URLs) + `validate-content.mjs` hard cs50x catalogue check and cs50x-aware internal links. Gates: tsc clean, lint (pre-existing warnings only), `test:content --strict` clean (`cs50x: 13 lectures, 0 problem(s)`), unit 49/49, build green (new SSG routes listed). E2E chromium-desktop extended for the new routes (a11y + responsive). Push of `feature/cs50x` explicitly authorized (branch push only — NOT merged to `main`; production untouched). **Post-push fix (`0305b03`)**: first full E2E run failed 131/207 — root-caused to (a) new header nav items pushing the 1280px header 111px past the viewport (horizontal-scroll gate) and (b) i.ytimg thumbnails hanging networkidle in this offline environment. Both fixed (scrollable nav; locally generated posters in both facades); responsive + phase1-routes re-ran green (151/151); full suite re-run pending at push time.
+- **Programming Advices pilot (2026-11-13, branch `feature/programmingadvices-free-courses`, uncommitted)**: two free Dr. Mohammed Abu-Hadhoud courses wired end-to-end — `/programmingadvices` hub, `/programmingadvices/course/pa-foundations|pa-algorithms`, `/programmingadvices/pa1-01…10`, `/programmingadvices/review` (ar + `/en`). Data `lib/programmingadvices-videos.ts` + `lib/programmingadvices-course1.ts` + `lib/programmingadvices-notes.ts`; progress track `"programmingadvices"`; Miku hints/explain; site themes `miku|bootcamp|codecademy`; Pomodoro lofi links. Pilot = 10 of 20 course-1 lessons; course 2 verified card only (0/50). Gates: typecheck/lint clean (pre-existing warnings), `test:content --strict` PASS (2 courses / 10 videos), unit 126/126, build 1661 pages, PA E2E 12/12 chromium-desktop + 12/12 mobile-chrome, webkit hub green (full webkit needs `--workers=1`). Thumbnails/playback not visually verifiable here (`i.ytimg.com`/`youtube.com` ECONNRESET). STOP for pilot approval before lessons 11–20.
 - **Linux course pilot (2026-11-12, branch `feature/linux-course`, merged into `fix/thumbnails-cs50-final-check`)**: one course added — «دورة تعلم نظام اللينكس 2021» by Linuxtopia (playlist PLAZ__zcDB1IaNaVNOckNpgEpjghSHr8Gg, 53 videos, all embeddable via noembed, 53/53 metadata via Invidious since YouTube hosts are unreachable here). Routes `/linux` (hub), `/linux/course/linux-2021` (section-grouped lesson index, 9 sections derived from titles), `/linux/[video]` (lnx-01..lnx-53, SSG), `/linux/review`. Components under `components/linux/` (facade, lesson panel w/ Summary/Terms/Practice/Terminal Lab/Notes tabs, key-terms flashcards, mixed-type practice engine, completion bar, review due-card + session, notes, course progress, credit). Terminal Lab = **simulated in-browser shell only** (`lib/linux/shell/*`: pure-TS parser/VFS/commands/pipes/chmod; 17 fresh-fixture-fail/solution-pass challenges) — never executes real commands. Progress layer extended with `track: "linux"` (`doneLinuxVideoIds`, export/import/delete incl. `etm-linux-notes-v1`); SRS parameterized by track; ResumeCard gains `variant="linux"`; nav groups ElZero/English/Linux under a «الدورات / Courses» dropdown (URLs unchanged); Miku tip + glossary «لينكس» category (12 referenced terms) + sitemap wired. Pilot = lessons 1–10 hand-curated; 11–53 ship `reviewed:false` with conservative Arabic summaries, empty terms/practice (generated `lib/linux-videos-bulk.ts`). Credit + non-affiliation line on every track page. Validator now scans Linux videos (lnx-NN ids, section coverage, exactly-one-correct-answer per practice type) and branches link params by locale-independent prefix; `out/` excluded from the stray-script scan.
 
 ## Task: Programming Advices free courses (new prompt, 2026-11-12)
@@ -134,11 +135,11 @@ Branch: `feature/programmingadvices-free-courses`. Prompt: add exactly two free 
 |---|---|---|
 | 0 — Explore | **done** | ElZero page/lesson, English facade/panel/notes/progress/validator/nav read; plan below |
 | 1 — Collect & verify | **done (metadata)** | 20/50 playlist items fetched; see findings |
-| 1 — Content | in progress | Captions unavailable → `reviewed:false` conservative summaries from titles/descriptions |
-| 2 — Data model | doing | `lib/programmingadvices-videos.ts` next |
-| 3 — UI + learning features | todo | nav, hub, course pages, lesson pages, embedded player, tabs, notes, progress, review queue, Miku |
-| 4 — Rollout (pilot 10) | todo | STOP after first 10 of course 1 for approval |
-| 5 — Gates | todo | typecheck/lint/test:content/unit/build/E2E |
+| 1 — Content (pilot) | **done** | Course 1 lessons 1–10 written; captions unavailable → `reviewed:false`, summaries from published titles/descriptions only, all terms/drills original |
+| 2 — Data model | **done** | `lib/programmingadvices-videos.ts` (both verified courses, 10 lessons) + `programmingadvices-course1.ts` + notes store |
+| 3 — UI + learning features | **done (pilot)** | nav, hub, course pages, lesson pages, facade, 4 tabs, notes, progress, review queue, Miku wired |
+| 4 — Rollout (pilot 10) | **done — awaiting approval** | STOP after first 10 of course 1; see pilot report below |
+| 5 — Gates | **done (pilot)** | typecheck/lint/test:content/unit/build/E2E green; details below |
 
 ### Step 0 findings (reused building blocks)
 
@@ -185,3 +186,35 @@ Branch: `feature/programmingadvices-free-courses`. Prompt: add exactly two free 
 - `scripts/validate-content.mjs` (Programming Advices block)
 - `tests/e2e/programmingadvices.spec.ts`
 - `docs/PROGRESS.md` (this section)
+
+### Pilot report (2026-11-13)
+
+**Shipped (uncommitted on `feature/programmingadvices-free-courses`).**
+
+- Data: `lib/programmingadvices-videos.ts` holds both real, verified course cards (20 + 50 videos, official playlist ids) and the 10 shipped course-1 lessons; `lib/programmingadvices-course1.ts` holds the lessons; `lib/programmingadvices-notes.ts` is the private notes store (`etm-programmingadvices-notes-v1`).
+- Progress: `programmingadvices` is a first-class track (`doneProgrammingAdvicesVideoIds`), fully covered by derive/toggle/export/import/delete and the shared Leitner queue. `isDone` also consults the PA done-set (bug found by E2E; fixed).
+- UI: hub `/programmingadvices`, course pages `/programmingadvices/course/pa-foundations` + `/pa-algorithms`, lessons `/programmingadvices/pa1-01…10`, review `/programmingadvices/review` (ar + `/en`). Course 2 shows its verified card and 0/50, with an explicit "batches after pilot approval" note — no fake lessons.
+- Lesson page: credit + non-affiliation, official video/playlist/course/channel links, click-to-load `youtube-nocookie` facade (`autoplay: 0`, resume, watched %), tabs Summary / Key terms / Practice / My notes. Summary shows the `reviewed:false` notice and the original published title.
+- Practice types in the pilot: MCQ, ordering, matching, typed answer (binary/hex/octal conversion drills). Every item has bilingual hints + explanation; Miku exposes "hint" before answering and "explain my wrong answer", never the answer up front.
+- Notes are local-first (no network request), exportable as JSON, deletable per lesson.
+- Site themes: `miku` (default), `bootcamp`, `codecademy`; switcher in desktop + mobile headers; saved theme applied pre-paint via inline script; only presentation tokens change.
+- Pomodoro: calm lofi links (Lofi Girl YouTube + Spotify playlist) added next to the existing SomaFM study radio; nothing autoplays.
+
+**Gates (all rerun after the last code change):**
+
+- `npm run typecheck` — clean.
+- `npm run lint` — pre-existing warnings only (custom fonts in `app/not-found.tsx` + `app/[locale]/layout.tsx`; 3 `exhaustive-deps` in `Pomodoro.tsx`).
+- `npm run test:content -- --strict` — PASS: elzero-web 6/390, english 36/458, programmingadvices 2 courses/10 videos, cs50x 13/0.
+- `npm run test:unit` — 126/126 (new PA catalogue suite: 6 tests for course counts, playlist ids, ordered ids/urls, drills, credit, normalizers).
+- `npm run build` — PASS, 1661 static pages (PA lesson pages = 10 × 2 locales).
+- E2E `tests/e2e/programmingadvices.spec.ts` — 12/12 chromium-desktop, 12/12 mobile-chrome, hub re-verified on webkit; full webkit run is stable only with `--workers=1` (default 3 workers crashes the browser with "Target page, context or browser has been closed").
+
+**Decisions recorded for this task (extend the list above):**
+
+1. Course 2 stays a card + honest count until course 1 is finished; no placeholder lesson pages.
+2. `SKZyCrY6XEE` (course 2 #37) is unavailable/private; when course 2 lands it ships a fallback "Watch on YouTube" lesson page, never a skipped position.
+3. The validator counts *rendered* roadmap links (`href={ETM_PA_ROADMAP}` / literal URL), not imports, so the "max one" rule matches the UI.
+4. Thumbnails still depend on `i.ytimg.com`, which is unreachable in this environment; the PA facade therefore renders a local poster/fallback and playback could not be visually verified here. `youtube.com`/`i.ytimg.com` `ECONNRESET` is environmental, not a code defect.
+5. E2E asserts no-autoplay by aborting `https://www.youtube.com/iframe_api` and checking the plain embed mounts with `autoplay=0`.
+
+**STOP point:** pilot ready for user review (hub, course page, lesson tabs, practice, notes, review, themes, mobile). Course 1 lessons 11–20 start only after approval.

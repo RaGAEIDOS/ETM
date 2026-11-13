@@ -145,6 +145,16 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
       body: "Free courses from @ZAmericanEnglish: Arabic summaries, key-term flashcards, drills and a pronunciation tab — and your position is saved automatically.",
     },
   },
+  programmingadvices: {
+    ar: {
+      title: "مسار Programming Advices 🎓",
+      body: "دورتان مجانيتان للدكتور محمد أبو هدهود: أساسيات الحاسوب ثم الخوارزميات. لكل درس ملخص وتمارين أصلية، وتلميح مني قبل الإجابة وشرح ليه إجابتك غلط. الفيديوهات بتتشاف من YouTube الرسمي فقط.",
+    },
+    en: {
+      title: "Programming Advices track 🎓",
+      body: "Two free Dr. Mohammed Abu-Hadhoud courses: computing foundations, then algorithms. Every lesson has an original summary and drills, plus a hint from me before you answer and an explanation when you miss. Videos play through official YouTube only.",
+    },
+  },
   cs50x: {
     ar: {
       title: "مسار CS50x 🎓",
@@ -294,6 +304,7 @@ export function tipForPath(pathname: string, locale: Locale): MikuTip {
   if (n.startsWith("/playground")) return PAGE_TIPS.playground[locale];
   if (n.startsWith("/elzero")) return PAGE_TIPS.elzero[locale];
   if (n.startsWith("/english")) return PAGE_TIPS.english[locale];
+  if (n.startsWith("/programmingadvices")) return PAGE_TIPS.programmingadvices[locale];
   if (n.startsWith("/cs50x")) return PAGE_TIPS.cs50x[locale];
   if (n.startsWith("/leaderboard")) return PAGE_TIPS.leaderboard[locale];
   if (n.startsWith("/linux")) return PAGE_TIPS.linux[locale];

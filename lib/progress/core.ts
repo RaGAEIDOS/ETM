@@ -16,6 +16,7 @@ export type Track =
   | "cpp"
   | "elzero"
   | "english"
+  | "programmingadvices"
   | "cs50x"
   | "elzero-web"
   | "linux"
@@ -281,12 +282,14 @@ export interface DerivedProgress {
   doneVideoIds: string[];
   /** English (zAmericanEnglish) video ids completed, Phase 4 track. */
   doneEnglishVideoIds: string[];
+  /** Programming Advices lesson ids completed (pa1-01 … pa2-50). */
+  doneProgrammingAdvicesVideoIds: string[];
   doneCs50xVideoIds: string[];
   /** ElZero Web track (HTML/CSS/JS/TS/SASS/Git) lesson ids completed. */
   doneElzeroWebVideoIds: string[];
   /** Linux (Linuxtopia) video ids completed, Linux track. */
   doneLinuxVideoIds: string[];
-  /** cpp + elzero + english + cs50x + elzero-web + linux lessons completed. */
+  /** cpp + elzero + english + programmingadvices + cs50x + elzero-web + linux lessons completed. */
   totalCompletions: number;
   minutesByDay: Record<string, number>;
   totalFocusMinutes: number;
@@ -319,6 +322,7 @@ const TRACKS: Track[] = [
   "cpp",
   "elzero",
   "english",
+  "programmingadvices",
   "cs50x",
   "elzero-web",
   "linux",
@@ -342,6 +346,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
   const doneCpp = new Set<string>();
   const doneElzero = new Set<string>();
   const doneEnglish = new Set<string>();
+  const doneProgrammingAdvices = new Set<string>();
   const doneElzeroWeb = new Set<string>();
   const doneLinux = new Set<string>();
   const minutesByDay: Record<string, number> = {};
@@ -380,6 +385,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
         if (!e.itemId) break;
         if (e.track === "elzero") doneElzero.add(e.itemId);
         else if (e.track === "english") doneEnglish.add(e.itemId);
+        else if (e.track === "programmingadvices") doneProgrammingAdvices.add(e.itemId);
         else if (e.track === "cs50x") doneCs50x.add(e.itemId);
         else if (e.track === "elzero-web") doneElzeroWeb.add(e.itemId);
         else if (e.track === "linux") doneLinux.add(e.itemId);
@@ -390,6 +396,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
         if (!e.itemId) break;
         if (e.track === "elzero") doneElzero.delete(e.itemId);
         else if (e.track === "english") doneEnglish.delete(e.itemId);
+        else if (e.track === "programmingadvices") doneProgrammingAdvices.delete(e.itemId);
         else if (e.track === "cs50x") doneCs50x.delete(e.itemId);
         else if (e.track === "elzero-web") doneElzeroWeb.delete(e.itemId);
         else if (e.track === "linux") doneLinux.delete(e.itemId);
@@ -443,6 +450,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
   for (const id of Array.from(doneCpp)) map[id] = true;
   for (const id of Array.from(doneElzero)) map[`elzero-${id}`] = true;
   for (const id of Array.from(doneLinux)) map[`linux-${id}`] = true;
+  for (const id of Array.from(doneProgrammingAdvices)) map[`pa-${id}`] = true;
 
   const weakTopics = Object.entries(perTopic)
     .filter(([, t]) => t.attempts >= 2 && t.total > 0)
@@ -470,6 +478,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
     doneLessonIds: Array.from(doneCpp),
     doneVideoIds: Array.from(doneElzero),
     doneEnglishVideoIds: Array.from(doneEnglish),
+    doneProgrammingAdvicesVideoIds: Array.from(doneProgrammingAdvices),
     doneCs50xVideoIds: Array.from(doneCs50x),
     doneElzeroWebVideoIds: Array.from(doneElzeroWeb),
     doneLinuxVideoIds: Array.from(doneLinux),
@@ -477,6 +486,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
       doneCpp.size +
       doneElzero.size +
       doneEnglish.size +
+      doneProgrammingAdvices.size +
       doneCs50x.size +
       doneElzeroWeb.size +
       doneLinux.size,

@@ -103,7 +103,16 @@ export default function LocaleLayout({ children, params }: Props) {
   const locale = params.locale;
 
   return (
-    <html lang={htmlLangFor(locale)} dir={dirFor(locale)}>
+    <html lang={htmlLangFor(locale)} dir={dirFor(locale)} suppressHydrationWarning>
+      <head>
+        {/* Apply the saved site theme before first paint (no flash). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('etm-theme-v1');if(t==='miku'||t==='bootcamp'||t==='codecademy'){document.documentElement.dataset.theme=t;}}catch(e){}})();",
+          }}
+        />
+      </head>
       <body>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

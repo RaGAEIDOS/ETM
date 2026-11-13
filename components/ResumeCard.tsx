@@ -11,6 +11,10 @@ import { stages } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
 import { englishCourses, englishVideos } from "@/lib/english-videos";
 import { CS50X_LECTURES } from "@/lib/cs50x";
+import {
+  orderedPAVideos,
+  findPACourse,
+} from "@/lib/programmingadvices-videos";
 
 /** Section id → localized section title for the linux resume card. */
 const LINUX_SECTION_TITLES: Record<string, string> = Object.fromEntries(
@@ -23,6 +27,10 @@ const COPY = {
     startCpp: "ابدأ رحلة C++",
     startElzero: "ابدأ رحلة ElZero",
     startEnglish: "ابدأ مسار الإنجليزية",
+    startProgrammingAdvices: "ابدأ مسار Programming Advices",
+    nextProgrammingAdvices: "الدرس التالي",
+    programmingAdvicesDone: "أنهيت كل دروس Programming Advices المتاحة! 🎉",
+    programmingAdvicesHubCta: "افتح مسار Programming Advices",
     startCs50x: "ابدأ مسار CS50x",
     nextCs50x: "المحاضرة التالية",
     startLinux: "ابدأ دورة اللينكس",
@@ -48,6 +56,10 @@ const COPY = {
     startCpp: "Start the C++ track",
     startElzero: "Start the ElZero track",
     startEnglish: "Start the English track",
+    startProgrammingAdvices: "Start the Programming Advices track",
+    nextProgrammingAdvices: "Next lesson",
+    programmingAdvicesDone: "You finished every available Programming Advices lesson! 🎉",
+    programmingAdvicesHubCta: "Open the Programming Advices track",
     startCs50x: "Start the CS50x track",
     nextCs50x: "Next lecture",
     startLinux: "Start the Linux course",
@@ -83,7 +95,7 @@ const COPY = {
 export default function ResumeCard({
   variant = "auto",
 }: {
-  variant?: "auto" | "cpp" | "elzero" | "english" | "cs50x" | "linux";
+  variant?: "auto" | "cpp" | "elzero" | "english" | "programmingadvices" | "cs50x" | "linux";
 }) {
   const locale = useLocale();
   const c = useCopy(COPY);
@@ -104,6 +116,10 @@ export default function ResumeCard({
         .flat()
         .find((v) => !doneEnglishIds.has(v.id)) ?? null
     : null;
+  const donePAIds = new Set(stats.doneProgrammingAdvicesVideoIds);
+  const paNext = ready
+    ? orderedPAVideos().find((v) => !donePAIds.has(v.id)) ?? null
+    : null;
   const doneCs50xIds = new Set(stats.doneCs50xVideoIds);
   const cs50xNext = ready ? CS50X_LECTURES.find((l) => !doneCs50xIds.has(l.id)) ?? null : null;
   const doneLinuxIds = new Set(stats.doneLinuxVideoIds);
@@ -111,10 +127,11 @@ export default function ResumeCard({
     ? linuxVideos.find((v) => !doneLinuxIds.has(v.id)) ?? null
     : null;
 
-  let track: "cpp" | "elzero" | "english" | "cs50x" | "linux" = "cpp";
+  let track: "cpp" | "elzero" | "english" | "programmingadvices" | "cs50x" | "linux" = "cpp";
   if (variant === "elzero") track = "elzero";
   else if (variant === "cpp") track = "cpp";
   else if (variant === "english") track = "english";
+  else if (variant === "programmingadvices") track = "programmingadvices";
   else if (variant === "cs50x") track = "cs50x";
   else if (variant === "linux") track = "linux";
   else {
@@ -122,16 +139,18 @@ export default function ResumeCard({
       cpp: stats.lastActivityByTrack.cpp ?? "",
       elzero: stats.lastActivityByTrack.elzero ?? "",
       english: stats.lastActivityByTrack.english ?? "",
+      programmingadvices: stats.lastActivityByTrack.programmingadvices ?? "",
       cs50x: stats.lastActivityByTrack.cs50x ?? "",
       linux: stats.lastActivityByTrack.linux ?? "",
     } as const;
     const ordered = (
-      Object.keys(at) as ("cpp" | "elzero" | "english" | "cs50x" | "linux")[]
+      Object.keys(at) as ("cpp" | "elzero" | "english" | "programmingadvices" | "cs50x" | "linux")[]
     ).sort((a, b) => at[b].localeCompare(at[a]));
     const nextFor = {
       cpp: cppNext,
       elzero: elzeroNext,
       english: englishNext,
+      programmingadvices: paNext,
       cs50x: cs50xNext,
       linux: linuxNext,
     } as const;
@@ -243,6 +262,59 @@ export default function ResumeCard({
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-emerald-400 to-cyan-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
           >
             {c.nextEnglish}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (track === "programmingadvices") {
+    if (!paNext) {
+      return (
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+            <p className="font-bold text-white">{c.programmingAdvicesDone}</p>
+          </div>
+          <Link
+            href="/programmingadvices"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/20 px-4 py-2 text-sm font-bold text-emerald-300 hover:bg-emerald-500/30"
+          >
+            {c.programmingAdvicesHubCta}
+            <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
+          </Link>
+        </div>
+      );
+    }
+    const course = findPACourse(paNext.courseId);
+    const courseTitle = course
+      ? (isAr ? course.shortTitle : course.shortTitleEn)
+      : (isAr ? paNext.section : paNext.sectionEn);
+    const title = isAr ? paNext.title : paNext.titleEn;
+    const started = stats.doneProgrammingAdvicesVideoIds.length > 0;
+    return (
+      <div className="rounded-2xl border border-amber-500/25 bg-gradient-to-l from-amber-500/[0.08] to-cyan-500/[0.08] p-5">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <span className="mt-0.5 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300">
+              <GraduationCap className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-400">
+                {c.label} · {started ? c.nextProgrammingAdvices : c.startProgrammingAdvices}
+              </p>
+              <h3 className="mt-1 font-black text-white leading-6" dir="auto">
+                {paNext.id} — {title}
+              </h3>
+              <p className="mt-1 text-xs text-slate-400" dir="auto">{courseTitle}</p>
+            </div>
+          </div>
+          <Link
+            href={`/programmingadvices/${paNext.id}`}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-amber-400 to-orange-500 px-5 py-2.5 text-sm font-bold text-ink-950 hover:opacity-90"
+          >
+            {c.nextProgrammingAdvices}
             <ArrowLeft className="h-4 w-4 ltr:rotate-180" />
           </Link>
         </div>
