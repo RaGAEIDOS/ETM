@@ -87,6 +87,10 @@ function scanStray(dir) {
     if (st.isDirectory()) { scanStray(p); continue; }
     if (!SCAN_EXT.has(path.extname(p))) continue;
     const rel = path.relative(cwd, p);
+    // The read-only audit report quotes non-Arabic source text verbatim
+    // (e.g. Chinese navigation labels) as evidence; it is documentation,
+    // not shipped content, so the stray-script gate does not apply to it.
+    if (rel === path.join('docs', 'AUDIT.md')) continue;
     const src = fs.readFileSync(p, 'utf8');
     const lines = src.split(/\r?\n/);
     for (let li = 0; li < lines.length; li++) {
