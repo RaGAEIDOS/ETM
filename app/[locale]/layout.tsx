@@ -13,6 +13,7 @@ import { MikuProvider } from "@/components/Miku";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Pomodoro from "@/components/Pomodoro";
+import AdBanners from "@/components/AdBanners";
 
 type Props = {
   children: React.ReactNode;
@@ -142,6 +143,7 @@ export default function LocaleLayout({ children, params }: Props) {
               <main className="min-h-screen">{children}</main>
               <SiteFooter />
               <Pomodoro />
+              <AdBanners />
             </AuthProvider>
           </MikuProvider>
         </LocaleProvider>
