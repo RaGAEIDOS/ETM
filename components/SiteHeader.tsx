@@ -124,13 +124,12 @@ export default function SiteHeader() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex min-h-16 items-center justify-between gap-2 py-2">
           <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Miku">
-            {/* Brand art on black — screen blend melts it into the dark glass header. */}
             <img
-              src="/brand/main-logo.jpg"
+              src="/brand/main-logo.png"
               alt="ETM — Education Technology Miku"
               width={768}
               height={512}
-              className="h-11 sm:h-12 w-auto mix-blend-screen transition-transform group-hover:scale-105"
+              className="h-11 sm:h-12 w-auto transition-transform group-hover:scale-105"
             />
           </Link>
 
@@ -249,7 +248,7 @@ export default function SiteHeader() {
                     {user.name[0] || "?"}
                   </span>
                 )}
-                <span className="hidden sm:inline max-w-24 truncate">
+                <span className="hidden xl:inline max-w-24 truncate">
                   {user.name}
                 </span>
               </Link>
@@ -262,7 +261,7 @@ export default function SiteHeader() {
                 <span className="whitespace-nowrap">{c.signIn}</span>
               </Link>
             )}
-            {!bare && (
+            {!bare && !user && (
               <Link
                 href="/curriculum"
                 className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"

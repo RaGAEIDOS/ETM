@@ -57,14 +57,13 @@ export default function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link href="/" className="mb-4 inline-flex items-center group" aria-label="ETM — Education Technology Miku">
-              {/* Brand art on black — screen blend melts it into the dark footer. */}
               <img
-                src="/brand/main-logo.jpg"
+                src="/brand/main-logo.png"
                 alt="ETM — Education Technology Miku"
                 width={768}
                 height={512}
                 loading="lazy"
-                className="h-16 w-auto mix-blend-screen transition-transform group-hover:scale-105"
+                className="h-16 w-auto transition-transform group-hover:scale-105"
               />
             </Link>
             <p className="text-slate-400 leading-7 max-w-md">

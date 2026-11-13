@@ -73,6 +73,10 @@ export async function generateMetadata({
     },
     description: meta.description,
     keywords: [...meta.keywords],
+    other: {
+      // HilltopAds site-verification tag (method 2 in their dashboard).
+      "5fa9c0682e40e6b7aaf2": "f3712d7d0b315823ea65",
+    },
     icons: { icon: "/favicon.svg" },
     openGraph: {
       title: meta.title,
