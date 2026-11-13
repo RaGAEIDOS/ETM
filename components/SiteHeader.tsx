@@ -121,7 +121,7 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 glass border-b border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         <div className="flex min-h-16 items-center justify-between gap-2 py-2">
           <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Miku">
             <img
@@ -145,7 +145,7 @@ export default function SiteHeader() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`px-1.5 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                      className={`px-1.5 py-2 rounded-lg text-[12px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors ${
                         active
                           ? "text-cyan-300 bg-cyan-500/10"
                           : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -165,7 +165,7 @@ export default function SiteHeader() {
                   onClick={() => setCoursesOpen((v) => !v)}
                   aria-expanded={coursesOpen}
                   aria-haspopup="menu"
-                  className={`flex items-center gap-1 px-2 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-1 px-2 py-2 rounded-lg text-[12px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors ${
                     coursesActive
                       ? "text-cyan-300 bg-cyan-500/10"
                       : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -213,7 +213,7 @@ export default function SiteHeader() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`px-1.5 py-2 rounded-lg text-[13px] font-semibold whitespace-nowrap transition-colors ${
+                      className={`px-1.5 py-2 rounded-lg text-[12px] 2xl:text-[13px] font-semibold whitespace-nowrap transition-colors ${
                         active
                           ? "text-cyan-300 bg-cyan-500/10"
                           : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -248,23 +248,24 @@ export default function SiteHeader() {
                     {user.name[0] || "?"}
                   </span>
                 )}
-                <span className="hidden xl:inline max-w-24 truncate">
+                <span className="hidden 2xl:inline max-w-32 truncate">
                   {user.name}
                 </span>
               </Link>
             ) : (
               <Link
                 href="/login"
+                aria-label={c.signIn}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm font-bold text-white hover:bg-white/10 min-h-[44px]"
               >
                 <User className="h-4 w-4 shrink-0" />
-                <span className="whitespace-nowrap">{c.signIn}</span>
+                <span className="hidden xl:inline whitespace-nowrap">{c.signIn}</span>
               </Link>
             )}
             {!bare && !user && (
               <Link
                 href="/curriculum"
-                className="hidden sm:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
+                className="hidden 2xl:inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-3 sm:px-4 py-2 text-sm font-bold text-ink-950 hover:opacity-90 transition-opacity min-h-[44px]"
               >
                 <Flame className="h-4 w-4 shrink-0" />
                 <span className="whitespace-nowrap">{c.start}</span>
