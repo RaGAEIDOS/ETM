@@ -1,12 +1,11 @@
 "use client";
 
-import { Terminal, Github, Heart } from "lucide-react";
+import { Github, Heart } from "lucide-react";
 import Link from "@/lib/i18n/navigation";
 import { useCopy } from "@/lib/i18n/context";
 
 const COPY = {
   ar: {
-    tagline: "Education Technology Miku",
     blurb:
       "منصة عربية مجانية لتعلم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب. مبنية على منهج OSSU، معاد كتابتها بالعربية مع أمثلة تفاعلية ومشاريع حقيقية.",
     platform: "المنصة",
@@ -28,7 +27,6 @@ const COPY = {
     openSource: "مفتوح المصدر على GitHub",
   },
   en: {
-    tagline: "Education Technology Miku",
     blurb:
       "A free platform for learning C++ from zero to building an operating system and a game engine. Based on the OSSU curriculum, with interactive examples and real projects.",
     platform: "Platform",
@@ -58,17 +56,17 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-2.5 mb-4">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950">
-                <Terminal className="h-5 w-5" strokeWidth={2.5} />
-              </span>
-              <span className="text-xl font-black text-white">
-                ETM
-                <span className="text-sm font-medium text-slate-400 ms-2">
-                  {c.tagline}
-                </span>
-              </span>
-            </div>
+            <Link href="/" className="mb-4 inline-flex items-center group" aria-label="ETM — Education Technology Miku">
+              {/* Brand art on black — screen blend melts it into the dark footer. */}
+              <img
+                src="/brand/main-logo.jpg"
+                alt="ETM — Education Technology Miku"
+                width={768}
+                height={512}
+                loading="lazy"
+                className="h-16 w-auto mix-blend-screen transition-transform group-hover:scale-105"
+              />
+            </Link>
             <p className="text-slate-400 leading-7 max-w-md">
               {c.blurb}{" "}
               <a

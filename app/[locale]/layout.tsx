@@ -80,13 +80,20 @@ export async function generateMetadata({
       type: "website",
       locale: meta.ogLocale,
       alternateLocale: locale === "ar" ? "en_US" : "ar_EG",
-      images: [{ url: "/og.svg", width: 1200, height: 630 }],
+      images: [
+        {
+          url: "/brand/etm-banner.jpg",
+          width: 1600,
+          height: 900,
+          alt: "ETM — Education Technology Miku — Your Ultimate Online Learning Platform",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
-      images: ["/og.svg"],
+      images: ["/brand/etm-banner.jpg"],
     },
   };
 }

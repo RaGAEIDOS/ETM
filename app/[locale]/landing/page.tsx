@@ -250,6 +250,22 @@ export default function LandingPage({ params }: Props) {
         </div>
       </section>
 
+      {/* ============ BRAND BANNER ============ */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-14 sm:pb-20">
+        <Reveal>
+          <div className="overflow-hidden rounded-2xl border border-white/10 shadow-2xl shadow-cyan-500/10">
+            <img
+              src="/brand/etm-banner.jpg"
+              alt={isAr ? "بانر ETM — منصة التعلّم الإلكتروني الأولى: دورات تفاعلية، محتوى خبير، شهادات وتتبع للتقدم" : "ETM — your ultimate online learning platform: interactive courses, expert content, certificates and progress tracking"}
+              width={1600}
+              height={900}
+              loading="lazy"
+              className="w-full h-auto"
+            />
+          </div>
+        </Reveal>
+      </section>
+
       {/* ============ STATS ============ */}
       <section className="border-y border-white/5 bg-white/[0.02]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10">

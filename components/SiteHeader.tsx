@@ -2,7 +2,7 @@
 
 
 import { useEffect, useRef, useState } from "react";
-import { Terminal, Menu, X, Flame, User, ChevronDown } from "lucide-react";
+import { Menu, X, Flame, User, ChevronDown } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import Link from "@/lib/i18n/navigation";
 import { useCanonicalPathname } from "@/lib/i18n/navigation";
@@ -123,16 +123,15 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex min-h-16 items-center justify-between gap-2 py-2">
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950 shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              <Terminal className="h-5 w-5" strokeWidth={2.5} />
-            </span>
-            <span className="text-xl font-black text-white tracking-tight">
-              ETM
-              <span className="hidden md:inline text-xs font-medium text-slate-400 ms-2">
-                Education Technology Miku
-              </span>
-            </span>
+          <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Miku">
+            {/* Brand art on black — screen blend melts it into the dark glass header. */}
+            <img
+              src="/brand/main-logo.jpg"
+              alt="ETM — Education Technology Miku"
+              width={768}
+              height={512}
+              className="h-11 sm:h-12 w-auto mix-blend-screen transition-transform group-hover:scale-105"
+            />
           </Link>
 
           {!bare && (
