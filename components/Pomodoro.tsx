@@ -7,7 +7,6 @@ import {
   Pause,
   RotateCcw,
   SkipForward,
-  Radio,
   X,
   Brain,
   Coffee,
@@ -22,11 +21,11 @@ import {
   Flame,
 } from "lucide-react";
 import { useMiku } from "./Miku";
+import PomodoroMusic from "./PomodoroMusic";
 import { trackEvent } from "@/lib/progress/store";
 import { POMODORO_MESSAGES } from "@/lib/miku";
 import { useLocale, useCopy } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
-import type { Locale } from "@/lib/i18n/config";
 import {
   AMBIENTS,
   AmbientEngine,
@@ -72,23 +71,18 @@ const COPY = {
     backToFocus: "العودة إلى التركيز",
     focusLength: "مدة التركيز",
     minutes: (n: number) => `${formatNumber(n)} دقيقة`,
-    studyRadio: "راديو الدراسة",
-    toggleRadio: "تبديل راديو الدراسة",
     volume: "مستوى الصوت",
-    radioVolume: "مستوى صوت الراديو",
-    radioNote: "بثوث حية من ",
-    radioNoteEnd:
-      " — راديو مجاني يدعمه المستمعون. اختر المحطة التي تضعك في منطقة التركيز.",
-    lofiTitle: "لوفي هادئ للتركيز",
-    lofiNote:
-      "يوتيوب يفتح في نافذة جديدة — سبوتيفاي يعمل هنا مباشرة. لا تشغيل تلقائي أبدًا.",
-    lofiYoutube: "Lofi Girl · YouTube",
-    spotifyEmbedTitle: "قائمة Spotify — لوفي للتركيز",
     ambientTitle: "أصوات محيطة",
     ambientVolume: "مستوى صوت المحيط",
     ambientNote:
       "تُولَّد هذه الأصوات في متصفحك مباشرة — لا ملفات خارجية ولا تحميل.",
     pomodoroTimer: "مؤقّت Pomodoro",
+    sessionsToday: (n: number) => `${formatNumber(n)} جلسات مكتملة اليوم`,
+    sessionsHint: "كل 4 جلسات تفتح استراحة طويلة",
+    notifyFocusTitle: "انتهت جلسة التركيز",
+    notifyFocusBody: "خذ استراحة قصيرة — أنت تستحقها.",
+    notifyBreakTitle: "انتهت الاستراحة",
+    notifyBreakBody: "جاهز للتركيز من جديد؟",
   },
   en: {
     modes: { focus: "Focus", short: "Short Break", long: "Long Break" },
@@ -105,113 +99,62 @@ const COPY = {
     backToFocus: "Back to focus",
     focusLength: "Focus length",
     minutes: (n: number) => `${n} min`,
-    studyRadio: "Study Radio",
-    toggleRadio: "Toggle study radio",
     volume: "Volume",
-    radioVolume: "Radio volume",
-    radioNote: "Live streams by ",
-    radioNoteEnd:
-      " - free, listener-supported radio. Pick the one that gets you in the zone.",
-    lofiTitle: "Calm lofi for focus",
-    lofiNote:
-      "YouTube opens in a new tab — Spotify plays inline here. Nothing ever autoplays.",
-    lofiYoutube: "Lofi Girl · YouTube",
-    spotifyEmbedTitle: "Spotify playlist — focus lofi",
     ambientTitle: "Ambient sounds",
     ambientVolume: "Ambient volume",
     ambientNote:
       "These sounds are generated live in your browser - no external files, no downloads.",
     pomodoroTimer: "Pomodoro timer",
+    sessionsToday: (n: number) => `${formatNumber(n)} sessions completed today`,
+    sessionsHint: "Every 4 sessions unlocks a long break",
+    notifyFocusTitle: "Focus session complete",
+    notifyFocusBody: "Take a short break — you earned it.",
+    notifyBreakTitle: "Break over",
+    notifyBreakBody: "Ready to focus again?",
   },
 } as const;
 
 const STORAGE_KEY = "etm-pomodoro-v1";
-const RADIO_KEY = "etm-radio-v1";
 const AMBIENT_KEY = "etm-ambient-v1";
+const NOTIF_ASKED_KEY = "etm-notif-asked-v1";
 const FOCUS_PRESETS = [15, 25, 50];
 
-interface RadioStation {
-  id: string;
-  name: string;
-  desc: Record<Locale, string>;
-  url: string;
+function localDayKey(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-// Free, listener-supported internet radio — SomaFM. Listen responsibly.
-const RADIOS: RadioStation[] = [
-  {
-    id: "groove-salad",
-    name: "Groove Salad",
-    desc: {
-      ar: "إيقاعات هادئة — إذاعة الدراسة الكلاسيكية",
-      en: "Chill ambient beats — the classic study radio",
-    },
-    url: "https://stream.somafm.com/groovesalad-128-mp3",
-  },
-  {
-    id: "beat-blender",
-    name: "Beat Blender",
-    desc: {
-      ar: "موسيقى إلكترونية هادئة وبطيئة الإيقاع",
-      en: "Downtempo and chill electronica",
-    },
-    url: "https://stream.somafm.com/beatblender-128-mp3",
-  },
-  {
-    id: "deep-space-one",
-    name: "Deep Space One",
-    desc: {
-      ar: "موسيقى ambient وفضاء عميق",
-      en: "Deep ambient and space music",
-    },
-    url: "https://stream.somafm.com/deepspaceone-128-mp3",
-  },
-  {
-    id: "space-station",
-    name: "Space Station Soma",
-    desc: {
-      ar: "موسيقى فضائية بأسلوب ناسا",
-      en: "Spaced-out ambient, NASA style",
-    },
-    url: "https://stream.somafm.com/spacestation-128-mp3",
-  },
-  {
-    id: "drone-zone",
-    name: "Drone Zone",
-    desc: {
-      ar: "موسيقى ambient ناعمة بطبقات ممتدة",
-      en: "Mellow drone-based ambient",
-    },
-    url: "https://stream.somafm.com/dronezone-128-mp3",
-  },
-  {
-    id: "mission-control",
-    name: "Mission Control",
-    desc: {
-      ar: "أجواء مستوحاة من بعثات ناسا",
-      en: "Ambience inspired by NASA missions",
-    },
-    url: "https://stream.somafm.com/missioncontrol-128-mp3",
-  },
-  {
-    id: "cliqhop",
-    name: "Cliqhop IDM",
-    desc: {
-      ar: "موسيقى رقص ذكية — تركيز إيقاعي",
-      en: "Intelligent dance music — rhythmic focus",
-    },
-    url: "https://stream.somafm.com/cliqhop-128-mp3",
-  },
-  {
-    id: "secret-agent",
-    name: "Secret Agent",
-    desc: {
-      ar: "لاونج الجاسوس وأجواء السينما",
-      en: "Spy lounge and exotica",
-    },
-    url: "https://stream.somafm.com/secretagent-128-mp3",
-  },
-];
+/** Ask for notification permission once, on the first Start gesture. */
+function askNotificationsOnce() {
+  try {
+    if (typeof Notification === "undefined") return;
+    if (Notification.permission !== "default") return;
+    if (window.localStorage.getItem(NOTIF_ASKED_KEY)) return;
+    window.localStorage.setItem(NOTIF_ASKED_KEY, "1");
+    void Notification.requestPermission();
+  } catch {
+    /* notifications blocked or unsupported */
+  }
+}
+
+function notifyPhaseChange(title: string, body: string) {
+  try {
+    if (typeof Notification === "undefined") return;
+    if (Notification.permission !== "granted") return;
+    const notification = new Notification(title, {
+      body,
+      tag: "etm-pomodoro",
+    });
+    notification.onclick = () => {
+      window.focus();
+      notification.close();
+    };
+  } catch {
+    /* notifications blocked or unsupported */
+  }
+}
 
 function chime() {
   try {
@@ -258,20 +201,21 @@ export default function Pomodoro() {
   const [running, setRunning] = useState(false);
   const [endAt, setEndAt] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
-  const [radioOn, setRadioOn] = useState(false);
-  const [radioVol, setRadioVol] = useState(0.5);
-  const [radioId, setRadioId] = useState(RADIOS[0].id);
   const [ambId, setAmbId] = useState<AmbientKind | null>(null);
   const [ambVol, setAmbVol] = useState(0.5);
   const [mounted, setMounted] = useState(false);
+  const [focusCount, setFocusCount] = useState(0);
+  const [focusDate, setFocusDate] = useState(() => localDayKey());
+  const [cozyTip, setCozyTip] = useState(false);
 
-  const radioRef = useRef<HTMLAudioElement | null>(null);
   const ambRef = useRef<AmbientEngine | null>(null);
   const modeRef = useRef<Mode>("focus");
   const focusLenRef = useRef(25);
   const hiddenAtRef = useRef<number | null>(null);
   const overtimeSaidRef = useRef(false);
   const focusCountRef = useRef(0);
+  const focusDateRef = useRef(localDayKey());
+  const breakNotifiedRef = useRef(false);
   const runningRef = useRef(false);
 
   useEffect(() => {
@@ -296,6 +240,8 @@ export default function Pomodoro() {
           secondsLeft: number;
           running: boolean;
           endAt: number | null;
+          focusCount?: number;
+          focusDate?: string;
         };
         setMode(s.mode);
         modeRef.current = s.mode;
@@ -305,21 +251,16 @@ export default function Pomodoro() {
         setRunning(s.running);
         runningRef.current = s.running;
         setEndAt(s.endAt);
+        const today = localDayKey();
+        const restoredCount =
+          s.focusDate === today && typeof s.focusCount === "number"
+            ? Math.max(0, s.focusCount)
+            : 0;
+        setFocusCount(restoredCount);
+        focusCountRef.current = restoredCount;
+        setFocusDate(today);
+        focusDateRef.current = today;
       }
-      try {
-        const saved = localStorage.getItem(RADIO_KEY);
-        if (saved) {
-          const s = JSON.parse(saved) as {
-            on?: boolean;
-            id?: string;
-            vol?: number;
-          };
-          if (s.id && RADIOS.some((r) => r.id === s.id)) setRadioId(s.id);
-          if (typeof s.vol === "number")
-            setRadioVol(Math.min(1, Math.max(0, s.vol)));
-          if (s.on) setRadioOn(true);
-        }
-      } catch {}
       try {
         const savedAmb = localStorage.getItem(AMBIENT_KEY);
         if (savedAmb) {
@@ -338,20 +279,18 @@ export default function Pomodoro() {
     try {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ mode, focusLen, secondsLeft, running, endAt })
+        JSON.stringify({
+          mode,
+          focusLen,
+          secondsLeft,
+          running,
+          endAt,
+          focusCount,
+          focusDate,
+        })
       );
     } catch {}
-  }, [mounted, mode, focusLen, secondsLeft, running, endAt]);
-
-  useEffect(() => {
-    if (!mounted) return;
-    try {
-      localStorage.setItem(
-        RADIO_KEY,
-        JSON.stringify({ on: radioOn, id: radioId, vol: radioVol })
-      );
-    } catch {}
-  }, [mounted, radioOn, radioId, radioVol]);
+  }, [mounted, mode, focusLen, secondsLeft, running, endAt, focusCount, focusDate]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -376,6 +315,7 @@ export default function Pomodoro() {
       runningRef.current = autostart;
       setEndAt(autostart ? Date.now() + dur * 1000 : null);
       overtimeSaidRef.current = false;
+      breakNotifiedRef.current = false;
     },
     []
   );
@@ -384,12 +324,20 @@ export default function Pomodoro() {
     trackEvent("playground", "focus_session", {
       payload: { minutes: focusLenRef.current },
     });
-    focusCountRef.current += 1;
+    const today = localDayKey();
+    const base =
+      focusDateRef.current === today ? focusCountRef.current : 0;
+    const nextCount = base + 1;
+    focusCountRef.current = nextCount;
+    focusDateRef.current = today;
+    setFocusCount(nextCount);
+    setFocusDate(today);
     chime();
     say(messages.focusDone);
-    const next: Mode = focusCountRef.current % 4 === 0 ? "long" : "short";
+    notifyPhaseChange(c.notifyFocusTitle, c.notifyFocusBody);
+    const next: Mode = nextCount % 4 === 0 ? "long" : "short";
     switchMode(next, true);
-  }, [say, switchMode]);
+  }, [say, switchMode, messages.focusDone, c.notifyFocusTitle, c.notifyFocusBody]);
 
   // ---- tick ----
   useEffect(() => {
@@ -403,7 +351,11 @@ export default function Pomodoro() {
         runningRef.current = false;
         setEndAt(null);
         handleFocusComplete();
-      } else if (m !== "focus" && left < 0) {
+      } else if (m !== "focus") {
+        if (left <= 0 && !breakNotifiedRef.current) {
+          breakNotifiedRef.current = true;
+          notifyPhaseChange(c.notifyBreakTitle, c.notifyBreakBody);
+        }
         if (!overtimeSaidRef.current && -left >= 60) {
           overtimeSaidRef.current = true;
           say(messages.longBreakOvertime);
@@ -411,7 +363,15 @@ export default function Pomodoro() {
       }
     }, 250);
     return () => clearInterval(id);
-  }, [running, endAt, handleFocusComplete, say]);
+  }, [
+    running,
+    endAt,
+    handleFocusComplete,
+    say,
+    messages.longBreakOvertime,
+    c.notifyBreakTitle,
+    c.notifyBreakBody,
+  ]);
 
   // ---- tab visibility (Miku notices when you leave) ----
   useEffect(() => {
@@ -436,34 +396,6 @@ export default function Pomodoro() {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [say]);
 
-  // ---- radio engine ----
-  useEffect(() => {
-    if (!mounted) return;
-    if (radioOn) {
-      if (!radioRef.current) {
-        const audio = new Audio();
-        audio.preload = "none";
-        audio.loop = true;
-        radioRef.current = audio;
-      }
-      const station = RADIOS.find((r) => r.id === radioId) ?? RADIOS[0];
-      if (radioRef.current.src !== station.url) {
-        radioRef.current.src = station.url;
-      }
-      radioRef.current.volume = radioVol;
-      radioRef.current.play().catch(() => {
-        // Autoplay or network issue — user can tap the toggle again
-      });
-    } else {
-      radioRef.current?.pause();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mounted, radioOn, radioId]);
-
-  useEffect(() => {
-    if (radioRef.current) radioRef.current.volume = radioVol;
-  }, [radioVol]);
-
   // ---- ambient sound engine ----
   useEffect(() => {
     if (!mounted) return;
@@ -481,8 +413,6 @@ export default function Pomodoro() {
 
   useEffect(() => {
     return () => {
-      radioRef.current?.pause();
-      radioRef.current = null;
       ambRef.current?.dispose();
       ambRef.current = null;
     };
@@ -494,6 +424,7 @@ export default function Pomodoro() {
       runningRef.current = false;
       setEndAt(null);
     } else {
+      askNotificationsOnce();
       setEndAt(Date.now() + secondsLeft * 1000);
       setRunning(true);
       runningRef.current = true;
@@ -511,6 +442,7 @@ export default function Pomodoro() {
     setEndAt(null);
     setSecondsLeft(duration);
     overtimeSaidRef.current = false;
+    breakNotifiedRef.current = false;
   }
 
   function skip() {
@@ -526,6 +458,17 @@ export default function Pomodoro() {
     say(messages.breakDone);
   }
 
+  const handleCozyTip = useCallback(() => setCozyTip(true), []);
+
+  useEffect(() => {
+    if (!cozyTip) return;
+    const id = window.setTimeout(() => setCozyTip(false), 10000);
+    return () => window.clearTimeout(id);
+  }, [cozyTip]);
+
+  const cycleDots =
+    focusCount > 0 && focusCount % 4 === 0 ? 4 : focusCount % 4;
+
   const progress = 1 - Math.max(0, secondsLeft) / duration;
   const isOvertime = secondsLeft < 0;
   const Icon = MODE_ICONS[mode];
@@ -533,9 +476,30 @@ export default function Pomodoro() {
   if (!mounted) return null;
 
   return (
-    <div className="fixed bottom-4 end-4 z-40 flex flex-col items-end gap-2">
-      {open && (
-        <div className="w-80 max-w-[calc(100vw-2rem)] rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl backdrop-blur">
+    <>
+      {cozyTip && (
+        <div
+          role="status"
+          className="fixed bottom-24 end-4 z-50 flex w-72 max-w-[calc(100vw-2rem)] items-start gap-2 rounded-xl border border-amber-500/30 bg-amber-500/15 px-3 py-2 text-[11px] font-bold leading-5 text-amber-100 shadow-xl backdrop-blur"
+        >
+          <span className="flex-1">Cozy mode + lofi = perfect combo 🎧</span>
+          <button
+            type="button"
+            onClick={() => setCozyTip(false)}
+            className="shrink-0 text-amber-200/70 hover:text-amber-100"
+            aria-label={c.close}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div className="fixed bottom-4 end-4 z-40 flex flex-col items-end gap-2">
+        <div
+          className={`w-80 max-w-[calc(100vw-2rem)] max-h-[calc(100dvh-10rem)] overflow-y-auto overscroll-contain rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl backdrop-blur ${
+            open ? "" : "hidden"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-violet-500 text-ink-950">
@@ -608,6 +572,29 @@ export default function Pomodoro() {
                 style={{ width: `${Math.min(100, Math.max(0, progress * 100))}%` }}
               />
             </div>
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] text-slate-500">
+              <span className="inline-flex items-center gap-1">
+                <Flame
+                  className={`h-3.5 w-3.5 ${
+                    focusCount > 0 ? "text-amber-400" : "text-slate-600"
+                  }`}
+                />
+                {c.sessionsToday(focusCount)}
+              </span>
+              <span className="inline-flex items-center gap-1" aria-hidden>
+                {[0, 1, 2, 3].map((i) => (
+                  <span
+                    key={i}
+                    className={`h-1.5 w-3 rounded-full ${
+                      i < cycleDots ? "bg-cyan-400" : "bg-white/15"
+                    }`}
+                  />
+                ))}
+              </span>
+              <span className="w-full text-center text-[10px] text-slate-600">
+                {c.sessionsHint}
+              </span>
+            </div>
           </div>
 
           {/* controls */}
@@ -674,110 +661,13 @@ export default function Pomodoro() {
             </div>
           </div>
 
-          {/* study radio */}
-          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-white">
-                <Radio className="h-4 w-4 text-cyan-400" />
-                {c.studyRadio}
-              </div>
-              <button
-                onClick={() => setRadioOn((v) => !v)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                  radioOn ? "bg-cyan-500" : "bg-white/15"
-                }`}
-                aria-label={c.toggleRadio}
-                aria-pressed={radioOn}
-              >
-                <span
-                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-all ${
-                    radioOn ? "start-5" : "start-0.5"
-                  }`}
-                />
-              </button>
-            </div>
-            {radioOn && (
-              <div className="mt-3">
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pe-0.5">
-                  {RADIOS.map((r) => {
-                    const active = radioId === r.id;
-                    return (
-                      <button
-                        key={r.id}
-                        onClick={() => setRadioId(r.id)}
-                        className={`rounded-lg border px-2.5 py-2 text-start transition-colors ${
-                          active
-                            ? "border-cyan-500/40 bg-cyan-500/10"
-                            : "border-white/10 bg-white/5 hover:bg-white/10"
-                        }`}
-                        aria-pressed={active}
-                      >
-                        <span className="block text-[11px] font-bold leading-4 text-white">
-                          {active && (
-                            <span className="me-1 text-cyan-400">●</span>
-                          )}
-                          {r.name}
-                        </span>
-                        <span className="mt-1 block text-[10px] font-normal leading-3 text-slate-500">
-                          {r.desc[locale]}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <span className="text-xs text-slate-500">{c.volume}</span>
-                  <input
-                    type="range"
-                    min={0}
-                    max={1}
-                    step={0.05}
-                    value={radioVol}
-                    onChange={(e) => setRadioVol(Number(e.target.value))}
-                    className="flex-1 accent-cyan-400"
-                    dir="ltr"
-                    aria-label={c.radioVolume}
-                  />
-                </div>
-                <p className="mt-2 text-[10px] leading-4 text-slate-600">
-                  {c.radioNote}
-                  <a
-                    href="https://somafm.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="underline hover:text-slate-400"
-                  >
-                    SomaFM
-                  </a>
-                  {c.radioNoteEnd}
-                </p>
-                <div className="mt-3 rounded-lg border border-violet-500/20 bg-violet-500/[0.06] p-2.5">
-                  <p className="text-[11px] font-bold text-violet-200">{c.lofiTitle}</p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <a
-                      href="https://www.youtube.com/watch?v=jfKfPfyJRdk"
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-bold text-slate-200 hover:bg-white/10"
-                    >
-                      <Radio className="h-3 w-3 text-rose-400" />
-                      {c.lofiYoutube}
-                    </a>
-                  </div>
-                  <iframe
-                    src="https://open.spotify.com/embed/playlist/2lbGxqs4WSMxVmMuIsolNr?utm_source=generator&theme=0"
-                    width="100%"
-                    height="152"
-                    className="mt-2 rounded-xl border-0"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    title={c.spotifyEmbedTitle}
-                  />
-                  <p className="mt-2 text-[10px] leading-4 text-slate-500">{c.lofiNote}</p>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* music layer: Lofi Girl / Spotify / Off */}
+          <PomodoroMusic
+            mode={mode}
+            running={running}
+            secondsLeft={secondsLeft}
+            onCozyTip={handleCozyTip}
+          />
 
           {/* ambient sounds */}
           <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3">
@@ -833,7 +723,6 @@ export default function Pomodoro() {
             <p className="mt-2 text-[10px] leading-4 text-slate-600">{c.ambientNote}</p>
           </div>
         </div>
-      )}
 
       {/* collapsed button */}
       <button
@@ -866,6 +755,7 @@ export default function Pomodoro() {
           )}
         </span>
       </button>
-    </div>
+      </div>
+    </>
   );
 }

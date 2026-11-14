@@ -75,7 +75,7 @@ export default function Quiz({ questions, track, itemId, topic }: QuizProps) {
   const reset = () => setAnswers({});
 
   return (
-    <div className="my-8">
+    <div data-quiz className="my-8">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <h3 className="flex items-center gap-2 text-xl font-bold text-white">
           <HelpCircle className="h-5 w-5 text-cyan-400" />

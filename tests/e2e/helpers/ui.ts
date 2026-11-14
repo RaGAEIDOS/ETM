@@ -39,9 +39,15 @@ export async function waitHydrated(page: Page, timeout = 15_000): Promise<void> 
   }
   // Fonts load over a <link> with display=swap; wait for the swap before any
   // layout measurement (scrollWidth) so results are stable with and without
-  // network access to Google Fonts. Resolves immediately when offline.
+  // network access to Google Fonts. Cap the wait: WebKit can leave
+  // document.fonts.ready pending forever when the font host times out.
   try {
-    await page.evaluate(() => document.fonts?.ready);
+    await page.evaluate(() =>
+      Promise.race([
+        (document.fonts?.ready ?? Promise.resolve()).then(() => undefined),
+        new Promise<void>((resolve) => window.setTimeout(resolve, 4_000)),
+      ])
+    );
   } catch {
     /* document.fonts unavailable — measurement happens anyway */
   }

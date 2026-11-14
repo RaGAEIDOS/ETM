@@ -563,7 +563,7 @@ export default function PAPractice({
   }
 
   return (
-    <div>
+    <div data-quiz>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 text-xl font-bold text-white">
           <HelpCircle className="h-5 w-5 text-amber-400" />

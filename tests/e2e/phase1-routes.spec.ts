@@ -5,7 +5,17 @@ import { instrument, horizontallyScrollable, waitHydrated } from "./helpers/ui";
 // Network noise tolerated (no live connection to fonts.googleapis / CDNs).
 // YouTube thumbnails live on i.ytimg.com and may be unreachable in offline
 // environments; they are decorative and fail over to mqdefault/black.
-const NOISE = [/fonts\.g/i, /fonts\.gstatic/i, /font.*(load|css)/i, /gstatic/i, /ytimg\.com/i];
+const NOISE = [
+  /fonts\.g/i,
+  /fonts\.gstatic/i,
+  /font.*(load|css)/i,
+  /gstatic/i,
+  /ytimg\.com/i,
+  // WebKit reports blocked third-party requests without the URL (no live
+  // connection to Google Fonts / YouTube thumbnails in this environment).
+  // Real 4xx/5xx responses are still asserted through `badResponses`.
+  /Failed to load resource: (Timeout was reached|SSL connect error|Load failed)/i,
+];
 
 for (const route of [...ALL_ROUTES, ...LESSON_ROUTES]) {
   test(`route ${route} loads, hydrates, and shows no console errors`, async ({ page }) => {

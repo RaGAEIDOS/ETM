@@ -203,7 +203,7 @@ export default function EnglishSpeaking({ terms }: { terms: EnglishKeyTerm[] }) 
                 onClick={listening ? stop : listen}
                 className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-black transition-colors ${
                   listening
-                    ? "bg-rose-500 text-white hover:bg-rose-400"
+                    ? "bg-rose-500 text-ink-950 hover:bg-rose-400"
                     : "bg-emerald-500 text-ink-950 hover:bg-emerald-400"
                 }`}
               >

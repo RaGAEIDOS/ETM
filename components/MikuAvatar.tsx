@@ -1,9 +1,11 @@
 export default function MikuAvatar({
   size = 48,
   className = "",
+  mood = "default",
 }: {
   size?: number;
   className?: string;
+  mood?: "default" | "sleepy" | "thinking";
 }) {
   return (
     <svg
@@ -75,13 +77,22 @@ export default function MikuAvatar({
       <rect x="23" y="55" width="8" height="16" rx="4" fill="#4ff0e8" />
       <rect x="89" y="55" width="8" height="16" rx="4" fill="#4ff0e8" />
 
-      {/* eyes */}
-      <ellipse cx="49" cy="66" rx="5" ry="7.5" fill="#0e7490" />
-      <ellipse cx="71" cy="66" rx="5" ry="7.5" fill="#0e7490" />
-      <circle cx="47" cy="63" r="2.2" fill="#ffffff" />
-      <circle cx="69" cy="63" r="2.2" fill="#ffffff" />
-      <circle cx="50.5" cy="68" r="1.2" fill="#a5f3fc" />
-      <circle cx="72.5" cy="68" r="1.2" fill="#a5f3fc" />
+      {/* eyes: closed while sleepy (cozy), lifted while thinking (terminal) */}
+      {mood === "sleepy" ? (
+        <>
+          <path d="M44 66 Q49 70 54 66" stroke="#0e7490" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+          <path d="M66 66 Q71 70 76 66" stroke="#0e7490" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          <ellipse cx="49" cy={mood === "thinking" ? 63 : 66} rx="5" ry="7.5" fill="#0e7490" />
+          <ellipse cx="71" cy={mood === "thinking" ? 63 : 66} rx="5" ry="7.5" fill="#0e7490" />
+          <circle cx="47" cy={mood === "thinking" ? 60 : 63} r="2.2" fill="#ffffff" />
+          <circle cx="69" cy={mood === "thinking" ? 60 : 63} r="2.2" fill="#ffffff" />
+          <circle cx="50.5" cy={mood === "thinking" ? 65 : 68} r="1.2" fill="#a5f3fc" />
+          <circle cx="72.5" cy={mood === "thinking" ? 65 : 68} r="1.2" fill="#a5f3fc" />
+        </>
+      )}
 
       {/* brows */}
       <path d="M43 56 Q49 54 55 56" stroke="#0d7f95" strokeWidth="2" fill="none" strokeLinecap="round" />

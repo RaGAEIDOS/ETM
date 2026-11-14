@@ -243,7 +243,7 @@ export default function Playground() {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Editor */}
-      <div className="rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden" dir="ltr">
+      <div className="rounded-2xl border border-white/10 bg-[rgb(var(--color-code-bg))] overflow-hidden" dir="ltr">
         <div className="flex items-center justify-between gap-3 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
           <div className="flex items-center gap-2">
             <span className="flex gap-1.5">
@@ -349,7 +349,7 @@ export default function Playground() {
 
       {/* Output */}
       <div className="flex flex-col gap-4">
-        <div className="flex-1 rounded-2xl border border-white/10 bg-[#0d1117] overflow-hidden">
+        <div className="flex-1 rounded-2xl border border-white/10 bg-[rgb(var(--color-code-bg))] overflow-hidden">
           <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
             <Terminal className="h-4 w-4 text-emerald-400" />
             <span className="text-xs text-slate-400">{c.output}</span>

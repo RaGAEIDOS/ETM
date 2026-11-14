@@ -38,7 +38,7 @@ export default function HeroTerminal() {
   }, []);
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0d1117]/90 shadow-2xl shadow-cyan-500/10 overflow-hidden" dir="ltr">
+    <div className="rounded-2xl border border-white/10 bg-[rgb(var(--color-code-bg))] shadow-2xl shadow-cyan-500/10 overflow-hidden" dir="ltr">
       <div className="flex items-center gap-2 border-b border-white/5 bg-white/[0.03] px-4 py-3">
         <span className="h-3 w-3 rounded-full bg-rose-500/70" />
         <span className="h-3 w-3 rounded-full bg-amber-400/70" />

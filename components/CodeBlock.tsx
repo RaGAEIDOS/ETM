@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
-import oneDark from "react-syntax-highlighter/dist/cjs/styles/prism/one-dark";
 import cpp from "react-syntax-highlighter/dist/cjs/languages/prism/cpp";
 import c from "react-syntax-highlighter/dist/cjs/languages/prism/c";
 import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
@@ -12,6 +11,7 @@ import python from "react-syntax-highlighter/dist/cjs/languages/prism/python";
 import javascript from "react-syntax-highlighter/dist/cjs/languages/prism/javascript";
 import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
 import { Copy, Check, Play, Code2 } from "lucide-react";
+import { etmSyntaxTheme } from "@/lib/syntax-theme";
 
 SyntaxHighlighter.registerLanguage("cpp", cpp);
 SyntaxHighlighter.registerLanguage("c", c);
@@ -83,7 +83,7 @@ export default function CodeBlock({
   };
 
   return (
-    <div className="my-6 rounded-xl border border-white/10 bg-[#0d1117] overflow-hidden" dir="ltr">
+    <div className="my-6 rounded-xl border border-white/10 bg-[rgb(var(--color-code-bg))] overflow-hidden" dir="ltr">
       <div className="flex items-center justify-between gap-3 border-b border-white/5 bg-white/[0.03] px-4 py-2.5">
         <div className="flex items-center gap-2 min-w-0">
           <span className="flex gap-1.5">
@@ -126,18 +126,18 @@ export default function CodeBlock({
         {isHighlighted ? (
           <SyntaxHighlighter
             language={lang}
-            style={oneDark}
+            style={etmSyntaxTheme}
             showLineNumbers={showLines}
             customStyle={{
               background: "transparent",
               margin: 0,
               padding: 0,
               overflow: "visible",
-              fontFamily: "Fira Code, JetBrains Mono, Consolas, monospace",
+              fontFamily: "var(--font-mono)",
               fontSize: "0.875rem",
             }}
             codeTagProps={{
-              style: { fontFamily: "Fira Code, JetBrains Mono, Consolas, monospace" },
+              style: { fontFamily: "var(--font-mono)" },
             }}
           >
             {code}

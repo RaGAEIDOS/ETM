@@ -14,6 +14,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Pomodoro from "@/components/Pomodoro";
 import AdBanners from "@/components/AdBanners";
+import { THEME_COLORS, THEME_INIT_SCRIPT } from "@/lib/theme";
 
 type Props = {
   children: React.ReactNode;
@@ -104,7 +105,7 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: "#05070f",
+  themeColor: THEME_COLORS.dark.page,
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -117,13 +118,8 @@ export default function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={htmlLangFor(locale)} dir={dirFor(locale)} suppressHydrationWarning>
       <head>
-        {/* Apply the saved site theme before first paint (no flash). */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "(function(){try{var t=localStorage.getItem('etm-theme-v1');if(t==='miku'||t==='bootcamp'||t==='codecademy'){document.documentElement.dataset.theme=t;}}catch(e){}})();",
-          }}
-        />
+        {/* Apply the saved/initial site theme before first paint (no flash). */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body>
         <link rel="preconnect" href="https://fonts.googleapis.com" />

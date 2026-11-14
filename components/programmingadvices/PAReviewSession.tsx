@@ -158,7 +158,7 @@ export default function PAReviewSession() {
   };
 
   return (
-    <div>
+    <div data-quiz>
       <div className="mb-4 flex items-center justify-between gap-3">
         <span dir="ltr" className="text-xs font-bold text-slate-500">
           {c.progress(formatNumber(index + 1), formatNumber(due.length))}

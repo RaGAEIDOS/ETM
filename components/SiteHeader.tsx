@@ -231,7 +231,7 @@ export default function SiteHeader() {
           )}
 
           <div className="flex items-center gap-2 shrink-0">
-            <ThemeSwitcher className="hidden sm:block" />
+            <ThemeSwitcher className="hidden lg:block" />
             <LanguageSwitcher className="hidden sm:inline-flex" />
             {ready && user ? (
               <Link
@@ -293,7 +293,7 @@ export default function SiteHeader() {
           <div className="px-3 pb-2 sm:hidden">
             <LanguageSwitcher />
           </div>
-          <div className="px-3 pb-2 sm:hidden">
+          <div className="px-3 pb-2">
             <ThemeSwitcher />
           </div>
           {navBeforeCourses.map((item) => {

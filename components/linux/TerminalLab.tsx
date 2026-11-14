@@ -374,7 +374,7 @@ export default function TerminalLab({ video }: { video: LinuxVideo }) {
       {/* Terminal + cheat sheet */}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px]">
         {/* Terminal (always LTR) */}
-        <div dir="ltr" className="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1020] shadow-inner">
+        <div dir="ltr" className="overflow-hidden rounded-2xl border border-white/10 bg-[rgb(var(--color-code-bg))] shadow-inner">
           {/* Title bar */}
           <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.03] px-4 py-2">
             <div className="flex items-center gap-2">

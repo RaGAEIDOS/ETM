@@ -1,0 +1,70 @@
+import type { CSSProperties } from "react";
+
+/**
+ * Prism theme expressed with the site's semantic CSS variables.
+ * Used by react-syntax-highlighter instead of the fixed One Dark palette, so
+ * every code block follows light / dark / terminal / cozy automatically.
+ */
+const c = (token: string) => `rgb(var(${token}))`;
+
+export const etmSyntaxTheme: Record<string, CSSProperties> = {
+  'code[class*="language-"]': {
+    color: c("--color-code-text"),
+    background: "none",
+    fontFamily: "var(--font-mono)",
+    direction: "ltr",
+    textAlign: "left",
+    whiteSpace: "pre",
+    wordSpacing: "normal",
+    wordBreak: "normal",
+    lineHeight: 1.5,
+    tabSize: 4,
+    hyphens: "none",
+  },
+  'pre[class*="language-"]': {
+    color: c("--color-code-text"),
+    background: "transparent",
+    fontFamily: "var(--font-mono)",
+    direction: "ltr",
+    textAlign: "left",
+    whiteSpace: "pre",
+    wordSpacing: "normal",
+    wordBreak: "normal",
+    lineHeight: 1.5,
+    tabSize: 4,
+    hyphens: "none",
+    margin: 0,
+    padding: 0,
+    overflow: "auto",
+  },
+  comment: { color: c("--color-text-muted"), fontStyle: "italic" },
+  prolog: { color: c("--color-text-muted"), fontStyle: "italic" },
+  doctype: { color: c("--color-text-muted"), fontStyle: "italic" },
+  cdata: { color: c("--color-text-muted"), fontStyle: "italic" },
+  punctuation: { color: c("--color-text-secondary") },
+  namespace: { opacity: 0.85 },
+  property: { color: c("--color-accent-muted") },
+  tag: { color: c("--color-danger") },
+  boolean: { color: c("--color-warning") },
+  number: { color: c("--color-warning") },
+  constant: { color: c("--color-warning") },
+  symbol: { color: c("--color-warning") },
+  deleted: { color: c("--color-danger") },
+  selector: { color: c("--color-success") },
+  "attr-name": { color: c("--color-success") },
+  string: { color: c("--color-success") },
+  char: { color: c("--color-success") },
+  builtin: { color: c("--color-success") },
+  inserted: { color: c("--color-success") },
+  operator: { color: c("--color-text-secondary") },
+  entity: { color: c("--color-info"), cursor: "help" },
+  url: { color: c("--color-info") },
+  atrule: { color: c("--color-accent-2-muted") },
+  "attr-value": { color: c("--color-success") },
+  keyword: { color: c("--color-accent-2-muted") },
+  function: { color: c("--color-accent") },
+  "class-name": { color: c("--color-info") },
+  regex: { color: c("--color-warning") },
+  important: { color: c("--color-danger"), fontWeight: "bold" },
+  variable: { color: c("--color-accent-muted") },
+};

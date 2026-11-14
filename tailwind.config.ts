@@ -1,5 +1,15 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Every colour utility used by the app resolves to a CSS custom property from
+ * `app/globals.css`. That is what lets the four themes restyle all 2,400+
+ * static pages without editing any content file.
+ */
+const token = (name: string) => `rgb(var(${name}) / <alpha-value>)`;
+
+const scale = (family: string, shades: readonly number[]) =>
+  Object.fromEntries(shades.map((shade) => [shade, token(`--tw-${family}-${shade}`)]));
+
 const config: Config = {
   content: [
     "./app/**/*.{ts,tsx}",
@@ -9,16 +19,27 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Cairo", "Tajawal", "Inter", "Segoe UI", "system-ui", "sans-serif"],
-        mono: ["Fira Code", "JetBrains Mono", "Consolas", "monospace"],
+        sans: ["var(--font-body)"],
+        mono: ["var(--font-mono)"],
       },
       colors: {
-        ink: {
-          950: "#05070f",
-          900: "#0a0f1e",
-          800: "#0f172a",
-          700: "#1e293b",
-        },
+        white: token("--tw-white"),
+        black: token("--tw-black"),
+        slate: scale("slate", [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]),
+        ink: scale("ink", [950, 900, 800, 700]),
+        cyan: scale("cyan", [100, 200, 300, 400, 500, 600]),
+        violet: scale("violet", [100, 200, 300, 400, 500, 600]),
+        sky: scale("sky", [400, 500]),
+        blue: scale("blue", [400, 500]),
+        indigo: scale("indigo", [500]),
+        purple: scale("purple", [500, 600]),
+        teal: scale("teal", [400, 500]),
+        pink: scale("pink", [400, 500]),
+        emerald: scale("emerald", [100, 200, 300, 400, 500, 950]),
+        amber: scale("amber", [50, 100, 200, 300, 400, 500, 600]),
+        yellow: scale("yellow", [300, 500]),
+        orange: scale("orange", [300, 400, 500]),
+        rose: scale("rose", [200, 300, 400, 500]),
       },
       animation: {
         "fade-up": "fadeUp 0.7s ease-out both",

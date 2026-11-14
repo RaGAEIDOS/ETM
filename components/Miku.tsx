@@ -21,12 +21,17 @@ import {
 } from "lucide-react";
 import MikuAvatar from "./MikuAvatar";
 import { MIKU, ONBOARDING_STEPS, tipForPath } from "@/lib/miku";
+import { THEME_EVENT } from "@/lib/theme";
+
+export type MikuMood = "default" | "sleepy" | "thinking";
 
 interface MikuContextValue {
   say: (message: string) => void;
   message: string | null;
   open: boolean;
   setOpen: (v: boolean) => void;
+  /** Reacts to the active theme: cozy -> sleepy, terminal -> thinking. */
+  mood: MikuMood;
 }
 
 const MikuContext = createContext<MikuContextValue | null>(null);
@@ -53,6 +58,10 @@ const COPY = {
     hideMiku: "إخفاء Miku لهذه الجلسة",
     assistant: "مساعدة Miku",
     tagline: MIKU.taglines.ar,
+    moodLabel: "المزاج",
+    moodDefault: "هادية وجاهزة",
+    moodSleepy: "نعسانة — وضع Cozy",
+    moodThinking: "بتفكر — وضع Terminal",
   },
   en: {
     step: (n: string, total: string) => `Miku · step ${n} of ${total}`,
@@ -66,6 +75,10 @@ const COPY = {
     hideMiku: "Hide Miku for this session",
     assistant: "Miku assistant",
     tagline: MIKU.taglines.en,
+    moodLabel: "Mood",
+    moodDefault: "Calm and ready",
+    moodSleepy: "Sleepy — Cozy mode",
+    moodThinking: "Thinking — Terminal mode",
   },
 } as const;
 
@@ -79,8 +92,19 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   const [tourOpen, setTourOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [mood, setMood] = useState<MikuMood>("default");
 
   const steps = ONBOARDING_STEPS[locale];
+
+  useEffect(() => {
+    const readMood = () => {
+      const active = document.documentElement.dataset.theme;
+      setMood(active === "cozy" ? "sleepy" : active === "terminal" ? "thinking" : "default");
+    };
+    readMood();
+    document.addEventListener(THEME_EVENT, readMood);
+    return () => document.removeEventListener(THEME_EVENT, readMood);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -98,6 +122,8 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   }, [message]);
 
   const tip = tipForPath(pathname, locale);
+  const moodText =
+    mood === "sleepy" ? c.moodSleepy : mood === "thinking" ? c.moodThinking : c.moodDefault;
 
   function finishTour() {
     setTourOpen(false);
@@ -109,7 +135,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   const isRtl = locale === "ar";
 
   return (
-    <MikuContext.Provider value={{ say, message, open, setOpen }}>
+    <MikuContext.Provider value={{ say, message, open, setOpen, mood }}>
       {children}
 
       {/* ===== Onboarding tour ===== */}
@@ -207,10 +233,19 @@ export function MikuProvider({ children }: { children: ReactNode }) {
           {open && (
             <div className="w-72 sm:w-80 rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl backdrop-blur">
               <div className="flex items-center gap-3">
-                <MikuAvatar size={44} />
+                <MikuAvatar size={44} mood={mood} />
                 <div className="flex-1">
                   <div className="font-black text-white">{MIKU.fullName}</div>
                   <div className="text-xs text-slate-400">{c.tagline}</div>
+                  <div
+                    className="mt-1 inline-flex items-center gap-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold text-cyan-300"
+                    title={`${c.moodLabel}: ${moodText}`}
+                  >
+                    <span aria-hidden>
+                      {mood === "sleepy" ? "😴" : mood === "thinking" ? "💭" : "🎧"}
+                    </span>
+                    <span>{moodText}</span>
+                  </div>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
@@ -264,8 +299,16 @@ export function MikuProvider({ children }: { children: ReactNode }) {
             className="group relative flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/40 bg-ink-900 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105"
             aria-label={c.assistant}
           >
-            <MikuAvatar size={52} />
+            <MikuAvatar size={52} mood={mood} />
             <span className="absolute top-0 end-0 h-3.5 w-3.5 rounded-full border-2 border-ink-950 bg-emerald-400" />
+            {mood !== "default" && (
+              <span
+                aria-hidden
+                className="absolute -bottom-1 -start-1 flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-ink-900 text-[11px] shadow"
+              >
+                {mood === "sleepy" ? "😴" : "💭"}
+              </span>
+            )}
           </button>
         </div>
       )}

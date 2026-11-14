@@ -117,7 +117,7 @@ export default function ProgressDashboard() {
           <div className="flex items-center gap-6">
             <div className="relative h-28 w-28">
               <svg className="h-28 w-28 -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+                <circle cx="50" cy="50" r="42" fill="none" style={{ stroke: "rgb(var(--color-text-primary) / 0.08)" }} strokeWidth="10" />
                 <circle
                   cx="50"
                   cy="50"
@@ -132,8 +132,8 @@ export default function ProgressDashboard() {
                 />
                 <defs>
                   <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#22d3ee" />
-                    <stop offset="100%" stopColor="#8b5cf6" />
+                    <stop offset="0%" style={{ stopColor: "rgb(var(--color-accent))" }} />
+                    <stop offset="100%" style={{ stopColor: "rgb(var(--color-accent-2))" }} />
                   </linearGradient>
                 </defs>
               </svg>
