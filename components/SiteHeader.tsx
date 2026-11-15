@@ -9,6 +9,7 @@ import { useCanonicalPathname } from "@/lib/i18n/navigation";
 import { useCopy } from "@/lib/i18n/context";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
+import SiteLogo from "./SiteLogo";
 
 const NAV = [
   { href: "/", key: "home" },
@@ -127,12 +128,9 @@ export default function SiteHeader() {
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         <div className="flex min-h-16 items-center justify-between gap-2 py-2">
           <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Maryam">
-            <img
-              src="/brand/main-logo.png"
-              alt="ETM — Education Technology Maryam"
-              width={768}
-              height={512}
-              className="h-11 sm:h-12 w-auto transition-transform group-hover:scale-105"
+            <SiteLogo
+              className="h-11 sm:h-12 transition-transform group-hover:scale-105"
+              eager
             />
           </Link>
 

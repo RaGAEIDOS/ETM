@@ -3,6 +3,7 @@
 import { Github, Heart } from "lucide-react";
 import Link from "@/lib/i18n/navigation";
 import { useCopy } from "@/lib/i18n/context";
+import SiteLogo from "./SiteLogo";
 
 const COPY = {
   ar: {
@@ -59,14 +60,7 @@ export default function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <Link href="/" className="mb-4 inline-flex items-center group" aria-label="ETM — Education Technology Maryam">
-              <img
-                src="/brand/main-logo.png"
-                alt="ETM — Education Technology Maryam"
-                width={768}
-                height={512}
-                loading="lazy"
-                className="h-16 w-auto transition-transform group-hover:scale-105"
-              />
+              <SiteLogo className="h-16 transition-transform group-hover:scale-105" />
             </Link>
             <p className="text-slate-400 leading-7 max-w-md">
               {c.blurb}{" "}

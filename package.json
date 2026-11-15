@@ -4,7 +4,9 @@
   "private": true,
   "description": "ETM - منصة تعليم البرمجة من الصفر إلى الاحتراف بلغة C++",
   "scripts": {
+    "predev": "node scripts/generate-logo-assets.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/generate-logo-assets.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",

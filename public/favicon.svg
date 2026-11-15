@@ -1,12 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">ETM Logo [icon]</title>
+  <desc id="desc">Placeholder square ETM favicon: code chevron and underscore on a dark rounded tile.</desc>
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="favicon-accent" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#22d3ee"/>
       <stop offset="1" stop-color="#8b5cf6"/>
     </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="14" fill="#0a0f1e"/>
-  <rect x="3" y="3" width="58" height="58" rx="12" fill="none" stroke="url(#g)" stroke-width="3"/>
-  <path d="M17 22 L27 32 L17 42" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="33" y1="42" x2="47" y2="42" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/>
+
+  <rect width="512" height="512" rx="112" fill="#0a0f1e"/>
+  <rect x="14" y="14" width="484" height="484" rx="100" fill="none" stroke="url(#favicon-accent)" stroke-width="12"/>
+  <path d="M126 168 L210 250 L126 332" fill="none" stroke="url(#favicon-accent)" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="246" y1="332" x2="378" y2="332" stroke="url(#favicon-accent)" stroke-width="36" stroke-linecap="round"/>
 </svg>

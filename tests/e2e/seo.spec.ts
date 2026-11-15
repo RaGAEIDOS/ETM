@@ -28,6 +28,40 @@ test.describe("SEO and sharing", () => {
     expect(img, "og:image").toBeTruthy();
   });
 
+  test("logo metadata, favicon and manifest resolve", async ({ page, request }) => {
+    await page.goto("/", { waitUntil: "domcontentloaded" });
+
+    const ogImage = await page
+      .locator('meta[property="og:image"]')
+      .getAttribute("content");
+    expect(ogImage, "og:image").toContain("/mascot/logo_full");
+    const twitterImage = await page
+      .locator('meta[name="twitter:image"]')
+      .getAttribute("content");
+    expect(twitterImage, "twitter:image").toBe(ogImage);
+
+    const iconHref = await page
+      .locator('link[rel="icon"]')
+      .first()
+      .getAttribute("href");
+    expect(iconHref, "favicon href").toBeTruthy();
+    const iconUrl = new URL(iconHref!, page.url()).toString();
+    const iconResponse = await request.get(iconUrl);
+    expect(iconResponse.status(), iconUrl).toBe(200);
+    expect(iconResponse.headers()["content-type"]).toMatch(/svg|png|icon/);
+
+    const manifestHref = await page
+      .locator('link[rel="manifest"]')
+      .getAttribute("href");
+    expect(manifestHref, "manifest href").toBe("/manifest.webmanifest");
+    const manifestResponse = await request.get("/manifest.webmanifest");
+    expect(manifestResponse.status()).toBe(200);
+    const manifest = await manifestResponse.json();
+    expect(manifest.name).toBe("ETM");
+    expect(manifest.short_name).toBe("ETM");
+    expect(manifest.icons?.length).toBeGreaterThan(0);
+  });
+
   test("robots.txt and sitemap.xml are served with the correct host", async ({ request }) => {
     const robots = await request.get("/robots.txt");
     expect(robots.status()).toBe(200);

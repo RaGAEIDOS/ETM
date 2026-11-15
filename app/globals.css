@@ -580,6 +580,37 @@ input, textarea, select, button {
 }
 
 /* ---------- Utilities ---------- */
+/* Theme-aware site logo (header + footer).
+   The full artwork is used on dark/terminal/cozy; the light theme swaps to the
+   optional logo_dark artwork when it exists. Both images are plain <img>s so
+   the swap happens before hydration and never flashes the wrong logo. */
+.site-logo {
+  line-height: 0;
+}
+.site-logo-picture {
+  display: inline-flex;
+  height: 100%;
+  align-items: center;
+}
+.site-logo-img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+.site-logo .site-logo-on-light {
+  display: none;
+}
+html[data-theme="light"] .site-logo .site-logo-on-light {
+  display: inline-flex;
+}
+html[data-theme="light"] .site-logo[data-logo-variant="dual"] .site-logo-on-dark {
+  display: none;
+}
+/* Single-variant fallback: force a white mark on the terminal theme's black. */
+html[data-theme="terminal"] .site-logo[data-logo-variant="single"] .site-logo-img {
+  filter: brightness(0) invert(1);
+}
+
 .glass {
   @apply bg-white/[0.04] backdrop-blur-xl border border-white/10;
 }

@@ -15,6 +15,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Pomodoro from "@/components/Pomodoro";
 import AdBanners from "@/components/AdBanners";
 import { THEME_COLORS, THEME_INIT_SCRIPT } from "@/lib/theme";
+import { LOGO_ASSETS } from "@/lib/logo-assets";
 
 type Props = {
   children: React.ReactNode;
@@ -24,6 +25,15 @@ type Props = {
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
+
+const SITE_URL = "https://etm-learning.vercel.app";
+const OG_IMAGE = new URL(LOGO_ASSETS.og.src, SITE_URL).toString();
+const LOGO_ALT = "ETM — Education Technology Maryam";
+const FAVICON_LINKS = LOGO_ASSETS.favicons.icon.map(({ src, sizes, type }) => ({
+  url: src,
+  sizes,
+  type,
+}));
 
 const META = {
   ar: {
@@ -68,7 +78,7 @@ export async function generateMetadata({
   const locale: Locale = params.locale === "en" ? "en" : "ar";
   const meta = META[locale];
   return {
-    metadataBase: new URL("https://etm-learning.vercel.app"),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: meta.title,
       template: "%s | ETM",
@@ -79,7 +89,12 @@ export async function generateMetadata({
       // HilltopAds site-verification tag (method 2 in their dashboard).
       "5fa9c0682e40e6b7aaf2": "f3712d7d0b315823ea65",
     },
-    icons: { icon: "/favicon.svg" },
+    icons: {
+      icon: FAVICON_LINKS,
+      shortcut: LOGO_ASSETS.favicons.shortcut,
+      apple: LOGO_ASSETS.favicons.apple,
+    },
+    manifest: "/manifest.webmanifest",
     openGraph: {
       title: meta.title,
       description: meta.description,
@@ -88,10 +103,10 @@ export async function generateMetadata({
       alternateLocale: locale === "ar" ? "en_US" : "ar_EG",
       images: [
         {
-          url: "/brand/etm-banner.jpg",
-          width: 1600,
-          height: 900,
-          alt: "ETM — Education Technology Maryam — Your Ultimate Online Learning Platform",
+          url: OG_IMAGE,
+          width: LOGO_ASSETS.og.width,
+          height: LOGO_ASSETS.og.height,
+          alt: LOGO_ALT,
         },
       ],
     },
@@ -99,7 +114,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: meta.title,
       description: meta.description,
-      images: ["/brand/etm-banner.jpg"],
+      images: [OG_IMAGE],
     },
   };
 }
