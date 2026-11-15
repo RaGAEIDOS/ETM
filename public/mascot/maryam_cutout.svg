@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-labelledby="cutout-title cutout-desc">
+  <title id="cutout-title">Maryam cutout placeholder</title>
+  <desc id="cutout-desc">Transparent-background placeholder of Maryam for the hero and About page. Replace with maryam_cutout.png.</desc>
+  <defs>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="cloth" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6" stop-opacity="0.42"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.12"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.42" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+
+  <circle cx="400" cy="430" r="330" fill="url(#halo)"/>
+
+  <g fill="none" stroke="url(#stroke)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M286 430c0-90 51-162 114-162s114 72 114 162v70c0 90-51 162-114 162s-114-72-114-162z" fill="#0b1026" stroke-opacity="0.95"/>
+    <path d="M304 382c23-57 56-84 96-84s73 27 96 84v62c-30-27-62-40-96-40s-66 13-96 40z" fill="url(#cloth)" stroke="none"/>
+    <circle cx="354" cy="456" r="9" fill="#67e8f9" stroke="none"/>
+    <circle cx="446" cy="456" r="9" fill="#67e8f9" stroke="none"/>
+    <path d="M365 512c18 15 52 15 70 0" stroke="#67e8f9"/>
+    <path d="M150 826c25-142 118-222 250-222s225 80 250 222" fill="#0b1026" stroke-opacity="0.95"/>
+    <path d="M238 760l50-58 38 38 42-62 44 62 40-38 52 58" stroke-opacity="0.65"/>
+    <path d="M560 306l64-42 58 58-64 42z" fill="#0b1026" stroke-opacity="0.9"/>
+    <path d="M584 314l-16 15 16 15M626 314l16 15-16 15" stroke="#67e8f9"/>
+  </g>
+
+  <g opacity="0.7">
+    <circle cx="160" cy="300" r="10" fill="#67e8f9"/>
+    <circle cx="648" cy="238" r="7" fill="#a78bfa"/>
+    <circle cx="662" cy="560" r="12" fill="#22d3ee" fill-opacity="0.6"/>
+    <circle cx="142" cy="600" r="7" fill="#a78bfa" fill-opacity="0.8"/>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.35">
+    <circle cx="400" cy="470" r="240" fill="#22d3ee"/>
+  </g>
+
+  <g>
+    <rect x="150" y="900" width="500" height="64" rx="18" fill="#05070f" fill-opacity="0.82" stroke="#67e8f9" stroke-opacity="0.35"/>
+    <text x="400" y="940" text-anchor="middle" fill="#f8fafc" font-family="monospace" font-size="24" font-weight="700">Maryam cutout placeholder</text>
+  </g>
+</svg>

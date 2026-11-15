@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 600" width="1920" height="600" role="img" aria-labelledby="banner-title banner-desc">
+  <title id="banner-title">Banner placeholder</title>
+  <desc id="banner-desc">Placeholder artwork for the Maryam hero banner. Replace with maryam_banner.png.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05070f"/>
+      <stop offset="0.55" stop-color="#0b1026"/>
+      <stop offset="1" stop-color="#160b2e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.74" cy="0.42" r="0.55">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.32"/>
+      <stop offset="0.55" stop-color="#8b5cf6" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#05070f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#67e8f9"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#94a3b8" stroke-opacity="0.10"/>
+    </pattern>
+  </defs>
+
+  <rect width="1920" height="600" fill="url(#bg)"/>
+  <rect width="1920" height="600" fill="url(#grid)"/>
+  <rect width="1920" height="600" fill="url(#glow)"/>
+
+  <g fill="none" stroke="url(#stroke)" stroke-width="3" opacity="0.7">
+    <path d="M1120 170l-48 46 48 46"/>
+    <path d="M1180 170l48 46-48 46"/>
+    <circle cx="1150" cy="430" r="54" stroke-opacity="0.35"/>
+    <circle cx="1150" cy="430" r="86" stroke-opacity="0.18"/>
+  </g>
+
+  <g transform="translate(1450 82)" fill="none" stroke="url(#stroke)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M110 26c0-36 29-65 65-65s65 29 65 65v78c0 36-29 65-65 65s-65-29-65-65z" fill="#0b1026" stroke-opacity="0.9"/>
+    <path d="M126 42c12-26 29-39 49-39s37 13 49 39v34c-15-14-31-21-49-21s-34 7-49 21z" fill="#8b5cf6" fill-opacity="0.28" stroke="none"/>
+    <circle cx="158" cy="88" r="6" fill="#67e8f9" stroke="none"/>
+    <circle cx="212" cy="88" r="6" fill="#67e8f9" stroke="none"/>
+    <path d="M166 119c10 8 28 8 38 0" stroke="#67e8f9"/>
+    <path d="M52 238c20-44 65-68 123-68s103 24 123 68" fill="#0b1026" stroke-opacity="0.9"/>
+    <path d="M96 205l30 33M284 205l-30 33" stroke-opacity="0.45"/>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.5">
+    <circle cx="1600" cy="300" r="150" fill="#22d3ee" fill-opacity="0.20"/>
+  </g>
+
+  <text x="84" y="250" fill="#67e8f9" font-family="monospace" font-size="26" letter-spacing="6">ETM · MARYAM</text>
+  <text x="84" y="330" fill="#f8fafc" font-family="monospace" font-size="58" font-weight="700">Banner placeholder</text>
+  <text x="84" y="384" fill="#94a3b8" font-family="monospace" font-size="24">Replace public/mascot/maryam_banner.png · 1920×600</text>
+
+  <rect x="84" y="438" width="292" height="2" fill="url(#stroke)" opacity="0.55"/>
+  <text x="84" y="492" fill="#a78bfa" font-family="monospace" font-size="22">منصتك لتعلّم البرمجة والذكاء الاصطناعي</text>
+</svg>

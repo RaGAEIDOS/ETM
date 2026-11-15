@@ -3,30 +3,17 @@ import Link from "next/link";
 import {
   BookOpen,
   Code2,
-  Rocket,
-  Terminal,
-  Brain,
   Trophy,
   Users,
-  Sparkles,
   ArrowLeft,
-  CheckCircle2,
-  Zap,
   Target,
-  Gamepad2,
   Search,
   Play,
   GraduationCap,
-  Github,
-  LayoutDashboard,
-  Timer,
-  BookMarked,
-  FlaskConical,
 } from "lucide-react";
-import { stages, totalLessons, totalCourses } from "@/lib/data";
+import { totalLessons, totalCourses } from "@/lib/data";
 import { projects } from "@/lib/projects";
-import { elzeroVideos } from "@/lib/elzero-videos";
-import MaryamAvatar from "@/components/MaryamAvatar";
+import HeroBanner from "@/components/HeroBanner";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
@@ -120,18 +107,6 @@ export default function LandingPage({ params }: Props) {
   const isAr = locale === "ar";
   const lessonCount = totalLessons();
   const courseCount = totalCourses();
-  const videoCount = elzeroVideos.length;
-
-  const heroBadge = isAr ? "المنهج العالمي الشهير — OSSU — موثّق بالعربية" : "The world-famous OSSU curriculum — explained in Arabic";
-  const heroA = isAr ? "تعلّم البرمجة" : "Learn programming from";
-  const heroAccentA = isAr ? "من الصفر" : "zero";
-  const heroAccentB = isAr ? "إلى بناء نظام تشغيل متقدم" : "to building an operating system";
-  const heroLead = isAr
-    ? "ETM بتعلمك لغة C++ مع منهج جامعي كامل، وشرح واضح، وأمثلة تفاعلية، ومشاريع حقيقية — من أول سطر كود لك إلى محرك ألعاب ونظام تشغيل عملي."
-    : "ETM teaches you C++ with a complete university-level curriculum, clear explanations, interactive examples, and real projects — from your first line of code to a game engine and an OS kernel that actually runs.";
-  const ctaStart = isAr ? "ابدأ الرحلة — مجاناً" : "Start the journey — free";
-  const ctaPlayground = isAr ? "جرّب المحرك C++" : "Try the C++ playground";
-  const ctaGuide = isAr ? "جديد هنا؟ تقودك مريم" : "New here? Maryam will show you around";
 
   const statsLessons = isAr ? "دروس تفاعلية" : "Interactive lessons";
   const statsCourses = isAr ? "كورسات متكاملة" : "Complete courses";
@@ -148,106 +123,11 @@ export default function LandingPage({ params }: Props) {
   const ctaTitle = isAr ? "رحلتك نحو الإتقان تبدأ بخطوة واحدة" : "Your journey to mastery starts with one step";
   const ctaLead = isAr ? "ساعة من الآن يمكنك أن تكتب أول سطر كود لك. بعد ذلك، السماء هي الحد." : "One hour from now you could write your first line of code. From there, the sky is the limit.";
   const ctaLesson = isAr ? "ابدأ الدرس الأول — مجاناً" : "Start the first lesson — free";
-  const ctaSources = isAr ? "تصفح المصادر" : "Browse the sources";
-  const ctaBooks = isAr ? "الكتب المجانية" : "Free books";
-  const freeForever = isAr ? "مجاناً إلى الأبد" : "Free forever";
-  const pomodoro = isAr ? "تركيز Pomodoro" : "Pomodoro focus";
-  const join = isAr ? "انضم لآلاف المتعلمين العرب —" : "Join thousands of Arabic learners —";
-  const freeForever2 = isAr ? "مجاناً إلى الأبد" : "free forever";
-
-  const maryamCopy = isAr
-    ? { name: "مريم", buddy: "مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة", ready: "جاهزة متى أردت — هيا نبدأ! 🚀", missionTitle: "مهمة اليوم", mission: <>أكمل الدرس <b className="text-white">&quot;Hello World&quot;</b> في C++ Basics، ثم شغّله في المحرك.</>, streak: "أيام متتالية", focus: "وقت تركيز", videos: "فيديوهات ElZero" }
-    : { name: "Maryam", buddy: "Maryam — your AI engineering companion", ready: "Ready when you are — let's code! 🚀", missionTitle: "Today's mission", mission: <>Finish lesson <b className="text-white">&quot;Hello World&quot;</b> in C++ Basics, then run it in the playground.</>, streak: "days streak", focus: "focus time", videos: "ElZero videos" };
 
   return (
     <div>
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-60" />
-        <div className="absolute -top-40 right-1/4 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pt-24 lg:pb-28">
-          <div className="grid items-center gap-10 lg:gap-12 lg:grid-cols-2">
-            <div>
-              <Reveal>
-                <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-semibold text-cyan-300">
-                  <Sparkles className="h-4 w-4" />
-                  {heroBadge}
-                </span>
-              </Reveal>
-              <Reveal delay={100}>
-                <h1 className="mt-6 text-[1.9rem] leading-[1.4] sm:text-5xl lg:text-6xl font-black text-white">
-                  {heroA}{" "}
-                  <span className="gradient-text">{heroAccentA}</span>
-                  <br />
-                  {heroAccentB}
-                </h1>
-              </Reveal>
-              <Reveal delay={200}>
-                <p className="mt-6 text-lg leading-9 text-slate-400 max-w-xl">{heroLead}</p>
-              </Reveal>
-              <Reveal delay={300}>
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <Link href={localePath(locale, "/curriculum")} className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-6 py-3.5 font-bold text-ink-950 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-shadow">
-                    {ctaStart}
-                    <ArrowLeft className="h-5 w-5 ltr:rotate-180 group-hover:-translate-x-1 rtl:group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <Link href={localePath(locale, "/playground")} className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 font-bold text-white hover:bg-white/10 transition-colors">
-                    <Play className="h-5 w-5 text-cyan-400" />
-                    {ctaPlayground}
-                  </Link>
-                </div>
-              </Reveal>
-              <Reveal delay={350}>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <Link href={localePath(locale, "/guide")} className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/25 bg-cyan-500/10 px-4 py-2.5 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-colors">
-                    <Terminal className="h-4 w-4" />
-                    {ctaGuide}
-                  </Link>
-                  <Link href={localePath(locale, "/dashboard")} className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">
-                    <LayoutDashboard className="h-4 w-4 text-cyan-400" />
-                    {isAr ? "لوحة التحكم" : "Dashboard"}
-                  </Link>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal delay={200}>
-              <div className="animate-float">
-                <div className="rounded-2xl border border-white/10 bg-ink-900/70 p-6 shadow-2xl backdrop-blur">
-                  <div className="flex items-center gap-4">
-                    <MaryamAvatar size={84} />
-                    <div>
-                      <div className="font-black text-white text-lg">{maryamCopy.name}</div>
-                      <div className="text-sm text-slate-400">{maryamCopy.buddy}</div>
-                      <div className="mt-2 text-xs text-emerald-400 font-bold">{maryamCopy.ready}</div>
-                    </div>
-                  </div>
-                  <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300 leading-6">
-                    <div className="font-bold text-cyan-400 mb-1">{maryamCopy.missionTitle}</div>
-                    <p>{maryamCopy.mission}</p>
-                  </div>
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                    <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
-                      <div className="font-black text-white text-lg">3</div>
-                      <div className="text-[11px] text-slate-500">{maryamCopy.streak}</div>
-                    </div>
-                    <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
-                      <div className="font-black text-white text-lg">25m</div>
-                      <div className="text-[11px] text-slate-500">{maryamCopy.focus}</div>
-                    </div>
-                    <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
-                      <div className="font-black text-white text-lg">{videoCount}</div>
-                      <div className="text-[11px] text-slate-500">{maryamCopy.videos}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <HeroBanner locale={locale} />
 
       {/* ============ BRAND BANNER ============ */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 pb-14 sm:pb-20">

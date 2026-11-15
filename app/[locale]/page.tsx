@@ -10,7 +10,6 @@ import {
   BookOpen,
   Code2,
   Rocket,
-  Terminal,
   Brain,
   Trophy,
   Users,
@@ -24,15 +23,13 @@ import {
   Gamepad2,
   Shield,
   Search,
-  Play,
   GraduationCap,
   Github,
-  LayoutDashboard,
   Timer,
 } from "lucide-react";
 import { stages, totalLessons, totalCourses } from "@/lib/data";
 import { projects } from "@/lib/projects";
-import HeroTerminal from "@/components/HeroTerminal";
+import HeroBanner from "@/components/HeroBanner";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
 import ResumeCard from "@/components/ResumeCard";
@@ -133,16 +130,6 @@ const FAQS: Record<Locale, { q: string; a: string }[]> = {
 };
 
 const COPY: Record<Locale, {
-  heroBadge: string;
-  heroA: string;
-  heroAccentA: string;
-  heroAccentB: string;
-  heroLead: string;
-  ctaStart: string;
-  ctaPlayground: string;
-  ctaGuide: string;
-  ctaDashboard: string;
-  ctaPomodoro: string;
   statsLessons: string;
   statsCourses: string;
   statsProjects: string;
@@ -179,21 +166,9 @@ const COPY: Record<Locale, {
   freeForever: string;
   maryamGuides: string;
   pomodoro: string;
-  join: string;
-  freeForever2: string;
   loading: string;
 }> = {
   ar: {
-    heroBadge: "المنهج العالمي الشهير — OSSU — موثّق بالعربية",
-    heroA: "تعلّم البرمجة",
-    heroAccentA: "من الصفر",
-    heroAccentB: "إلى بناء نظام تشغيل متقدم",
-    heroLead: "ETM بتعلمك لغة C++ مع منهج جامعي كامل، وشرح واضح، وأمثلة تفاعلية، ومشاريع حقيقية — من أول سطر كود لك إلى محرك ألعاب ونظام تشغيل عملي.",
-    ctaStart: "ابدأ الرحلة — مجاناً",
-    ctaPlayground: "جرّب المحرك C++",
-    ctaGuide: "جديد هنا؟ تقودك مريم",
-    ctaDashboard: "لوحة التقدم",
-    ctaPomodoro: "تركيز Pomodoro",
     statsLessons: "دروس تفاعلية",
     statsCourses: "كورسات متكاملة",
     statsProjects: "مشاريع حقيقية",
@@ -230,21 +205,9 @@ const COPY: Record<Locale, {
     freeForever: "مجاناً إلى الأبد",
     maryamGuides: "مريم تقود خطاك",
     pomodoro: "تركيز Pomodoro",
-    join: "انضم لآلاف المتعلمين العرب —",
-    freeForever2: "مجاناً إلى الأبد",
     loading: "جارٍ التحميل...",
   },
   en: {
-    heroBadge: "The world-famous OSSU curriculum — explained in Arabic",
-    heroA: "Learn programming from",
-    heroAccentA: "zero",
-    heroAccentB: "to building an operating system",
-    heroLead: "ETM teaches you C++ with a complete university-level curriculum, clear explanations, interactive examples, and real projects — from your first line of code to a game engine and an OS kernel that actually runs.",
-    ctaStart: "Start the journey — free",
-    ctaPlayground: "Try the C++ playground",
-    ctaGuide: "New here? Maryam will show you around",
-    ctaDashboard: "Dashboard",
-    ctaPomodoro: "Pomodoro focus",
     statsLessons: "Interactive lessons",
     statsCourses: "Complete courses",
     statsProjects: "Real projects",
@@ -281,8 +244,6 @@ const COPY: Record<Locale, {
     freeForever: "Free forever",
     maryamGuides: "Maryam guides you",
     pomodoro: "Pomodoro focus",
-    join: "Join thousands of Arabic learners —",
-    freeForever2: "free forever",
     loading: "Loading...",
   },
 } as const;
@@ -314,86 +275,7 @@ export default function HomePage() {
   return (
     <div>
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 grid-bg opacity-60" />
-        <div className="absolute -top-40 right-1/4 h-96 w-96 rounded-full bg-cyan-500/20 blur-[120px]" />
-        <div className="absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-violet-500/20 blur-[120px]" />
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-12 sm:pt-16 sm:pb-20 lg:pt-24 lg:pb-28">
-          <div className="grid items-center gap-10 lg:gap-12 lg:grid-cols-2">
-            <div>
-              <Reveal>
-                <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-semibold text-cyan-300">
-                  <Sparkles className="h-4 w-4" />
-                  {c.heroBadge}
-                </span>
-              </Reveal>
-              <Reveal delay={100}>
-                <h1 className="mt-6 text-[1.9rem] leading-[1.4] sm:text-5xl lg:text-6xl font-black text-white">
-                  {c.heroA}{" "}
-                  <span className="gradient-text">{c.heroAccentA}</span>
-                  <br />
-                  {c.heroAccentB}
-                </h1>
-              </Reveal>
-              <Reveal delay={200}>
-                <p className="mt-6 text-lg leading-9 text-slate-400 max-w-xl">
-                  {c.heroLead}
-                </p>
-              </Reveal>
-              <Reveal delay={300}>
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <Link href="/curriculum" className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-l from-cyan-400 to-violet-500 px-6 py-3.5 font-bold text-ink-950 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-shadow">
-                    {c.ctaStart}
-                    <ArrowLeft className="h-5 w-5 ltr:rotate-180 group-hover:-translate-x-1 rtl:group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <Link href="/playground" className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-6 py-3.5 font-bold text-white hover:bg-white/10 transition-colors">
-                    <Play className="h-5 w-5 text-cyan-400" />
-                    {c.ctaPlayground}
-                  </Link>
-                </div>
-              </Reveal>
-              <Reveal delay={350}>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <Link href="/guide" className="inline-flex items-center gap-2 rounded-xl border border-cyan-500/25 bg-cyan-500/10 px-4 py-2.5 text-sm font-bold text-cyan-300 hover:bg-cyan-500/20 transition-colors">
-                    <Terminal className="h-4 w-4" />
-                    {c.ctaGuide}
-                  </Link>
-                  <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">
-                    <LayoutDashboard className="h-4 w-4 text-cyan-400" />
-                    {c.ctaDashboard}
-                  </Link>
-                  <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition-colors">
-                    <Timer className="h-4 w-4 text-emerald-400" />
-                    {c.ctaPomodoro}
-                  </Link>
-                </div>
-              </Reveal>
-              <Reveal delay={400}>
-                <div className="mt-8 flex items-center gap-3 text-sm text-slate-500">
-                  <div className="flex -space-x-2 space-x-reverse">
-                    {["Ahmed", "Sara", "Mahmoud", "Nour"].map((n) => (
-                      <span key={n} className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-ink-950 bg-gradient-to-br from-cyan-500/30 to-violet-500/30 text-xs font-bold text-white">
-                        {n[0]}
-                      </span>
-                    ))}
-                  </div>
-                  <span>
-                    {c.join}{" "}
-                    <span className="text-white font-semibold">{c.freeForever2}</span>
-                  </span>
-                </div>
-              </Reveal>
-            </div>
-
-            <Reveal delay={200}>
-              <div className="animate-float">
-                <HeroTerminal />
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
+      <HeroBanner locale={locale} />
 
       {/* ============ STATS ============ */}
       <section className="border-y border-white/5 bg-white/[0.02]">

@@ -4,6 +4,8 @@ import { waitHydrated } from "./helpers/ui";
 
 const PAGES = [
   ["home", "/"],
+  ["landing", "/landing"],
+  ["about", "/about"],
   ["curriculum", "/curriculum"],
   ["lesson", "/learn/stage-1/cpp-basics/hello-world"],
   ["elzero-index", "/elzero"],

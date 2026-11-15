@@ -5,7 +5,9 @@
   "description": "ETM - منصة تعليم البرمجة من الصفر إلى الاحتراف بلغة C++",
   "scripts": {
     "dev": "next dev",
+    "predev": "node scripts/generate-mascot-manifest.mjs",
     "build": "next build",
+    "prebuild": "node scripts/generate-mascot-manifest.mjs",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:content": "node --experimental-strip-types scripts/validate-content.mjs",

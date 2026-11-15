@@ -43,6 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/sources", "monthly", 0.5),
     entry("/books", "monthly", 0.6),
     entry("/guide", "monthly", 0.6),
+    entry("/about", "monthly", 0.6),
   ];
 
   entries.push(entry("/elzero", "weekly", 0.9));

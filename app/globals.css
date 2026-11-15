@@ -599,6 +599,47 @@ input, textarea, select, button {
   box-shadow: 0 0 40px -10px rgb(var(--color-accent) / 0.5);
 }
 
+/* ---------- Hero banner (theme-token driven) ---------- */
+.hero-banner-overlay {
+  background: linear-gradient(
+    to right,
+    rgb(var(--color-bg)) 0%,
+    rgb(var(--color-bg) / 0.94) 26%,
+    rgb(var(--color-bg) / 0.55) 58%,
+    rgb(var(--color-bg) / 0.08) 100%
+  );
+}
+
+html[dir="rtl"] .hero-banner-overlay {
+  background: linear-gradient(
+    to left,
+    rgb(var(--color-bg)) 0%,
+    rgb(var(--color-bg) / 0.94) 26%,
+    rgb(var(--color-bg) / 0.55) 58%,
+    rgb(var(--color-bg) / 0.08) 100%
+  );
+}
+
+.hero-banner-glow {
+  background: radial-gradient(
+    ellipse 55% 75% at 74% 42%,
+    rgb(var(--color-accent) / 0.18),
+    transparent 70%
+  );
+}
+
+html[dir="rtl"] .hero-banner-glow {
+  background: radial-gradient(
+    ellipse 55% 75% at 26% 42%,
+    rgb(var(--color-accent) / 0.18),
+    transparent 70%
+  );
+}
+
+.hero-banner-frame {
+  box-shadow: 0 32px 90px -48px rgb(var(--color-accent) / 0.7);
+}
+
 .code-scroll {
   direction: ltr;
 }
