@@ -3,7 +3,7 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-15 · **Branch**: `feat/new-logo` @ `2deff84`; new ETM logo pipeline, theme-aware header/footer logo, favicons, manifest and share metadata integrated with labelled placeholders (banner work is isolated on `feat/maryam-banner` @ `cfaaf8f`)
+**Updated**: 2026-11-15 · **Branch**: `feat/rebrand-assets`; logo, favicons, manifest and hero banner integrated (merge of `feat/new-logo` and `feat/maryam-banner`; final assets and verification in progress)
 
 ## New ETM logo — placeholder integration (2026-11-15, 12-line digest)
 
@@ -19,6 +19,19 @@ Update after every task. If a session is interrupted, resume from here.
 10. Limitations: final designer art, real raster favicons and WebP delivery remain pending. Until PNGs arrive, `apple-touch-icon`, `manifest` icons and `og:image` are SVG placeholders (some social/iOS clients do not render SVG); `og:image` is the full logo at 960×320 rather than a designed 1200×630 card.
 11. Live verification: `/favicon.ico` → 200 `image/svg+xml`, `/icons/favicon.svg` → 200, `/mascot/logo_full.svg` → 200, `/manifest.webmanifest` → 200 `application/manifest+json` with `name`/`short_name` `ETM`; head links point at `/icons/favicon.svg`, `/manifest.webmanifest`, and absolute `https://etm-learning.vercel.app/mascot/logo_full.svg` for OG/Twitter.
 12. Protected work: `components/programmingadvices/PACourseCard.tsx`, `tests/e2e/programmingadvices.spec.ts`, `scripts/5fa9c0682e40e6b7aaf2.txt` and the user's untracked `images/*` files were not edited or committed. `public/brand/etm-banner.jpg` is kept for the landing marketing section only.
+## Maryam hero banner — done (2026-11-15, 10-line digest)
+
+1. Scope: `feat/maryam-banner` from `main` @ `2deff84`. New `components/HeroBanner.tsx` replaces the old marketing hero on `/landing` and `/` and is reused on the new `/about` page; `app/sitemap.ts` lists `/landing` and `/about`.
+2. Copy: exact Arabic tagline `منصتك لتعلّم البرمجة والذكاء الاصطناعي`, English `Your platform for coding & AI`, CTAs to `/curriculum` and `/about`, and a labelled Maryam quote block.
+3. Quotes: four Arabic/English quotes rotate every 6 s with a 300 ms opacity transition; `prefers-reduced-motion` stops rotation. The quote text is the only client island (`components/HeroQuote.tsx`) so the rest of the hero is server-rendered.
+4. Theme/RTL: the 55/45 hero mirrors with `dir`; overlay and glow use `--color-bg`/`--color-accent`, so all four themes (light, dark, terminal, cozy) are covered and the ETM heading takes the active accent colour.
+5. Assets: no banner/cutout PNGs were supplied, so labelled placeholders `public/mascot/maryam_banner.svg` + `maryam_cutout.svg` are used. `scripts/generate-mascot-manifest.mjs` writes `lib/mascot-assets.ts` on `predev`/`prebuild`; dropping real `maryam_banner*.png/webp` and `maryam_cutout.png/webp` switches the hero with no code change.
+6. Responsive: 390 px shows a 120 px avatar and hides the banner frame; 1280 px shows the full banner/cutout frame. Screenshots: `docs/screenshots/banner_390_dark.png`, `banner_1280_dark.png`, `banner_390_terminal.png`, `banner_1280_terminal.png`.
+7. Gates: `npm run typecheck` clean; `npm run lint` pre-existing warnings only; `npm run build` PASS (2,457 static pages, `/landing` 98 kB first-load JS); banner + axe on chromium-desktop 26/26; banner + `/landing`//`/about` axe on mobile-chrome and webkit 14/14.
+8. Lighthouse `/landing` (paired baseline on 3101 vs banner build on 3100, 3 alternating rounds): baseline 70/69/67 (avg 68.7), banner 70/65/70 (avg 68.3) → **-0.3 points, inside the ≤5 gate**. LCP 7.3–7.4 s vs 7.8–7.9 s; TBT 50/250/40 ms vs 60/90/220 ms; CLS 0.024 vs 0.
+9. Lighthouse caveat: later samples on this host were contaminated by concurrent Chrome/Edge load (baseline fell to 64/61, banner TBT showed 800–1,400 ms of *unattributable* long tasks). The clean alternating pair above is the gate; the code was unchanged after it (the temporary mobile min-height experiment was reverted).
+10. Protected work: `components/programmingadvices/PACourseCard.tsx`, `tests/e2e/programmingadvices.spec.ts`, `scripts/5fa9c0682e40e6b7aaf2.txt` and the user's untracked `images/*` files were not edited or committed.
+
 
 ## Maryam rebrand — done (2026-11-14, 12-line digest)
 
