@@ -524,9 +524,11 @@ Arabic word `ميكونش` (“shouldn’t be”), whose letters contain the sub
 7. `npm run test:unit` → **131/131 pass**.
 8. `npm run test:content` → **PASS** (elzero-web 6/390, english 36/458,
    programmingadvices 2/10, cs50x 13/0; 0 blocking, 0 advisories).
-9. Playwright: `maryam.spec.ts` **3/3** on chromium-desktop, mobile-chrome and
-   webkit (single worker for WebKit); `responsive.spec.ts` **40/40** on
-   chromium-desktop; changed-area subset **42/42** on chromium-desktop.
+9. Playwright: `maryam.spec.ts` **4/4** on chromium-desktop, mobile-chrome and
+   webkit (single worker for WebKit), including a direct `/mascot/*.svg`
+   asset-serving test; `responsive.spec.ts` **40/40** on chromium-desktop;
+   changed-area subset **42/42** on chromium-desktop; `404.spec.ts` and
+   `internal-links.spec.ts` **7/7** after the middleware fix.
 10. Built output: **0** case-sensitive `Miku` / `ميكو` hits. The lowercase
     legacy theme token still appears inside the pre-paint migration script,
     which is necessary to migrate saved `etm-theme-v1` values; it is not
@@ -534,7 +536,9 @@ Arabic word `ميكونش` (“shouldn’t be”), whose letters contain the sub
 11. Assets: all four `public/mascot/*.svg` parse as valid XML; the old
     `/miku.png` reference is gone. The rendered mascot remains the inline
     `MaryamAvatar`; the four SVGs are the designer replacement set and
-    `MARYAM.avatar` points at the icon.
+    `MARYAM.avatar` points at the icon. The locale middleware matcher now
+    excludes `mascot/`; without that exclusion every mascot URL is rewritten to
+    `/ar/mascot/...` and returns 404. The E2E asset test covers this.
 
 ## 9. Change log (implementation record)
 
@@ -587,13 +591,15 @@ Arabic word `ميكونش` (“shouldn’t be”), whose letters contain the sub
 - `lib/maryam.ts` — `MARYAM_TAGLINE`, `MARYAM_PERSONA`, `MARYAM` config
   (`avatar: /mascot/maryam_icon.svg`), `MaryamTip`, onboarding/page/Pomodoro
   copy.
+- `middleware.ts` — matcher excludes `mascot/` so the new public SVGs bypass the
+  Arabic locale rewrite and are served as static files instead of 404.
 
 ### Tests and scripts
 
 - `tests/e2e/helpers/ui.ts` — `seedMaryamDone`, new storage key, compatibility
   alias `seedMikuDone`.
 - `tests/e2e/maryam.spec.ts` — describe/button names, EN + AR assertions,
-  `seedMaryamDone`.
+  `seedMaryamDone`, and a `/mascot/*.svg` asset-serving regression test.
 - `tests/e2e/404.spec.ts`, `books.spec.ts`, `elzero.spec.ts`, `english.spec.ts`,
   `internal-links.spec.ts`, `linux.spec.ts`, `playground.spec.ts`,
   `progress.spec.ts`, `quiz.spec.ts` — `seedMaryamDone`.

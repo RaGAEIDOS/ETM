@@ -20,6 +20,19 @@ test.describe("Maryam study buddy", () => {
     await expect(tagline.nth(1)).toBeVisible();
   });
 
+  test("mascot assets resolve through the locale middleware", async ({ request }) => {
+    for (const name of [
+      "maryam_front.svg",
+      "maryam_3q.svg",
+      "maryam_side.svg",
+      "maryam_icon.svg",
+    ]) {
+      const res = await request.get(`/mascot/${name}`);
+      expect(res.status(), name).toBe(200);
+      expect(res.headers()["content-type"], name).toContain("image/svg+xml");
+    }
+  });
+
   test("no API keys are visible in the browser console/bundle strings", async ({ page }) => {
     seedMaryamDone(page);
     const sent: string[] = [];
