@@ -34,21 +34,34 @@ test.describe("SEO and sharing", () => {
     const ogImage = await page
       .locator('meta[property="og:image"]')
       .getAttribute("content");
-    expect(ogImage, "og:image").toContain("/mascot/logo_full");
+    expect(ogImage, "og:image").toContain("/mascot/logo_full.png");
+    expect(ogImage, "og:image is absolute").toMatch(/^https?:\/\//);
     const twitterImage = await page
       .locator('meta[name="twitter:image"]')
       .getAttribute("content");
     expect(twitterImage, "twitter:image").toBe(ogImage);
 
-    const iconHref = await page
+    const iconHrefs = await page
       .locator('link[rel="icon"]')
-      .first()
-      .getAttribute("href");
-    expect(iconHref, "favicon href").toBeTruthy();
-    const iconUrl = new URL(iconHref!, page.url()).toString();
+      .evaluateAll((links) => links.map((link) => link.getAttribute("href") ?? ""));
+    expect(iconHrefs.length, "icon links").toBeGreaterThan(0);
+    expect(iconHrefs.some((href) => href.startsWith("/icons/"))).toBe(true);
+    expect(iconHrefs.some((href) => href === "/favicon.ico")).toBe(true);
+
+    const iconUrl = new URL(iconHrefs[0], page.url()).toString();
     const iconResponse = await request.get(iconUrl);
     expect(iconResponse.status(), iconUrl).toBe(200);
     expect(iconResponse.headers()["content-type"]).toMatch(/svg|png|icon/);
+
+    const appleHref = await page
+      .locator('link[rel="apple-touch-icon"]')
+      .getAttribute("href");
+    expect(appleHref, "apple-touch-icon").toBe("/icons/apple-touch-icon.png");
+    expect((await request.get(appleHref!)).status()).toBe(200);
+
+    const icoResponse = await request.get("/favicon.ico");
+    expect(icoResponse.status(), "/favicon.ico").toBe(200);
+    expect(icoResponse.headers()["content-type"]).toBe("image/x-icon");
 
     const manifestHref = await page
       .locator('link[rel="manifest"]')
@@ -60,6 +73,10 @@ test.describe("SEO and sharing", () => {
     expect(manifest.name).toBe("ETM");
     expect(manifest.short_name).toBe("ETM");
     expect(manifest.icons?.length).toBeGreaterThan(0);
+    const manifestSizes = manifest.icons.map((icon: { sizes: string }) => icon.sizes);
+    expect(manifestSizes).toEqual(
+      expect.arrayContaining(["192x192", "512x512"])
+    );
   });
 
   test("robots.txt and sitemap.xml are served with the correct host", async ({ request }) => {

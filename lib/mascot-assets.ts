@@ -13,18 +13,18 @@ export const MASCOT_ASSETS: {
   icon: string;
 } = {
   "banner": {
-    "png": null,
-    "webp": null,
-    "srcSet": null,
+    "png": "/mascot/maryam_banner.png",
+    "webp": "/mascot/maryam_banner.webp",
+    "srcSet": "/mascot/maryam_banner-480.webp 480w, /mascot/maryam_banner-768.webp 768w, /mascot/maryam_banner-1280.webp 1280w, /mascot/maryam_banner-1920.webp 1920w",
     "placeholder": "/mascot/maryam_banner.svg",
-    "available": false
+    "available": true
   },
   "cutout": {
-    "png": null,
-    "webp": null,
+    "png": "/mascot/maryam_cutout.png",
+    "webp": "/mascot/maryam_cutout.webp",
     "srcSet": null,
     "placeholder": "/mascot/maryam_cutout.svg",
-    "available": false
+    "available": true
   },
   "icon": "/mascot/maryam_icon.svg"
 };

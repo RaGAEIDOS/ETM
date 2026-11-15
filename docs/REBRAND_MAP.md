@@ -236,7 +236,7 @@ docs\I18N_GUIDE.md:82: existing Miku copy uses Egyptian dialect; keep that voice
 docs\MASTER_PROMPT.md:4: You are the lead engineer for ETM (Education Technology Miku), a free, open-source, Arabic-first learning platform: https://etm-learning.vercel.app (repo: github.com/RaGAEIDOS/ETM). Today it teaches C++ (Curriculum, ElZero video path, Playground, Projects, Glossary, Dashboard, sign-in, AI study buddy "Miku"). You run as DeepSeek V4.1 Flash at MAX reasoning effort: think carefully before every change, verify every claim by running things, never skip a check to save time. Your context window is large but you will not reliably remember every detail, so keep all state in files (see protocol).
 docs\MASTER_PROMPT.md:16: Read the repo and write docs/RECON.md (max 1 page): stack, routes, where lesson/quiz/glossary/ElZero/books data live, how progress and auth/persistence work today, the playground engine and its limits, the AI/Miku endpoint, existing i18n (if any), CI. Run install, build, lint, type-check and existing tests; start the app; take baseline screenshots of every main page; list the problems found.
 docs\MASTER_PROMPT.md:65: PHASE 7 - MIKU-CHAN (MASCOT AND TUTOR)
-docs\MASTER_PROMPT.md:66: Images: Miku is a character owned by Crypton Future Media. Do NOT scrape fan art or random web images (Google Images, Pixiv, wikis, etc.). Use only images whose license explicitly allows this use: official assets under Crypton's Piapro Character License (read the CURRENT license text and comply with it: non-commercial limits, required credit line and logo, prohibited uses) or images with a clear free license (e.g. Wikimedia Commons, honoring its terms). For every image record source URL, author, license, date and required credit in docs/ATTRIBUTIONS.md; show the required credit on the site (footer + About); download and optimize locally (WebP/AVIF, responsive sizes), no hotlinking. If the license is unclear or excludes our use, don't use that image: create a clean original mascot illustration (SVG) instead and tell me.
+docs\MASTER_PROMPT.md:66: Images: Miku is a character owned by Crypton Future Media. Do NOT scrape fan art or random web images (Google Images, Pixiv, wikis, etc.). Use only images whose license explicitly allows this use: official assets under Crypton's Piapro Character License (read the CURRENT license text and comply with it: non-commercial limits, required credit line and brand mark, prohibited uses) or images with a clear free license (e.g. Wikimedia Commons, honoring its terms). For every image record source URL, author, license, date and required credit in docs/ATTRIBUTIONS.md; show the required credit on the site (footer + About); download and optimize locally (WebP/AVIF, responsive sizes), no hotlinking. If the license is unclear or excludes our use, don't use that image: create a clean original mascot illustration (SVG) instead and tell me.
 docs\MASTER_PROMPT.md:67: Mascot system: a <Miku mood="happy|thinking|celebrating|encouraging|sleeping" /> component used in the home hero, empty states, quiz feedback (including the English practice), streak milestones, loading and 404 states; lazy-loaded, respects prefers-reduced-motion, alt text in both languages.
 docs\MASTER_PROMPT.md:74: - Features: quizzes and scoring; progress persistence, resume, stats, streaks; sign-in/out; blocked storage; playground (hello world, cin, compile error, infinite loop timeout, huge output, rapid clicks, reset/persistence, exercise hints); Miku chat and "Explain this error" (normal, empty, very long, API failure, no key exposed); the English section end to end (video plays inside the platform, resume position, flashcards, every practice type, review queue, notes, credits); books (filters, search, links, no leftovers of removed books); language switcher and /dev/bidi; 404.
 docs\PROGRESS.md:37: | 7 — Miku-chan mascot & tutor | todo | Miku today = canned tips, no AI endpoint; no image licensing work done |
@@ -626,4 +626,133 @@ Arabic word `ميكونش` (“shouldn’t be”), whose letters contain the sub
   `images/Tech Hijab Character*.png` sheets — untouched.
 - The old lowercase theme token in the built pre-paint script — required for
   stored-theme migration.
+
+## 10. Rebrand-assets audit (2026-11-15)
+
+This section covers the later asset branch, not the mascot rename in §1–§9.
+`feat/rebrand-assets` was cut from `feat/new-logo` at base `2deff84`; the
+`feat/maryam-banner` work was merged at `a6725fc`. The inventory below is the
+pre-change state, captured before this branch's asset work, followed by the
+final shipped state and the complete file ledger.
+
+### 10.1 Method
+
+- Case-insensitive text search over tracked source, tests, scripts and docs for
+  `logo`, `favicon`, `apple-touch`, `manifest`, `og:image`, `twitter:image`,
+  `brand/`, `main-logo`, `etm-banner`, `favicon.svg`, `og.svg`,
+  `background-image`, `hero` and `banner`.
+- A filename pass covered `public/` recursively.
+- Every relevant hit is listed below with `file:line`. Generic uses of the words
+  "hero" and "banner" (page section comments, ad rails, completion banners and
+  YouTube titles) are recorded as false positives so the audit is complete.
+
+### 10.2 Logo, favicon, Open Graph and manifest references
+
+| File:line | What it was | Final state |
+|---|---|---|
+| `components/SiteHeader.tsx:130–136` | `<img src="/brand/main-logo.png" width={768} height={512}>` header logo | `SiteLogo` with `<picture>` WebP + PNG fallback, eager |
+| `components/SiteFooter.tsx:62–69` | `<img src="/brand/main-logo.png" width={768} height={512}>` footer logo | `SiteLogo`, lazy |
+| `app/[locale]/layout.tsx:82` | `icons: { icon: "/favicon.svg" }` | generated 16/32 PNG + ICO, shortcut and 180 px apple icon |
+| `app/[locale]/layout.tsx:89–96` | `openGraph.images = [{ url: "/brand/etm-banner.jpg", width: 1600, height: 900 }]` | absolute `/mascot/logo_full.png`, 750×192 |
+| `app/[locale]/layout.tsx:98–103` | `twitter.images = ["/brand/etm-banner.jpg"]` | same absolute `logo_full.png` URL |
+| `app/favicon.ico/route.ts:7–8` | reads `public/favicon.svg` and serves it as `/favicon.ico` | reads generated `public/icons/favicon.ico`, `image/x-icon` |
+| `app/manifest.ts` | did not exist | new PWA manifest, `name`/`short_name` = `ETM`, 192/512 icons |
+| `middleware.ts:39` | matcher excluded `favicon.svg`, `og.svg`, `brand/` | excludes `icons/`, `manifest.webmanifest`, `mascot/` |
+| `tests/e2e/seo.spec.ts:27–28` | only asserted `og:image` exists | absolute OG/Twitter URL, ICO type, apple icon, 192/512 manifest icons |
+| `tests/e2e/logo.spec.ts` | theme logo visibility checks | retained for all four themes |
+| `docs/LOGO_MAP.md` | pre-change logo audit | reconciled with the final deleted/added paths |
+| `README.md:94` | project-tree line containing "logout" | false positive, not a logo |
+| `components/ProfileClient.tsx:14,133` | `LogOut` import and icon | false positive, not a logo |
+| `app/api/auth/github/route.ts`, `lib/auth.tsx:166` | auth logout route/URL | false positive, not a logo |
+| `docs/AUDIT.md:199`, `docs/RECON.md:11` | auth route descriptions containing "logout" | false positive, not a logo |
+| `.opencode/skills/etm-debug/SKILL.md:62` | `prerender-manifest.json` instruction | false positive, not a web manifest |
+| `public/brand/main-logo.png` | old 768×512 header/footer logo | deleted on `feat/new-logo`; absent at branch start |
+| `public/brand/etm-banner.jpg` | old 1600×900 marketing banner | deleted with the landing brand section |
+| `public/favicon.svg` | old compatibility icon copy | deleted |
+| `public/og.svg` | unused 1200×630 social card | deleted |
+
+### 10.3 Banner, hero and background-image references
+
+| File:line | What it was | Final state |
+|---|---|---|
+| `app/[locale]/page.tsx:35` | `import HeroTerminal from "@/components/HeroTerminal"` | replaced by `HeroBanner` import |
+| `app/[locale]/page.tsx:391` | `<HeroTerminal />` inside the old home hero | replaced by `<HeroBanner locale={locale} />` at line 278 |
+| `app/[locale]/landing/page.tsx:125–129` | old badge/headline/lead strings | replaced by the exact Arabic/English hero taglines |
+| `app/[locale]/landing/page.tsx:164–240` | old landing HERO section | replaced by `<HeroBanner locale={locale} />` at line 130 |
+| `app/[locale]/landing/page.tsx:252–263` | marketing `BRAND BANNER` section with `/brand/etm-banner.jpg` | section removed |
+| `components/HeroTerminal.tsx:14` | old terminal-style hero component | file deleted |
+| `app/globals.css:369–371` | body `background-image` radial gradients | kept; no logo/artwork URL |
+| `app/globals.css:592` | cozy-theme `background-image` texture | kept; no logo/artwork URL |
+| `app/globals.css:633–672` | no hero banner classes existed | new theme-token overlay, glow and frame classes |
+| `components/MaryamAvatar.tsx:44–89` | inline SVG gradients `url(#maryam-*)` | kept; mascot avatar, not the site logo |
+| `components/ProgressDashboard.tsx:126` | inline chart gradient `url(#grad)` | kept; chart, not a brand asset |
+| `docs/AUDIT.md:276–279,349` | old landing hero spinner/CWV notes | historical; superseded by the real hero |
+| `docs/MASTER_PROMPT.md:67` | mascot component in the home hero | now implemented by `HeroBanner` |
+| `components/AdBanners.tsx:6–7` | HilltopAds "banner rails" | false positive; unrelated ad UI |
+| `app/[locale]/{cs50x,english,linux,programmingadvices}/page.tsx` | `{/* Hero */}` section comments | false positive; normal page headings |
+| `components/LeaderboardClient.tsx:197` | `{/* Hero */}` section comment | false positive |
+| `lib/english-videos-bulk.ts` | YouTube titles containing "Hero" | false positive |
+| `scripts/generate-elzero-web-catalogue.mjs:119,154` | generated `banner` string variable | false positive; code-header banner |
+| `tests/e2e/elzero.spec.ts:5`, `tests/e2e/quiz.spec.ts:23` | completion "banner" assertions | false positive; quiz UI |
+| `docs/HANDOFF.md:18` | Vercel branch-banner note | false positive |
+| `docs/PROGRESS.md:135,137` | historical English-section/review-banner notes | false positive; historical ledger |
+
+### 10.4 Final added assets
+
+| Path | Dimensions / format | Role |
+|---|---|---|
+| `public/mascot/logo_full.png`, `.webp` | 750×192 | Header/footer dark logo and OG image |
+| `public/mascot/logo_dark.png`, `.webp` | 750×192 | Light-theme logo |
+| `public/mascot/logo_icon.png`, `.webp` | 512×512 | Square icon and favicon source |
+| `public/mascot/maryam_banner.png`, `.webp` | 1920×600 | Hero banner |
+| `public/mascot/maryam_banner-480.webp` | 480×150 | Responsive banner |
+| `public/mascot/maryam_banner-768.webp` | 768×240 | Responsive banner |
+| `public/mascot/maryam_banner-1280.webp` | 1280×400 | Responsive banner |
+| `public/mascot/maryam_banner-1920.webp` | 1920×600 | Responsive banner |
+| `public/mascot/maryam_cutout.png`, `.webp` | 389×922 | Desktop cutout and mobile avatar |
+| `public/mascot/maryam_icon.png` | 256×256 | Maryam raster avatar |
+| `public/icons/favicon.ico` | 16/32/48 | `/favicon.ico` |
+| `public/icons/favicon-16x16.png` | 16×16 | Browser icon |
+| `public/icons/favicon-32x32.png` | 32×32 | Browser icon |
+| `public/icons/apple-touch-icon.png` | 180×180 | iOS home screen |
+| `public/icons/android-chrome-192x192.png` | 192×192 | Manifest icon |
+| `public/icons/android-chrome-512x512.png` | 512×512 | Manifest icon |
+| `scripts/generate-rebrand-assets.mjs` | Node script | Reproducible derivation of every raster/WebP/SVG asset from the supplied artwork outside the repo |
+
+### 10.5 Changed files
+
+| Path | Change |
+|---|---|
+| `components/HeroBanner.tsx` | Real banner/cutout/avatar wiring, `<picture>` srcsets, 120 px mobile avatar, 55/45 grid, test IDs |
+| `components/HeroQuote.tsx` | `data-active` state for deterministic quote-rotation tests |
+| `app/[locale]/landing/page.tsx` | Uses `HeroBanner`; old hero and brand banner removed |
+| `lib/logo-assets.ts` | Regenerated: real PNG/WebP logo map, PNG favicons, ICO |
+| `lib/mascot-assets.ts` | Regenerated: real banner/cutout, responsive banner srcset |
+| `middleware.ts` | Serves `icons/`, `manifest.webmanifest` and `mascot/` outside the locale rewrite |
+| `scripts/generate-logo-assets.mjs` | Reuses committed WebP when sharp/cwebp are unavailable |
+| `scripts/generate-mascot-manifest.mjs` | Existing manifest generator now sees the real PNG/WebP files |
+| `public/mascot/maryam_icon.svg` | Rewritten as a 128 px embedded-PNG SVG avatar |
+| `tests/e2e/banner.spec.ts` | Real asset paths, responsive srcsets, 55/45 ratio, mobile/desktop visibility |
+| `tests/e2e/seo.spec.ts` | Absolute OG/Twitter, favicon ICO type, apple icon, manifest 192/512 |
+| `docs/LOGO_MAP.md` | Final keep/delete statuses and shipped asset list |
+| `docs/REBRAND_MAP.md` | This audit and final ledger |
+| `docs/PROGRESS.md` | Rebrand-assets completion digest |
+
+### 10.6 Deleted files
+
+| Path | Reason |
+|---|---|
+| `components/HeroTerminal.tsx` | Replaced by `HeroBanner` |
+| `public/brand/etm-banner.jpg` | Old marketing banner; landing section removed |
+| `public/brand/main-logo.png` | Old header/footer logo; already deleted on `feat/new-logo` |
+| `public/brand/` | Directory removed after the last asset was deleted |
+| `public/favicon.svg` | Unreferenced legacy compatibility copy |
+| `public/og.svg` | Unreferenced legacy OG card |
+
+### 10.7 Untouched protected work
+
+`components/programmingadvices/PACourseCard.tsx`,
+`tests/e2e/programmingadvices.spec.ts`,
+`scripts/5fa9c0682e40e6b7aaf2.txt`, and the untracked `images/*` source sheets
+were not edited, deleted or committed.
 

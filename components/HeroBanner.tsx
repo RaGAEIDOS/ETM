@@ -1,7 +1,6 @@
 import { ArrowLeft, Sparkles } from "lucide-react";
 import Link from "@/lib/i18n/navigation";
 import { MASCOT_ASSETS, type MascotAsset } from "@/lib/mascot-assets";
-import MaryamAvatar from "@/components/MaryamAvatar";
 import HeroQuote from "@/components/HeroQuote";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -41,17 +40,19 @@ function AssetPicture({
   sizes,
   className = "",
   imgClassName = "",
+  testId,
 }: {
   asset: MascotAsset;
   sizes: string;
   className?: string;
   imgClassName?: string;
+  testId?: string;
 }) {
   const sourceSet = asset.srcSet ?? asset.webp;
   const fallback = asset.png ?? asset.webp ?? asset.placeholder;
 
   return (
-    <picture className={className}>
+    <picture className={className} data-testid={testId}>
       {sourceSet ? <source type="image/webp" srcSet={sourceSet} sizes={sizes} /> : null}
       <img
         src={fallback}
@@ -83,9 +84,16 @@ export default function HeroBanner({ locale }: { locale: Locale }) {
       <div className="hero-banner-glow pointer-events-none absolute inset-0" aria-hidden="true" />
       <div className="grid-bg pointer-events-none absolute inset-0 opacity-40" aria-hidden="true" />
 
-      <div className="relative mx-auto grid max-w-7xl items-stretch gap-8 px-4 py-10 sm:px-6 md:grid-cols-[55%_45%] md:gap-0 md:py-0">
+      <div
+        data-testid="hero-grid"
+        className="relative mx-auto grid max-w-7xl items-stretch gap-8 px-4 py-10 sm:px-6 md:grid-cols-[55%_45%] md:gap-0 md:py-0"
+      >
         <div className="relative z-10 flex flex-col justify-center py-2 md:min-h-[560px] md:py-16 md:pe-12">
-          <div className="mx-auto mb-6 h-[120px] w-[120px] shrink-0 overflow-hidden rounded-full border border-cyan-400/40 bg-white/[0.04] shadow-lg shadow-cyan-500/10 md:hidden">
+          <div
+            data-testid="hero-mobile-avatar"
+            className="mx-auto mb-6 h-[120px] w-[120px] shrink-0 overflow-hidden rounded-full border border-cyan-400/40 bg-white/[0.04] shadow-lg shadow-cyan-500/10 md:hidden"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element -- decorative avatar from a generated local asset; next/image adds no value for an aria-hidden crop */}
             <img
               src={mobileAvatar}
               alt=""
@@ -137,7 +145,18 @@ export default function HeroBanner({ locale }: { locale: Locale }) {
               aria-hidden="true"
               className="h-10 w-10 shrink-0 overflow-hidden rounded-full border border-cyan-400/30 bg-ink-900"
             >
-              <MaryamAvatar size={40} />
+              {/* eslint-disable-next-line @next/next/no-img-element -- quote avatar is already a 40px embedded-PNG SVG; optimization would break the SVG path */}
+              <img
+                data-testid="hero-quote-avatar"
+                src={MASCOT_ASSETS.icon}
+                alt=""
+                aria-hidden="true"
+                width={40}
+                height={40}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
             </span>
             <div className="min-w-0">
               <div className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-400">
@@ -155,6 +174,7 @@ export default function HeroBanner({ locale }: { locale: Locale }) {
               sizes="(min-width: 768px) 45vw, 100vw"
               className="absolute inset-0 h-full w-full"
               imgClassName="h-full w-full object-cover object-right rtl:object-left"
+              testId="hero-banner"
             />
             <div className="hero-banner-overlay absolute inset-0" />
             {MASCOT_ASSETS.banner.available && MASCOT_ASSETS.cutout.available ? (
@@ -164,6 +184,7 @@ export default function HeroBanner({ locale }: { locale: Locale }) {
                   sizes="(min-width: 768px) 32vw, 100vw"
                   className="block h-full"
                   imgClassName="h-full w-auto max-w-none object-contain object-bottom drop-shadow-[0_24px_40px_rgb(var(--color-accent)/0.35)]"
+                  testId="hero-cutout"
                 />
               </div>
             ) : null}

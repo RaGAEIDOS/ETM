@@ -112,8 +112,10 @@ async function generateWebp(pngPath, webpPath) {
     return false;
   }
 
-  if (await isFresh(webpPath, pngPath)) {
-    notes.push(`Using existing fresh ${webpPath.split(/[\\/]/).pop()}.`);
+  // The repository ships pre-generated WebP files. On machines without
+  // sharp/cwebp, reuse them instead of dropping back to the PNG source.
+  if (await exists(webpPath)) {
+    notes.push(`Using existing ${webpPath.split(/[\\/]/).pop()}.`);
     return true;
   }
   return false;

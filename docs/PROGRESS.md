@@ -3,7 +3,22 @@
 Single source of truth for the multi-phase master plan (`docs/MASTER_PROMPT.md`).
 Update after every task. If a session is interrupted, resume from here.
 
-**Updated**: 2026-11-15 · **Branch**: `feat/rebrand-assets`; logo, favicons, manifest and hero banner integrated (merge of `feat/new-logo` and `feat/maryam-banner`; final assets and verification in progress)
+**Updated**: 2026-11-15 · **Branch**: `feat/rebrand-assets`; real logo, favicons, manifest, OG metadata and hero banner shipped and verified (merge of `feat/new-logo` and `feat/maryam-banner`)
+
+## Rebrand assets — done (2026-11-15, 12-line digest)
+
+1. Scope: `feat/rebrand-assets` cut from `feat/new-logo` @ `2deff84`; `feat/maryam-banner` merged at `a6725fc`. The complete pre-change inventory is `docs/REBRAND_MAP.md` §10; every runtime logo, favicon, OG, manifest and hero reference now points at the real artwork.
+2. Real artwork is derived from the user-supplied source sheets outside the repo by `scripts/generate-rebrand-assets.mjs`; the originals are never copied in. Final assets: `logo_full.png` / `logo_dark.png` 750×192, `logo_icon.png` 512×512, `maryam_banner.png` 1920×600, `maryam_cutout.png` 389×922, `maryam_icon.png` 256×256 and `maryam_icon.svg` (128 px embedded PNG), each with WebP where applicable.
+3. Logo cleanup: connected-component filtering removed the hand, badge arcs and the old English subtitle, leaving the ETM cube + wordmark. `logo_dark` is a dark-tinted light-theme variant; `logo_icon` is the cube on a 512 px rounded tile.
+4. Banner: a right-aligned crop of the clean top strip, scaled to exactly 1920×600 so Maryam and the code panel survive; 480/768/1280/1920 WebP variants feed the hero `srcSet`. The cutout is the full-body front figure trimmed above the “Front” label.
+5. Favicons/manifest: `public/icons/favicon.ico` (16/32/48 via `scripts/lib/png-tools.mjs`) plus 16/32/180/192/512 PNGs generated without `sharp`/`cwebp`; manifest `name`/`short_name` = `ETM`; `/favicon.ico` serves `image/x-icon`.
+6. Metadata: `app/[locale]/layout.tsx` emits every generated icon link and absolute `og:image`/`twitter:image` URLs from `LOGO_ASSETS.og` (`/mascot/logo_full.png`).
+7. Hero: `HeroBanner` is 2 columns at ≥768 px at exactly 55%/45% and 1 column below; exact Arabic/English taglines, CTAs to `/curriculum` and `/about`, and a labelled rotating quote with the real avatar. The right column is the banner under a left-to-right dark overlay with an absolute bottom-right cutout; <768 px hides the banner and shows the 120 px cutout circle above the text.
+8. A11y/themes: decorative images are `aria-hidden`, quotes pause under `prefers-reduced-motion`, the hero is `role="banner"`, and overlay/glow use only `--color-bg`/`--color-accent` across light, dark, terminal and cozy.
+9. Deleted: `public/brand/etm-banner.jpg`, `public/favicon.svg`, `public/og.svg`, `components/HeroTerminal.tsx` and the old landing brand-banner section; `public/brand/` is gone.
+10. Gates: typecheck clean; lint only pre-existing warnings; build PASS (2,458 static pages); unit 131/131; content 0 blocking/0 advisories; E2E banner+logo+SEO 18/18 desktop and banner 14/14 mobile/webkit; axe landing/about 2/2.
+11. Screenshots: `docs/screenshots/rebrand_{390,1280}_{dark,light,terminal}.png`; desktop captures block the HilltopAds rail so its fixed white placeholder does not cover the hero.
+12. Protected work: `components/programmingadvices/PACourseCard.tsx`, `tests/e2e/programmingadvices.spec.ts`, `scripts/5fa9c0682e40e6b7aaf2.txt` and the untracked `images/*` sources were not edited or committed.
 
 ## New ETM logo — placeholder integration (2026-11-15, 12-line digest)
 

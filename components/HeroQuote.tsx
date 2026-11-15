@@ -29,11 +29,12 @@ export default function HeroQuote({ quotes }: { quotes: readonly string[] }) {
   }, [quotes.length, reducedMotion]);
 
   return (
-    <div className="relative mt-1 grid">
+    <div data-testid="hero-quote" className="relative mt-1 grid">
       {quotes.map((item, index) => (
         <p
           key={item}
           aria-hidden={index !== quoteIndex}
+          data-active={index === quoteIndex}
           className={`col-start-1 row-start-1 text-sm leading-6 text-slate-300 transition-opacity duration-300 ${
             index === quoteIndex ? "opacity-100" : "opacity-0"
           }`}
