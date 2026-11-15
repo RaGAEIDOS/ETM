@@ -1,29 +1,47 @@
 import type { Locale } from "./i18n/config";
 
 /**
- * Miku's voice is Egyptian Arabic by design in `ar`.
+ * Maryam's voice is Egyptian Arabic by design in `ar`.
  * `en` keeps the same personality in English.
+ *
+ * There is no LLM endpoint, proxy or AI key in this repository. This block is
+ * the single source of truth for the study buddy's persona if one is added
+ * later; the guardrails below are descriptive, not wired to a network call.
  */
-export const MIKU = {
-  name: "Miku",
-  fullName: "Miku Chan",
-  avatar: "/miku.png",
-  taglines: {
-    ar: "رفيقة دراستك في ETM",
-    en: "Your study buddy at ETM",
-  } as Record<Locale, string>,
+export const MARYAM_TAGLINE: Record<Locale, string> = {
+  ar: "مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة",
+  en: "Maryam — your AI engineering companion",
 };
 
-export interface MikuTip {
+export const MARYAM_PERSONA = {
+  name: "Maryam",
+  nameAr: "مريم",
+  role: "AI engineer and learning companion",
+  personality: [
+    "Calm, encouraging, and Socratic: gives hints before answers.",
+    "Says so when unsure and never hallucinates beyond the lesson content.",
+    "Speaks in the learner's language (Arabic or English).",
+    'Refers to herself as "مريم" in Arabic replies and "Maryam" in English.',
+  ],
+} as const;
+
+export const MARYAM = {
+  name: "Maryam",
+  fullName: "Maryam",
+  avatar: "/mascot/maryam_icon.svg",
+  taglines: MARYAM_TAGLINE,
+};
+
+export interface MaryamTip {
   title: string;
   body: string;
 }
 
-export const ONBOARDING_STEPS: Record<Locale, MikuTip[]> = {
+export const ONBOARDING_STEPS: Record<Locale, MaryamTip[]> = {
   ar: [
     {
-      title: "أهلًا بيك يا بطل! 🎵",
-      body: "أنا Miku، مساعدتك في ETM. هاخدك في جولة سريعة تتعلم فيها تستخدم المنصة في دقيقة.",
+      title: "أهلًا بيك يا بطل! ✨",
+      body: "أنا مريم، رفيقتك في ETM. هاخدك في جولة سريعة تتعلم فيها تستخدم المنصة في دقيقة.",
     },
     {
       title: "1. اتعلم بالمنهج",
@@ -48,8 +66,8 @@ export const ONBOARDING_STEPS: Record<Locale, MikuTip[]> = {
   ],
   en: [
     {
-      title: "Hey, champion! 🎵",
-      body: "I'm Miku, your ETM guide. This quick tour shows you how to use the platform in one minute.",
+      title: "Hey, champion! ✨",
+      body: "I'm Maryam, your ETM guide. This quick tour shows you how to use the platform in one minute.",
     },
     {
       title: "1. Learn with the curriculum",
@@ -74,15 +92,15 @@ export const ONBOARDING_STEPS: Record<Locale, MikuTip[]> = {
   ],
 };
 
-export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
+export const PAGE_TIPS: Record<string, Record<Locale, MaryamTip>> = {
   landing: {
     ar: {
       title: "أهلاً بـ ETM! 🎉",
-      body: "دي الصفحة الرئيسية للمنصة — الفكرة الكبيرة: تعلّم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب، ومعك Miku رفيقتك في الدراسة.",
+      body: "دي الصفحة الرئيسية للمنصة — الفكرة الكبيرة: تعلّم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب، ومعك مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة.",
     },
     en: {
       title: "Welcome to ETM! 🎉",
-      body: "This is the landing page — the big idea: learn C++ from zero to building an operating system and a game engine, with Miku your study buddy.",
+      body: "This is the landing page — the big idea: learn C++ from zero to building an operating system and a game engine, with Maryam — your AI engineering companion.",
     },
   },
   home: {
@@ -237,11 +255,11 @@ export const PAGE_TIPS: Record<string, Record<Locale, MikuTip>> = {
   },
   guide: {
     ar: {
-      title: "شرح Miku 🎓",
+      title: "شرح مريم 🎓",
       body: "هنا بشرح لك كل حاجة في المنصة خطوة بخطوة. لو ضايع، ابدأ من هنا.",
     },
     en: {
-      title: "Miku's guide 🎓",
+      title: "Maryam's guide 🎓",
       body: "I explain everything in the platform step by step. Lost? Start here.",
     },
   },
@@ -307,7 +325,7 @@ export const ENCOURAGEMENTS: Record<Locale, string[]> = {
   ],
 };
 
-export function tipForPath(pathname: string, locale: Locale): MikuTip {
+export function tipForPath(pathname: string, locale: Locale): MaryamTip {
   const n = pathname === "" ? "/" : pathname;
   if (n.startsWith("/landing")) return PAGE_TIPS.landing[locale];
   if (n.startsWith("/learn")) return PAGE_TIPS.learn[locale];

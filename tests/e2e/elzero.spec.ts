@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 test.describe("ElZero video player page", () => {
   test("/en/elzero/001: quiz all-correct shows completion banner", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/elzero/001", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /Test your understanding/ })).toBeVisible();
 
@@ -14,7 +14,7 @@ test.describe("ElZero video player page", () => {
   });
 
   test("/elzero index lists video entries and links to 001", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/elzero", { waitUntil: "domcontentloaded" });
     // 78 videos are listed — make sure at least one ElZero route is linked.
     const link = page.locator('a[href="/en/elzero/001"]').first();

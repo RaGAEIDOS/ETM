@@ -126,10 +126,10 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 glass border-b border-white/5">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         <div className="flex min-h-16 items-center justify-between gap-2 py-2">
-          <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Miku">
+          <Link href="/" className="flex items-center group shrink-0" aria-label="ETM — Education Technology Maryam">
             <img
               src="/brand/main-logo.png"
-              alt="ETM — Education Technology Miku"
+              alt="ETM — Education Technology Maryam"
               width={768}
               height={512}
               className="h-11 sm:h-12 w-auto transition-transform group-hover:scale-105"

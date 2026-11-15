@@ -1,9 +1,10 @@
-# ETM — Education Technology Miku
+# ETM — Education Technology Maryam
 
 A free Arabic platform for learning **C++** from absolute zero to building an
 operating system and a game engine. The curriculum is based on the
 [OSSU](https://github.com/ossu/computer-science) degree, rewritten in Arabic
-with interactive examples, real projects, and **Miku** — your study buddy.
+with interactive examples, real projects, and **Maryam — your AI engineering
+companion**.
 
 ## ✨ Features
 
@@ -13,9 +14,9 @@ with interactive examples, real projects, and **Miku** — your study buddy.
 - **Glossary** of 100+ English/Arabic terms
 - **Real projects**: calculator, Snake game with a custom engine, OS kernel in QEMU
 - **Progress tracking** saved on your device
-- **Miku**, an interactive guide that explains every part of the platform
+- **Maryam — your AI engineering companion**, an interactive guide that explains every part of the platform
 - **Dashboard** with lessons, ElZero videos, focus time, streaks and what's left
-- **Pomodoro focus timer** with lofi study music and Miku reminders
+- **Pomodoro focus timer** with lofi study music and Maryam reminders
 - **ElZero videos**: 78 videos, each with a summary, quiz and key terminology
 - **GitHub sign-in** — your real profile picture and identity
 
@@ -84,7 +85,7 @@ ETM/
 │   ├── learn/              # Dynamic lesson pages
 │   ├── playground/         # C++ playground
 │   ├── dashboard/          # Progress dashboard
-│   ├── guide/              # Miku's tutorials
+│   ├── guide/              # Maryam's tutorials
 │   ├── elzero/             # ElZero video pages
 │   ├── glossary/           # Glossary
 │   ├── projects/           # Projects
@@ -92,8 +93,8 @@ ETM/
 │   ├── login/              # GitHub sign in
 │   └── api/auth/           # Auth routes (GitHub, session, logout)
 ├── components/             # Reusable React components
-│   ├── Miku.tsx            # Miku assistant + onboarding
-│   ├── MikuAvatar.tsx      # Miku SVG mascot
+│   ├── Maryam.tsx          # Maryam assistant + onboarding
+│   ├── MaryamAvatar.tsx    # Maryam SVG mascot
 │   ├── Pomodoro.tsx        # Focus timer + lofi music
 │   └── DashboardClient.tsx # Dashboard
 ├── lib/
@@ -105,7 +106,7 @@ ETM/
 │   ├── session.ts          # Server session signing
 │   ├── progress.ts         # Progress storage (localStorage)
 │   ├── stats.ts            # Streaks, focus time, next lessons
-│   ├── miku.ts             # Miku persona and messages
+│   ├── maryam.ts           # Maryam persona and messages
 │   └── types.ts            # TypeScript types
 ├── public/                 # Static files
 └── vercel.json             # Vercel deployment config

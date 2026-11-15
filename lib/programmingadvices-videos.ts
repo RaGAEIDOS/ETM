@@ -46,7 +46,7 @@ export interface PAMatchPair {
 interface PAPracticeBase {
   explanation: string;
   explanationEn: string;
-  /** Authored hint shown by Miku BEFORE the learner answers. Never the answer. */
+  /** Authored hint shown by Maryam BEFORE the learner answers. Never the answer. */
   hint: string;
   hintEn: string;
 }

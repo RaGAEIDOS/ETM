@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 const EXTERNAL_URLS = [
   "https://github.com/RaGAEIDOS/ETM",
@@ -16,7 +16,7 @@ const EXTERNAL_URLS = [
 
 test.describe("Link integrity", () => {
   test("every internal link extracted from the main pages resolves", async ({ page, request }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     const sources = ["/en", "/en/curriculum", "/en/books", "/en/projects", "/en/glossary", "/en/guide"];
     const internal = new Set<string>();
     for (const route of sources) {
@@ -55,7 +55,7 @@ test.describe("Link integrity", () => {
   });
 
   test("404 page link to curriculum exists", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/definitely-not-a-page", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("link", { name: /curriculum|Curriculum/i }).first()).toBeVisible();
   });

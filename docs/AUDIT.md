@@ -23,7 +23,7 @@ approval time.
 | Content | Stray scripts | distributed.ts (网络×2), networking-db.ts (CJK / Hebrew / Cyrillic / Devanagari / Hangul×3), thinking-computer.ts (跳过), tools.ts (拒绝), elzero-videos.ts (传递), projects.ts (拼写) | see §A1 |
 | Learning design | Mastery gating | none | lessons freely skippable |
 | Learning design | Placement diagnostic | none | see §B1 |
-| Practice | Guided auto-checking | none on main | Miku = scripted mascot; no AI endpoint (see §D1) |
+| Practice | Guided auto-checking | none on main | Maryam = scripted mascot; no AI endpoint (see §D1) |
 | Progress/motivation | Cross-device sync | *claims* "everywhere"; actually false — localStorage only (see §E2) |
 | Progress/motivation | ElZero completion tracking | 0 (dead code `saveElzeroProgress`) | §E1 |
 | Engineering | CI | none | §F4 |
@@ -188,23 +188,23 @@ to Stage 2 item 5.
 
 ---
 
-## D. AI Study buddy (Miku)
+## D. AI Study buddy (Maryam)
 
 ### D1. Scripted mascot only — no real buddy (HIGH)
 
-`lib/miku.ts` ships static tips/widgets and `components/Miku.tsx` renders a static SVG
+`lib/maryam.ts` ships static tips/widgets and `components/Maryam.tsx` renders a static SVG
 avatar + auto-closed message bubble. **No user-written answer input ever exists.**
 There is zero call to any AI provider on `main`:
 
 - `app/api/` contains only GitHub-token auth routes (`api/auth/github`, `logout`, `me`) —
-  no OpenAI / Anthropic / Gemini route, no `MIKU_AI_*` env keys.
+  no OpenAI / Anthropic / Gemini route, no `MARYAM_AI_*` env keys.
 - `package.json` deps: no `openai`/`anthropic`/`gemini`. grep `app/` for
-  `openai|anthropic|MIKU_AI|generative` returned nothing; `package.json` likewise empty.
+  `openai|anthropic|MARYAM_AI|generative` returned nothing; `package.json` likewise empty.
 - There is no grader, no explanation API, no "explain my wrong answer" trigger.
 
 The stub `app/api/explain-error/route.ts` referenced in prior work lives on the
 `feature/lesson-playground` branch only (unmerged on main) and predates any real AI
-model wiring; stage 2 item 6 (Miku as tutor) must not claim to ship without a working
+model wiring; stage 2 item 6 (Maryam as tutor) must not claim to ship without a working
 config key, and must degrade to "I don't have this yet" rather than hallucinate.
 
 Severity: LOW on present machine; MEDIUM once the user commits to adding a real model
@@ -216,7 +216,7 @@ all undefined). Documented placeholder end state required by stage 2.
 UI defaults are English headers (`dir="ltr"`, `lang="en"`) with Arabic prose marked
 `dir="rtl"`. The platform itself is Arabic-first, yet `html` is English — Googlebot
 and screen readers both see an English interface and miss Arabic content semantics
-unless every heading carries `lang`. Real bug (§F5). The Miku widget itself is bilingual
+unless every heading carries `lang`. Real bug (§F5). The Maryam widget itself is bilingual
 okay (tip bodies are English; onboarding Arabic).
 
 ---
@@ -350,7 +350,7 @@ Rank by `learning impact ↑` ÷ `effort ↑` (low effort = high priority).
 | 8 | **Sitemap / robots fix** (correct base URL, add /elzero, /dashboard, /guide, /books entries) + consistent localized per-page metadata | S | §F1 |
 | 9 | **HTML lang/dir fix**: `<html lang="ar">` + global `dir="rtl"` when Arabic | S | §F5 |
 | 10 | **Review reminders + daily streak goal** on Dashboard; "continue where you left off" already present — extend | M | §E3 |
-| 11 | **Miku as tutor**: current lesson + recent mistakes context; Socratic default; `explain-my-wrong-answer` button on quizzes; stay in learner language; refuse to exceed lesson knowledge; configured placeholder mode when no AI key | M | §D1 §6 target |
+| 11 | **Maryam as tutor**: current lesson + recent mistakes context; Socratic default; `explain-my-wrong-answer` button on quizzes; stay in learner language; refuse to exceed lesson knowledge; configured placeholder mode when no AI key | M | §D1 §6 target |
 | 12 | **Popular CS/C++ book refresh** (seed list provided in brief) with OpenLibrary-verified fields, null+flag on failures, category-colored cards, reading order per stage, "Further reading" via slug map, nav/footer/home CTA | M | TASK B §B1–B5 |
 | 13 | **Stats accuracy fix**: Dashboard `done` must use `Lessons completed` semantic (`map[l.id]` ids, filter distinct from non-lesson keys) — confirm practice prefix logic | S | §E1 |
 | 14 | **CI for content validation + progress tests + quiz-scoring unit tests** | M | §F6 |
@@ -365,9 +365,9 @@ Rank by `learning impact ↑` ÷ `effort ↑` (low effort = high priority).
 2. **TASK B precedence vs §2 items.** TASK B is scheduled parallel to stages 2.5/3 in
    your plans; confirm books refresh stays on its own branch and is merged before §13/§14
    if you want it co-located.
-3. **Miku tutor configuration** (rate limits, model choice, tenant isolation, error passthrough)
+3. **Maryam tutor configuration** (rate limits, model choice, tenant isolation, error passthrough)
    is undefined and must be decided before any stage-2 PR touches it. I can scaffold the
-   `explain-error` route behind `MIKU_AI_API_KEY` for a keyname-style configuration (no
+   `explain-error` route behind `MARYAM_AI_API_KEY` for a keyname-style configuration (no
    model committed) — agree?
 4. **Auth wording change** on `/login` only? affects sign-out flow.
 

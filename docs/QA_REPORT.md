@@ -51,9 +51,9 @@
 
 - `components/CodeBlock.tsx` — scrollable region now `tabindex="0"` with `role="region"` and `aria-label="Code snippet"`  
 - `components/Pomodoro.tsx` — aria-label now matches visible text (`{fmt(secondsLeft)} · Pomodoro timer`)  
-- `components/Miku.tsx` — caption contrast bump (`text-slate-500` → `text-slate-300`)  
+- `components/Maryam.tsx` — caption contrast bump (`text-slate-500` → `text-slate-300`)  
 - `components/Playground.tsx` — aria-label for reset button, `textareaId`, and color-contrast bumps  
-- `tests/e2e/helpers/ui.ts` — `seedMikuDone(page)` seeds `localStorage.etm-miku-onboarding-done = "1"` to prevent Miku onboarding modal from intercepting clicks  
+- `tests/e2e/helpers/ui.ts` — `seedMaryamDone(page)` seeds `localStorage.etm-maryam-onboarding-done = "1"` to prevent Maryam onboarding modal from intercepting clicks  
 - `playwright.config.ts` — projects: chromium-desktop, mobile-chrome, webkit; webServer `next start -p 3100`  
 - `tests/e2e/` — 17 files covering all Phase 1–5 deliverables  
 - `.github/workflows/qa.yml` — CI workflow for PR gating  

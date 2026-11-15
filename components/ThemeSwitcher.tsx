@@ -3,7 +3,7 @@
 /**
  * Four-theme pill: sun / moon / terminal prompt / cup.
  * - Persists the choice in `etm-theme-v2` (with migration from the old key).
- * - Applies the theme via `lib/theme.ts`, which also notifies Miku.
+ * - Applies the theme via `lib/theme.ts`, which also notifies Maryam.
  * - Themes only change presentation tokens: never URLs, content or progress.
  */
 

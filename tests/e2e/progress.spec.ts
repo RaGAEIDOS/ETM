@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone, waitHydrated } from "./helpers/ui";
+import { seedMaryamDone, waitHydrated } from "./helpers/ui";
 
 const V2_KEY = "etm-progress-v2";
 const ENGLISH_NOTES_KEY = "etm-english-notes-v1";
 
 test.describe("Progress persistence", () => {
   test("lesson marked complete stays complete after reload", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", { waitUntil: "domcontentloaded" });
     const mark = page.getByRole("button", { name: /Mark lesson complete/i });
     await expect(mark).toBeVisible();
@@ -46,7 +46,7 @@ test.describe("Progress persistence", () => {
   });
 
   test("marking lessons persists to the unified v2 store", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/variables-types", {
       waitUntil: "domcontentloaded",
     });
@@ -63,7 +63,7 @@ test.describe("Progress persistence", () => {
   });
 
   test("quiz attempt is persisted to the unified v2 store", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", {
       waitUntil: "domcontentloaded",
     });
@@ -82,7 +82,7 @@ test.describe("Progress persistence", () => {
   });
 
   test("elzero video can be marked as watched and unmarked", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/elzero/001", { waitUntil: "domcontentloaded" });
     const mark = page.getByRole("button", { name: /Mark video as watched/i });
     await expect(mark).toBeVisible();
@@ -95,7 +95,7 @@ test.describe("Progress persistence", () => {
   });
 
   test("dashboard shows the unified progress sections", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/dashboard", { waitUntil: "domcontentloaded" });
     await expect(page.getByText("Your activity — last 12 weeks")).toBeVisible();
     await expect(page.getByText("Quiz accuracy — last 8 weeks")).toBeVisible();
@@ -126,13 +126,13 @@ test.describe("Progress persistence", () => {
         }),
       }),
     );
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/", { waitUntil: "domcontentloaded" });
     await expect(page.getByText(/Continue where you left off/i).first()).toBeVisible();
   });
 
   test("delete my data wipes all learning keys on this device", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", {
       waitUntil: "domcontentloaded",
     });

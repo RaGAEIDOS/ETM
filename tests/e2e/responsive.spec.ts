@@ -23,12 +23,12 @@ for (const { width, height } of SIZES) {
   });
 }
 
-test("menu/mikusu buttons satisfy the 44px minimum on touch screens", async ({ page }) => {
+test("menu/assistant buttons satisfy the 44px minimum on touch screens", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.setViewportSize({ width: 360, height: 800 });
   await waitHydrated(page);
   const ok = await page.evaluate(() => {
-    const menus = Array.from(document.querySelectorAll('button[aria-label="Menu"], button[aria-label="Miku assistant"], button[aria-label="القائمة"], button[aria-label="مساعدة Miku"]'));
+    const menus = Array.from(document.querySelectorAll('button[aria-label="Menu"], button[aria-label="Maryam assistant"], button[aria-label="القائمة"], button[aria-label="مساعدة مريم"]'));
     return menus.every(
       (b) => b.getBoundingClientRect().width >= 44 && b.getBoundingClientRect().height >= 44
     );

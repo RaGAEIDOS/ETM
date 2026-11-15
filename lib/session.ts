@@ -9,7 +9,7 @@ export interface SessionUser {
   provider: "github";
 }
 
-const SECRET = process.env.AUTH_SECRET || "etm-miku-dev-secret-change-me";
+const SECRET = process.env.AUTH_SECRET || "etm-maryam-dev-secret-change-me";
 export const SESSION_COOKIE = "etm_session";
 const MAX_AGE = 60 * 60 * 24 * 30; // 30 days
 

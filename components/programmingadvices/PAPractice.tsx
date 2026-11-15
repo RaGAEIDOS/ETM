@@ -6,7 +6,7 @@
  * answer per item. A full pass emits ONE quiz_attempt (track
  * "programmingadvices", itemId = lesson id, topic = course id).
  *
- * Miku affordances are authored locally (no AI call): a hint appears BEFORE
+ * Maryam affordances are authored locally (no AI call): a hint appears BEFORE
  * answering, and a wrong answer unlocks "explain my wrong answer" which shows
  * the authored explanation. Correct answers are never revealed by the hint.
  */
@@ -44,7 +44,7 @@ const COPY = {
     score: (ok: string, total: string) => `أجبت بشكل صحيح على ${ok} من ${total}`,
     review: "راجع الشرح أعلاه وحاول مرة أخرى",
     passed: "اجتزت التمرين — أحسنت",
-    hint: "تلميح من ميكو",
+    hint: "تلميح من مريم",
     hideHint: "إخفاء التلميح",
     explainWrong: "اشرح لي إجابتي الخاطئة",
     wrongExplanation: "لماذا كانت الإجابة خاطئة؟",
@@ -65,7 +65,7 @@ const COPY = {
     score: (ok: string, total: string) => `You answered ${ok} of ${total} correctly`,
     review: "Review the explanation above and try again",
     passed: "Drill passed",
-    hint: "Miku hint",
+    hint: "Maryam hint",
     hideHint: "Hide hint",
     explainWrong: "Explain my wrong answer",
     wrongExplanation: "Why was that wrong?",
@@ -119,7 +119,7 @@ function Explanation({
   c,
 }: {
   text: string;
-  /** Text shown on a wrong answer: Miku explains the mistake. */
+  /** Text shown on a wrong answer: Maryam explains the mistake. */
   wrongText?: string;
   c: (typeof COPY)[keyof typeof COPY];
 }) {

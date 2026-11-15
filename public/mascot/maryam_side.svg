@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-labelledby="maryam-side-title maryam-side-desc">
+  <title id="maryam-side-title">Maryam side</title>
+  <desc id="maryam-side-desc">Placeholder mascot asset: an outlined circle labelled Maryam side.</desc>
+  <circle cx="200" cy="200" r="150" fill="#ffffff" stroke="#22d3ee" stroke-width="6" />
+  <circle cx="200" cy="200" r="162" fill="none" stroke="#a78bfa" stroke-width="2" stroke-dasharray="8 10" opacity="0.7" />
+  <text x="200" y="200" text-anchor="middle" dominant-baseline="middle" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="700" fill="#0f172a">Maryam side</text>
+</svg>

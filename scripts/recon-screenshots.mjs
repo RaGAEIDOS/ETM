@@ -38,7 +38,7 @@ mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch();
 
-// Capture the first-visit experience once (Miku onboarding overlay).
+// Capture the first-visit experience once (Maryam onboarding overlay).
 {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
@@ -50,10 +50,10 @@ const browser = await chromium.launch();
 
 for (const [vpName, viewport] of VIEWPORTS) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 1 });
-  // One-time Miku tour — seed it so screenshots show the actual pages.
+  // One-time Maryam tour — seed it so screenshots show the actual pages.
   await context.addInitScript(() => {
     try {
-      window.localStorage.setItem("etm-miku-onboarding-done", "1");
+      window.localStorage.setItem("etm-maryam-onboarding-done", "1");
     } catch {}
   });
   const page = await context.newPage();

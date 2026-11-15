@@ -47,7 +47,7 @@ async function verifyWithGithubClient(token: string): Promise<AuthUser> {
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: "application/vnd.github+json",
-      "User-Agent": "ETM-Miku",
+      "User-Agent": "ETM-Maryam",
       "X-GitHub-Api-Version": "2022-11-28",
     },
   });

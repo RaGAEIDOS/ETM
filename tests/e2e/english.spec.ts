@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 const COURSE_EN = ["English from Zero", "Grammar", "Phonetics", "Listening", "Conversation"];
 
 test.describe("English section (Phase 4)", () => {
   test("nav shows Courses dropdown with الإنجليزية (ar) and English (en)", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     // NB: assert on /curriculum — `/` client-redirects guests to /landing (bare header)
     await page.goto("/curriculum", { waitUntil: "domcontentloaded" });
     // Courses live behind the "الدورات / Courses" dropdown — open it first.
@@ -24,7 +24,7 @@ test.describe("English section (Phase 4)", () => {
   });
 
   test("/en/english hub groups every course by level and links to course pages", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/english", { waitUntil: "domcontentloaded" });
 
     for (const course of COURSE_EN) {
@@ -55,7 +55,7 @@ test.describe("English section (Phase 4)", () => {
   });
 
   test("/en/english/course/en-zero lists the course lessons", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/english/course/en-zero", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.getByRole("heading", { name: /Course lessons/i })).toBeVisible();
@@ -67,7 +67,7 @@ test.describe("English section (Phase 4)", () => {
   });
 
   test("/english hub (Arabic locale) renders Arabic labels, groups and credit", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/english", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /قسم الإنجليزية/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: /المستوى الأول/ }).first()).toBeVisible();
@@ -76,7 +76,7 @@ test.describe("English section (Phase 4)", () => {
   });
 
   test("lesson page renders the player facade, lesson panel and credit", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/english/001", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     // Tabs come from EnglishLessonPanel
@@ -88,7 +88,7 @@ test.describe("English section (Phase 4)", () => {
   });
 
   test("/en/english/review renders the empty state when nothing is due", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/english/review", { waitUntil: "domcontentloaded" });
     await expect(page.getByText(/No terms due today/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /Back to the English section/i })).toBeVisible();

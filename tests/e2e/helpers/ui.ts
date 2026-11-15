@@ -1,17 +1,24 @@
 import type { Page } from "@playwright/test";
 
-// Seed localStorage so the Miku onboarding tour does not open (it intercepts clicks).
-export function seedMikuDone(page: Page): void {
+// Seed localStorage so the Maryam onboarding tour does not open (it intercepts clicks).
+export function seedMaryamDone(page: Page): void {
   page.context().addInitScript(() => {
-    try { window.localStorage.setItem("etm-miku-onboarding-done", "1"); } catch { /* storage may be blocked */ }
+    try { window.localStorage.setItem("etm-maryam-onboarding-done", "1"); } catch { /* storage may be blocked */ }
   });
 }
 
+/**
+ * @deprecated Compatibility alias for the protected `programmingadvices.spec.ts`
+ * fixture, which still imports the pre-rename name. New tests must use
+ * `seedMaryamDone`.
+ */
+export const seedMikuDone = seedMaryamDone;
+
 // Instrument a page BEFORE navigating: collect console errors and failed/4xx/5xx requests,
-// and seed localStorage so the Miku onboarding tour does not open (it is a full-screen
+// and seed localStorage so the Maryam onboarding tour does not open (it is a full-screen
 // modal and intercepts pointer events).
 export function instrument(page: Page) {
-  seedMikuDone(page);
+  seedMaryamDone(page);
 
   const consoleErrors: string[] = [];
   const badResponses: string[] = [];

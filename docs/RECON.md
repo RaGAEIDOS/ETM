@@ -28,7 +28,7 @@ Next.js 14.2 (App Router) · React 18.3 · TypeScript 5.6 · Tailwind 3.4 · luc
 - **Progress** (`lib/progress.ts`): localStorage only. Guest map `etm-progress-v1`; per-user `etm-progress-<uid>` merged over guest on read. Lesson completion = boolean map entry. Stats in `lib/stats.ts`: `etm-activity-days` (streak), `etm-focus-log` (Pomodoro minutes).
 - **ElZero progress is dead code**: `saveElzeroProgress()` / `isElzeroDone()` are defined but never called; no UI writes `elzero-*` keys, yet the Dashboard counts them.
 - **Auth** (`lib/auth.tsx`, `lib/session.ts`): user pastes a GitHub token → `/api/auth/github` verifies it against `api.github.com` → HMAC-signed, httpOnly `etm_session` cookie (30 days) + localStorage mirror `etm-auth-session-v1`. No OAuth redirect, no DB, no server-side progress. `AUTH_SECRET` falls back to a dev default.
-- **Miku** (`components/Miku.tsx`, `lib/miku.ts`): deterministic contextual tips, onboarding tour, Pomodoro messages. **There is no AI/LLM endpoint** — "AI study buddy" is marketing language for the canned helper.
+- **Maryam** (`components/Maryam.tsx`, `lib/maryam.ts`): deterministic contextual tips, onboarding tour, Pomodoro messages. **There is no AI/LLM endpoint** — "AI study buddy" is marketing language for the canned helper.
 - **Playground** (`components/Playground.tsx`): browser POSTs code directly to `https://wandbox.org/api/compile.json` (`gcc-head`, `-std=c++2a`). No server proxy, no stdin box, no code-size/timeout/output limits, no rate limit; third-party availability is a hard dependency (HTTP 500 observed here).
 - **i18n**: none. `app/layout.tsx` hardcodes `<html lang="en" dir="ltr">`; Arabic content zones set `dir="rtl"` per page. UI chrome English, lesson prose Arabic, no locale switcher.
 - **SEO**: `metadataBase` = `https://etm-learning.vercel.app`; `app/sitemap.ts` (237 URLs), `app/robots.ts`.
@@ -52,7 +52,7 @@ Next.js 14.2 (App Router) · React 18.3 · TypeScript 5.6 · Tailwind 3.4 · luc
 
 1. **Live deploy is stale**: `etm-learning.vercel.app/sitemap.xml` and `/robots.txt` still serve the old `etm.vercel.app` host; the repo fix (`2ec0f4d`) is not deployed.
 2. **Security debt**: `npm audit` = 14 vulns; the critical one is Next 14 and only clears with a Next ≥16 major upgrade (`npm audit fix --force` would break the app — do not run). No CSP/security headers in `next.config.mjs` or `vercel.json`.
-3. **Miku onboarding overlay** covers the first visit and intercepts pointer clicks until dismissed; E2E specs must seed `etm-miku-onboarding-done=1`.
+3. **Maryam onboarding overlay** covers the first visit and intercepts pointer clicks until dismissed; E2E specs must seed `etm-maryam-onboarding-done=1`.
 4. **Google Fonts unreachable in this environment** (curl 000): `page.goto(..., {waitUntil:"load"})` hangs; tests use `domcontentloaded`. The font `<link>` is also render-blocking in `<body>`.
 5. **Playground limits**: C++/Wandbox-only, no stdin, no size/time/output caps, no server-side rate limiting; Wandbox 500 seen.
 6. **ElZero progress is unwired** (dead functions above) — video pages cannot mark themselves complete, so Dashboard's "ElZero videos" counter never moves from real use.

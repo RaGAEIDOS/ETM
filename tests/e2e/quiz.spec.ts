@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 test.describe("Quiz interaction", () => {
   test("wrong answer flagged, correct answer accepted, retry clears", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /Test your understanding/ })).toBeVisible();
 
@@ -21,7 +21,7 @@ test.describe("Quiz interaction", () => {
   });
 
   test("all questions answered shows a completion banner with a score", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", { waitUntil: "domcontentloaded" });
     await page.getByRole("button", { name: "استدعاء مكتبة أدوات الإدخال والإخراج" }).click(); // Q1 correct
     await page.getByRole("button", { name: "من دالة main" }).click(); // Q2 correct
@@ -30,7 +30,7 @@ test.describe("Quiz interaction", () => {
   });
 
   test("keyboard: focusing an option and pressing Enter selects it", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { name: /Test your understanding/ })).toBeVisible();
     const q2 = page.getByRole("button", { name: "من دالة main" });
@@ -40,7 +40,7 @@ test.describe("Quiz interaction", () => {
   });
 
   test("choosing an option disables it", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/learn/stage-1/cpp-basics/hello-world", { waitUntil: "domcontentloaded" });
     await page.getByRole("button", { name: "تعريف متغير جديد" }).click();
     await expect(page.getByRole("button", { name: "تعريف متغير جديد" })).toBeDisabled();

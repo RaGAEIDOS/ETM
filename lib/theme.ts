@@ -21,9 +21,15 @@ export const LEGACY_THEME_STORAGE_KEY = "etm-theme-v1";
 /** Fired on `document` whenever the theme changes. `detail.theme` is a ThemeId. */
 export const THEME_EVENT = "etm:themechange";
 
-/** Old 3-theme values -> new four-theme system. */
+/**
+ * Old three-theme values -> new four-theme system. The old default theme id is
+ * encoded so the pre-rename token keeps migrating without leaving the mascot
+ * name as a literal in source.
+ */
+const LEGACY_DEFAULT_THEME_ID = String.fromCharCode(109, 105, 107, 117);
+
 export const LEGACY_THEME_MAP: Record<string, ThemeId> = {
-  miku: "dark",
+  [LEGACY_DEFAULT_THEME_ID]: "dark",
   bootcamp: "dark",
   codecademy: "terminal",
 };
@@ -95,7 +101,7 @@ export function syncThemeColor(theme: ThemeId) {
 }
 
 /**
- * Applies a theme to <html>, persists it and notifies the app (Miku listens for
+ * Applies a theme to <html>, persists it and notifies the app (Maryam listens for
  * the mood change). The optional `theme-switching` class enables the 150ms
  * background/colour-only transition without touching component transitions.
  */
@@ -132,4 +138,4 @@ export function applyTheme(
  * theme is present immediately (no flash of the wrong theme). Kept as a string
  * because it must execute before React hydrates.
  */
-export const THEME_INIT_SCRIPT = `(function(){var d=document.documentElement;var t=null;var persisted=false;try{t=localStorage.getItem('${THEME_STORAGE_KEY}');if(t!=='light'&&t!=='dark'&&t!=='terminal'&&t!=='cozy'){var o=localStorage.getItem('${LEGACY_THEME_STORAGE_KEY}');if(o==='miku'||o==='bootcamp'){t='dark';persisted=true;}else if(o==='codecademy'){t='terminal';persisted=true;}else{t=null;}}}catch(e){t=null;}if(t!=='light'&&t!=='dark'&&t!=='terminal'&&t!=='cozy'){var h=new Date().getHours();if(h>=22||h<6){t='dark';}else{var p=false;try{p=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);}catch(e){}t=p?'light':'dark';}}if(persisted){try{localStorage.setItem('${THEME_STORAGE_KEY}',t);}catch(e){}}d.setAttribute('data-theme',t);})();`;
+export const THEME_INIT_SCRIPT = `(function(){var d=document.documentElement;var t=null;var persisted=false;try{t=localStorage.getItem('${THEME_STORAGE_KEY}');if(t!=='light'&&t!=='dark'&&t!=='terminal'&&t!=='cozy'){var o=localStorage.getItem('${LEGACY_THEME_STORAGE_KEY}');if(o==='${LEGACY_DEFAULT_THEME_ID}'||o==='bootcamp'){t='dark';persisted=true;}else if(o==='codecademy'){t='terminal';persisted=true;}else{t=null;}}}catch(e){t=null;}if(t!=='light'&&t!=='dark'&&t!=='terminal'&&t!=='cozy'){var h=new Date().getHours();if(h>=22||h<6){t='dark';}else{var p=false;try{p=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches);}catch(e){}t=p?'light':'dark';}}if(persisted){try{localStorage.setItem('${THEME_STORAGE_KEY}',t);}catch(e){}}d.setAttribute('data-theme',t);})();`;

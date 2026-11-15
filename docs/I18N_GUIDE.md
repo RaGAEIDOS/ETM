@@ -79,7 +79,7 @@ export default function Page({ params }: { params: { locale: string } }) {
 - Numbers: Western digits only. Use `formatNumber()` from
   `@/lib/i18n/config`, not `toLocaleString()`.
 - Arabic UI copy in this project is simple Modern Standard Arabic (MSA). The
-  existing Miku copy uses Egyptian dialect; keep that voice for Miku only.
+  existing Maryam copy uses Egyptian dialect; keep that voice for Maryam only.
 
 ## Arabic copy conventions
 

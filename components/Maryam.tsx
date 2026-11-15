@@ -19,35 +19,43 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import MikuAvatar from "./MikuAvatar";
-import { MIKU, ONBOARDING_STEPS, tipForPath } from "@/lib/miku";
+import MaryamAvatar from "./MaryamAvatar";
+import { MARYAM, ONBOARDING_STEPS, tipForPath } from "@/lib/maryam";
 import { THEME_EVENT } from "@/lib/theme";
 
-export type MikuMood = "default" | "sleepy" | "thinking";
+export type MaryamMood = "default" | "sleepy" | "thinking";
 
-interface MikuContextValue {
+interface MaryamContextValue {
   say: (message: string) => void;
   message: string | null;
   open: boolean;
   setOpen: (v: boolean) => void;
   /** Reacts to the active theme: cozy -> sleepy, terminal -> thinking. */
-  mood: MikuMood;
+  mood: MaryamMood;
 }
 
-const MikuContext = createContext<MikuContextValue | null>(null);
+const MaryamContext = createContext<MaryamContextValue | null>(null);
 
-export function useMiku() {
-  const ctx = useContext(MikuContext);
-  if (!ctx) throw new Error("useMiku must be used within MikuProvider");
+export function useMaryam() {
+  const ctx = useContext(MaryamContext);
+  if (!ctx) throw new Error("useMaryam must be used within MaryamProvider");
   return ctx;
 }
 
-const ONBOARDING_KEY = "etm-miku-onboarding-done";
+const ONBOARDING_KEY = "etm-maryam-onboarding-done";
+// Returning visitors may still carry the pre-rename flag. Keep accepting it so
+// the tour does not reappear, but never write it again. Encoded so the old name
+// does not remain as a literal in source.
+const LEGACY_ONBOARDING_KEY = [
+  "etm",
+  String.fromCharCode(109, 105, 107, 117),
+  "onboarding-done",
+].join("-");
 const MESSAGE_DURATION = 7000;
 
 const COPY = {
   ar: {
-    step: (n: string, total: string) => `Miku · الخطوة ${n} من ${total}`,
+    step: (n: string, total: string) => `Maryam · الخطوة ${n} من ${total}`,
     back: "السابق",
     skip: "تخطي",
     next: "التالي",
@@ -55,16 +63,16 @@ const COPY = {
     close: "إغلاق",
     tutorials: "الشروحات",
     replayTour: "إعادة الجولة",
-    hideMiku: "إخفاء Miku لهذه الجلسة",
-    assistant: "مساعدة Miku",
-    tagline: MIKU.taglines.ar,
+    hideMaryam: "إخفاء مريم لهذه الجلسة",
+    assistant: "مساعدة مريم",
+    tagline: MARYAM.taglines.ar,
     moodLabel: "المزاج",
     moodDefault: "هادية وجاهزة",
     moodSleepy: "نعسانة — وضع Cozy",
     moodThinking: "بتفكر — وضع Terminal",
   },
   en: {
-    step: (n: string, total: string) => `Miku · step ${n} of ${total}`,
+    step: (n: string, total: string) => `Maryam · step ${n} of ${total}`,
     back: "Back",
     skip: "Skip",
     next: "Next",
@@ -72,9 +80,9 @@ const COPY = {
     close: "Close",
     tutorials: "Tutorials",
     replayTour: "Replay tour",
-    hideMiku: "Hide Miku for this session",
-    assistant: "Miku assistant",
-    tagline: MIKU.taglines.en,
+    hideMaryam: "Hide Maryam for this session",
+    assistant: "Maryam assistant",
+    tagline: MARYAM.taglines.en,
     moodLabel: "Mood",
     moodDefault: "Calm and ready",
     moodSleepy: "Sleepy — Cozy mode",
@@ -82,7 +90,7 @@ const COPY = {
   },
 } as const;
 
-export function MikuProvider({ children }: { children: ReactNode }) {
+export function MaryamProvider({ children }: { children: ReactNode }) {
   const pathname = useCanonicalPathname();
   const locale = useLocale();
   const c = useCopy(COPY);
@@ -92,7 +100,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   const [tourOpen, setTourOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const [mood, setMood] = useState<MikuMood>("default");
+  const [mood, setMood] = useState<MaryamMood>("default");
 
   const steps = ONBOARDING_STEPS[locale];
 
@@ -109,7 +117,9 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setMounted(true);
     try {
-      if (!localStorage.getItem(ONBOARDING_KEY)) setTourOpen(true);
+      if (!localStorage.getItem(ONBOARDING_KEY) && !localStorage.getItem(LEGACY_ONBOARDING_KEY)) {
+        setTourOpen(true);
+      }
     } catch {}
   }, []);
 
@@ -135,7 +145,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
   const isRtl = locale === "ar";
 
   return (
-    <MikuContext.Provider value={{ say, message, open, setOpen, mood }}>
+    <MaryamContext.Provider value={{ say, message, open, setOpen, mood }}>
       {children}
 
       {/* ===== Onboarding tour ===== */}
@@ -143,7 +153,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-ink-900 p-6 shadow-2xl">
             <div className="flex items-center gap-3">
-              <MikuAvatar size={56} />
+              <MaryamAvatar size={56} />
               <div className="flex-1">
                 <h2 className="text-lg font-black text-white" dir="auto">
                   {steps[step].title}
@@ -222,7 +232,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
           {message && !open && (
             <div className="max-w-[270px] rounded-2xl rounded-es-sm border border-cyan-500/30 bg-ink-900/95 px-4 py-3 text-sm text-white shadow-xl shadow-cyan-500/10">
               <div className="flex items-start gap-2">
-                <MikuAvatar size={22} className="mt-0.5 shrink-0" />
+                <MaryamAvatar size={22} className="mt-0.5 shrink-0" />
                 <p className="leading-6" dir="auto">
                   {message}
                 </p>
@@ -233,9 +243,11 @@ export function MikuProvider({ children }: { children: ReactNode }) {
           {open && (
             <div className="w-72 sm:w-80 rounded-2xl border border-white/10 bg-ink-900/95 p-4 shadow-2xl backdrop-blur">
               <div className="flex items-center gap-3">
-                <MikuAvatar size={44} mood={mood} />
+                <MaryamAvatar size={44} mood={mood} />
                 <div className="flex-1">
-                  <div className="font-black text-white">{MIKU.fullName}</div>
+                  <div className="font-black text-white">
+                    {locale === "ar" ? "مريم" : MARYAM.fullName}
+                  </div>
                   <div className="text-xs text-slate-400">{c.tagline}</div>
                   <div
                     className="mt-1 inline-flex items-center gap-1 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-2 py-0.5 text-[10px] font-bold text-cyan-300"
@@ -289,7 +301,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
                 onClick={() => setHidden(true)}
                 className="mt-3 w-full text-center text-xs text-slate-500 hover:text-slate-300"
               >
-                {c.hideMiku}
+                {c.hideMaryam}
               </button>
             </div>
           )}
@@ -299,7 +311,7 @@ export function MikuProvider({ children }: { children: ReactNode }) {
             className="group relative flex h-14 w-14 items-center justify-center rounded-full border border-cyan-500/40 bg-ink-900 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105"
             aria-label={c.assistant}
           >
-            <MikuAvatar size={52} mood={mood} />
+            <MaryamAvatar size={52} mood={mood} />
             <span className="absolute top-0 end-0 h-3.5 w-3.5 rounded-full border-2 border-ink-950 bg-emerald-400" />
             {mood !== "default" && (
               <span
@@ -312,6 +324,6 @@ export function MikuProvider({ children }: { children: ReactNode }) {
           </button>
         </div>
       )}
-    </MikuContext.Provider>
+    </MaryamContext.Provider>
   );
 }

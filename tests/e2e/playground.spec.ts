@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 test.describe("Playground page", () => {
   test("renders the editor and Run control without crashing", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/playground", { waitUntil: "domcontentloaded" });
     // The C++ editor (react-simple-code-editor) mounts as a textarea.
     await expect(page.locator("textarea").first()).toBeVisible();
@@ -13,7 +13,7 @@ test.describe("Playground page", () => {
   });
 
   test("running C++ reaches either compiled output or a friendly error (Wandbox-dependent)", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     test.setTimeout(90_000);
     await page.goto("/en/playground", { waitUntil: "domcontentloaded" });
     const run = page.getByRole("button", { name: /Run/i }).first();

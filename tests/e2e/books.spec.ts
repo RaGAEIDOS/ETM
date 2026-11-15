@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 test.describe("Free Books page", () => {
   test("loads with the Free Books content and links", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/books", { waitUntil: "domcontentloaded" });
     await expect(page.locator("text=Operating Systems: Three Easy Pieces").first()).toBeVisible();
 
@@ -12,7 +12,7 @@ test.describe("Free Books page", () => {
   });
 
   test("no references to removed commercial books appear", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/books", { waitUntil: "domcontentloaded" });
     // Spot-check known commercial-only titles that must NOT be in a legally-free library.
     for (const removed of [

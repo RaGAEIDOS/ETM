@@ -58,10 +58,10 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14">
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Link href="/" className="mb-4 inline-flex items-center group" aria-label="ETM — Education Technology Miku">
+            <Link href="/" className="mb-4 inline-flex items-center group" aria-label="ETM — Education Technology Maryam">
               <img
                 src="/brand/main-logo.png"
-                alt="ETM — Education Technology Miku"
+                alt="ETM — Education Technology Maryam"
                 width={768}
                 height={512}
                 loading="lazy"

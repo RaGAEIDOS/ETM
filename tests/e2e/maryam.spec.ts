@@ -1,17 +1,27 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
-test.describe("Miku study buddy", () => {
+test.describe("Maryam study buddy", () => {
   test("opens on /landing and shows the page tip panel", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/landing", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: /Miku assistant/i }).click();
+    await page.getByRole("button", { name: /Maryam assistant/i }).click();
     await expect(page.getByText("Tutorials")).toBeVisible();
     await expect(page.getByRole("link", { name: /Tutorials/i })).toBeVisible();
+    const tagline = page.getByText("Maryam — your AI engineering companion", { exact: true });
+    await expect(tagline.nth(1)).toBeVisible();
+  });
+
+  test("responds as Maryam in Arabic", async ({ page }) => {
+    seedMaryamDone(page);
+    await page.goto("/ar/landing", { waitUntil: "domcontentloaded" });
+    await page.getByRole("button", { name: "مساعدة مريم" }).click();
+    const tagline = page.getByText("مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة", { exact: true });
+    await expect(tagline.nth(1)).toBeVisible();
   });
 
   test("no API keys are visible in the browser console/bundle strings", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     const sent: string[] = [];
     page.on("request", (req) => sent.push(req.url()));
     await page.goto("/en/landing", { waitUntil: "domcontentloaded" });

@@ -9,7 +9,7 @@ import {
   type Locale,
 } from "@/lib/i18n/config";
 import { AuthProvider } from "@/lib/auth";
-import { MikuProvider } from "@/components/Miku";
+import { MaryamProvider } from "@/components/Maryam";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Pomodoro from "@/components/Pomodoro";
@@ -29,7 +29,7 @@ const META = {
   ar: {
     title: "ETM — تعلّم C++ من الصفر إلى الاحتراف",
     description:
-      "ETM (Education Technology Miku) منصة عربية مجانية لتعلم C++ من الصفر المطلق حتى بناء نظام تشغيل ومحرك ألعاب. منهج OSSU كامل، محرر تفاعلي، مشاريع حقيقية، ورفيقة الدراسة Miku.",
+      "ETM (Education Technology Maryam) منصة عربية مجانية لتعلم C++ من الصفر المطلق حتى بناء نظام تشغيل ومحرك ألعاب. منهج OSSU كامل، محرر تفاعلي، مشاريع حقيقية، ومريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة.",
     keywords: [
       "تعلم البرمجة",
       "تعلم C++",
@@ -39,14 +39,14 @@ const META = {
       "محرك ألعاب",
       "نظام تشغيل",
       "ETM",
-      "Miku",
+      "مريم",
     ],
     ogLocale: "ar_EG",
   },
   en: {
     title: "ETM — Learn C++ from Zero to Expert",
     description:
-      "ETM (Education Technology Miku) is a free platform for learning C++ from absolute zero to building an operating system and a game engine. A complete OSSU-based curriculum, interactive playground, projects, and Miku your study buddy.",
+      "ETM (Education Technology Maryam) is a free platform for learning C++ from absolute zero to building an operating system and a game engine. A complete OSSU-based curriculum, interactive playground, projects, and Maryam — your AI engineering companion.",
     keywords: [
       "learn programming",
       "learn C++",
@@ -56,7 +56,7 @@ const META = {
       "game engine",
       "operating system",
       "ETM",
-      "Miku",
+      "Maryam",
     ],
     ogLocale: "en_US",
   },
@@ -91,7 +91,7 @@ export async function generateMetadata({
           url: "/brand/etm-banner.jpg",
           width: 1600,
           height: 900,
-          alt: "ETM — Education Technology Miku — Your Ultimate Online Learning Platform",
+          alt: "ETM — Education Technology Maryam — Your Ultimate Online Learning Platform",
         },
       ],
     },
@@ -133,7 +133,7 @@ export default function LocaleLayout({ children, params }: Props) {
           rel="stylesheet"
         />
         <LocaleProvider locale={locale}>
-          <MikuProvider>
+          <MaryamProvider>
             <AuthProvider>
               <SiteHeader />
               <main className="min-h-screen">{children}</main>
@@ -141,7 +141,7 @@ export default function LocaleLayout({ children, params }: Props) {
               <Pomodoro />
               <AdBanners />
             </AuthProvider>
-          </MikuProvider>
+          </MaryamProvider>
         </LocaleProvider>
       </body>
     </html>

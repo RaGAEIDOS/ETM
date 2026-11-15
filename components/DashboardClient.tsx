@@ -10,7 +10,7 @@ import { deriveSrs } from "@/lib/english/srs";
 import { stages, totalLessons } from "@/lib/data";
 import { elzeroVideos } from "@/lib/elzero-videos";
 import { nextLessons } from "@/lib/stats";
-import MikuAvatar from "./MikuAvatar";
+import MaryamAvatar from "./MaryamAvatar";
 import ResumeCard from "./ResumeCard";
 import Heatmap from "./dash/Heatmap";
 import AccuracyTrend from "./dash/AccuracyTrend";
@@ -58,7 +58,7 @@ const COPY = {
     curriculum: "المنهج",
     continueLearning: "تابع التعلم",
     finishedTitle: "أنهيت المنهج بالكامل! 🎉",
-    finishedBody: "Miku فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
+    finishedBody: "مريم فخورة بك. تفقّد صفحة المشاريع لتحديك التالي.",
     progressByStage: "التقدم حسب المستوى",
     whatsRemaining: "ما تبقّى",
     nothingLeft: "لا شيء متبقٍ — أنجزت كل شيء! 🏆",
@@ -104,7 +104,7 @@ const COPY = {
     curriculum: "Curriculum",
     continueLearning: "Continue learning",
     finishedTitle: "You finished the whole curriculum! 🎉",
-    finishedBody: "Miku is proud of you. Check the projects page for your next challenge.",
+    finishedBody: "Maryam is proud of you. Check the projects page for your next challenge.",
     progressByStage: "Progress by stage",
     whatsRemaining: "What's remaining",
     nothingLeft: "Nothing left — you did it all! 🏆",
@@ -189,7 +189,7 @@ export default function DashboardClient() {
       {/* greeting */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <MikuAvatar size={52} />
+          <MaryamAvatar size={52} />
           <div>
             <h1 className="text-3xl sm:text-4xl font-black text-white">
               {c.title}

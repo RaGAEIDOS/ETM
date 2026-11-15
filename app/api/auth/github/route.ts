@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/vnd.github+json",
-        "User-Agent": "ETM-Miku",
+        "User-Agent": "ETM-Maryam",
         "X-GitHub-Api-Version": "2022-11-28",
       },
       cache: "no-store",

@@ -8,7 +8,7 @@ import { THEME_COLORS } from "@/lib/theme";
 // by the Next.js App Router.
 export const metadata: Metadata = {
   metadataBase: new URL("https://etm-learning.vercel.app"),
-  title: "ETM — Education Technology Miku",
+  title: "ETM — Education Technology Maryam",
 };
 
 export const viewport: Viewport = {

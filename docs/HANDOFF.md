@@ -107,7 +107,7 @@ npx playwright test --project=chromium-desktop   # 192/192 (الويبسايت �
 - GitHub sign-in ما اتحققش (مفيش test token) — الـ fallback فقط موجود.
 - **Deployment facts (verified 2026-11-12)**: `etm-learning.vercel.app` is live and **serves the Phase-4 build** — `/english` and `/english/review` respond with the English hub/review page (empty-videos sync notice), while `main` @ `380b475` has no English/books/progress routes at all. So this domain is NOT tracking `main`; likely a manual `vercel --prod` from the phase-4 working tree or a Production Branch override. `etm-one-ruddy.vercel.app` returns HTTP 404 (no such project/alias). **Action at home**: Vercel dashboard → project → Settings → Git → Production Branch, and confirm which domain is canonical before trusting any "production" claim.
 - استعمال command `npm run test:content -- --strict` مش بدون `--strict` للتحقق الكامل من المحتوى.
-- وقت الاختبار: `waitUntil: "domcontentloaded"` + seed `etm-miku-onboarding-done=1` (الـ helper موجود في `tests/e2e/helpers/ui.ts`).
+- وقت الاختبار: `waitUntil: "domcontentloaded"` + seed `etm-maryam-onboarding-done=1` (الـ helper موجود في `tests/e2e/helpers/ui.ts`).
 - **لا تدفع إطلاقاً لـ `main`** بدون موافقة المستخدم — main ينشر برودكشين.
 
 ## 7) أوامر Git المرجعية (في البيت)

@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { seedMikuDone } from "./helpers/ui";
+import { seedMaryamDone } from "./helpers/ui";
 
 test.describe("Linux section (Pilot)", () => {
   test("nav Groups the tracks under Courses dropdown (ar + en)", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     // NB: assert on /curriculum — `/` client-redirects guests to /landing (bare header)
     await page.goto("/curriculum", { waitUntil: "domcontentloaded" });
     await page.locator("header button", { hasText: "الدورات" }).first().click();
@@ -21,7 +21,7 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("/linux hub renders the course card, credit and section index", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/linux", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toContainText("لينكس");
     // Catalogue line: 1 course · 53 videos
@@ -35,7 +35,7 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("/en/linux hub renders English labels and credit", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/linux", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Linux");
     await expect(page.getByText(/53 videos/).first()).toBeVisible();
@@ -43,7 +43,7 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("/linux/course/linux-2021 lists all 53 lessons grouped by section", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/linux/course/linux-2021", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.getByText(/53 فيديو|53 videos/).first()).toBeVisible();
@@ -57,7 +57,7 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("lesson page renders the facade, lesson panel tabs and credit", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/linux/lnx-01", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     // Click-to-load facade button (no autoplay, no iframe yet)
@@ -72,7 +72,7 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("lesson page Terminal Lab tab boots the simulated shell", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/linux/lnx-05", { waitUntil: "domcontentloaded" });
     await page.getByRole("tab", { name: "Terminal Lab" }).click();
     // Simulated — the safety notice must be visible
@@ -87,13 +87,13 @@ test.describe("Linux section (Pilot)", () => {
   });
 
   test("/en/linux/review renders the empty state when nothing is due", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/en/linux/review", { waitUntil: "domcontentloaded" });
     await expect(page.getByText(/No terms due today/i)).toBeVisible();
   });
 
   test("Arabic lesson page shows the interactive tabs in Arabic", async ({ page }) => {
-    seedMikuDone(page);
+    seedMaryamDone(page);
     await page.goto("/linux/lnx-01", { waitUntil: "domcontentloaded" });
     for (const tab of ["الملخص", "مصطلحات", "تدرّب", "معمل الطرفية", "ملاحظاتي"]) {
       await expect(page.getByRole("tab", { name: tab })).toBeVisible();

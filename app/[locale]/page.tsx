@@ -52,7 +52,7 @@ const FEATURES_COPY: Record<Locale, Record<string, { title: string; desc: string
     glossary: { title: "شرح عربي + مصطلحات", desc: "كل المصطلحات الإنجليزية تشرح بالعربية وتتوفر في دليل المصطلحات — بلا حاجز لغوي." },
     playground: { title: "محرك C++ التفاعلي", desc: "اكتب وشغّل C++ حقيقياً مباشرة في المتصفح، بدون تركيب. جرّب كل الأمثلة بنفسك." },
     projects: { title: "مشاريع حقيقية", desc: "من آلة حاسبة بسيطة إلى لعبة Snake بمحركك وماكينات زمنية حقيقية تنفذ في QEMU." },
-    progress: { title: "تتبع التقدم", desc: "اعرف أين أنت بالضبط، وكم الدروس أكملتها، وما هو المستوى التالي — مع تشجيع من Miku." },
+    progress: { title: "تتبع التقدم", desc: "اعرف أين أنت بالضبط، وكم الدروس أكملتها، وما هو المستوى التالي — مع تشجيع من مريم." },
     career: { title: "مسار مهني واضح", desc: "مصمم للسوق: مهارات حقيقية الطلب في هندسة الأنظمة وتطوير محركات الألعاب." },
   },
   en: {
@@ -60,7 +60,7 @@ const FEATURES_COPY: Record<Locale, Record<string, { title: string; desc: string
     glossary: { title: "Arabic explanations + glossary", desc: "Every English term is explained in Arabic and indexed in a dedicated glossary — no language barrier in your way." },
     playground: { title: "Interactive C++ playground", desc: "Write and run real C++ right in your browser, no installs. Try every example yourself and experiment freely." },
     projects: { title: "Real projects", desc: "From a simple calculator to a Snake game with your own engine and an OS kernel that actually runs in QEMU." },
-    progress: { title: "Progress tracking", desc: "Know exactly where you are, how many lessons you finished, and what stage comes next — with Miku cheering you on." },
+    progress: { title: "Progress tracking", desc: "Know exactly where you are, how many lessons you finished, and what stage comes next — with Maryam cheering you on." },
     career: { title: "A clear career path", desc: "Designed for the job market: skills actually in demand in systems programming and game engineering." },
   },
 };
@@ -177,7 +177,7 @@ const COPY: Record<Locale, {
   ctaSources: string;
   ctaBooks: string;
   freeForever: string;
-  mikuz: string;
+  maryamGuides: string;
   pomodoro: string;
   join: string;
   freeForever2: string;
@@ -191,7 +191,7 @@ const COPY: Record<Locale, {
     heroLead: "ETM بتعلمك لغة C++ مع منهج جامعي كامل، وشرح واضح، وأمثلة تفاعلية، ومشاريع حقيقية — من أول سطر كود لك إلى محرك ألعاب ونظام تشغيل عملي.",
     ctaStart: "ابدأ الرحلة — مجاناً",
     ctaPlayground: "جرّب المحرك C++",
-    ctaGuide: "جديد هنا؟ يقوّدك Miku",
+    ctaGuide: "جديد هنا؟ تقودك مريم",
     ctaDashboard: "لوحة التقدم",
     ctaPomodoro: "تركيز Pomodoro",
     statsLessons: "دروس تفاعلية",
@@ -228,7 +228,7 @@ const COPY: Record<Locale, {
     ctaSources: "تصفح المصادر",
     ctaBooks: "الكتب المجانية",
     freeForever: "مجاناً إلى الأبد",
-    mikuz: "يقوّد Miku خطاك",
+    maryamGuides: "مريم تقود خطاك",
     pomodoro: "تركيز Pomodoro",
     join: "انضم لآلاف المتعلمين العرب —",
     freeForever2: "مجاناً إلى الأبد",
@@ -242,7 +242,7 @@ const COPY: Record<Locale, {
     heroLead: "ETM teaches you C++ with a complete university-level curriculum, clear explanations, interactive examples, and real projects — from your first line of code to a game engine and an OS kernel that actually runs.",
     ctaStart: "Start the journey — free",
     ctaPlayground: "Try the C++ playground",
-    ctaGuide: "New here? Miku will show you around",
+    ctaGuide: "New here? Maryam will show you around",
     ctaDashboard: "Dashboard",
     ctaPomodoro: "Pomodoro focus",
     statsLessons: "Interactive lessons",
@@ -279,7 +279,7 @@ const COPY: Record<Locale, {
     ctaSources: "Browse the sources",
     ctaBooks: "Free books",
     freeForever: "Free forever",
-    mikuz: "Miku guides you",
+    maryamGuides: "Maryam guides you",
     pomodoro: "Pomodoro focus",
     join: "Join thousands of Arabic learners —",
     freeForever2: "free forever",
@@ -628,7 +628,7 @@ export default function HomePage() {
                   <CheckCircle2 className="h-3 w-3 text-emerald-400" /> {c.freeForever}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1">
-                  <Brain className="h-3 w-3 text-cyan-400" /> {c.mikuz}
+                  <Brain className="h-3 w-3 text-cyan-400" /> {c.maryamGuides}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full bg-white/5 px-3 py-1">
                   <Timer className="h-3 w-3 text-emerald-400" /> {c.pomodoro}

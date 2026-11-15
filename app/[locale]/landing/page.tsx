@@ -26,7 +26,7 @@ import {
 import { stages, totalLessons, totalCourses } from "@/lib/data";
 import { projects } from "@/lib/projects";
 import { elzeroVideos } from "@/lib/elzero-videos";
-import MikuAvatar from "@/components/MikuAvatar";
+import MaryamAvatar from "@/components/MaryamAvatar";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
@@ -43,10 +43,10 @@ export function generateMetadata({ params }: Omit<Props, "children">): Promise<M
     pageMetadata({
       locale,
       path: "/landing",
-      title: isAr ? "ETM — تعلّم C++ من الصفر إلى الاحتراف" : "ETM — Education Technology Miku",
+      title: isAr ? "ETM — تعلّم C++ من الصفر إلى الاحتراف" : "ETM — Education Technology Maryam",
       description: isAr
-        ? "ETM (Education Technology Miku) — منصة عربية مجانية لتعلم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب. منهج OSSU كامل، محرك تفاعلي، مشاريع حقيقية، ورفيقة الدراسة Miku."
-        : "ETM (Education Technology Miku) — a free platform that teaches C++ from zero to building an operating system and a game engine. Full Arabic-origin content, interactive playground, real projects, Miku your study buddy.",
+        ? "ETM (Education Technology Maryam) — منصة عربية مجانية لتعلم C++ من الصفر حتى بناء نظام تشغيل ومحرك ألعاب. منهج OSSU كامل، محرك تفاعلي، مشاريع حقيقية، ومريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة."
+        : "ETM (Education Technology Maryam) — a free platform that teaches C++ from zero to building an operating system and a game engine. Full Arabic-origin content, interactive playground, real projects, and Maryam — your AI engineering companion.",
     })
   );
 }
@@ -66,7 +66,7 @@ const FEATURES_COPY: Record<Locale, Record<string, { title: string; desc: string
     glossary: { title: "شرح عربي + مصطلحات", desc: "كل المصطلحات الإنجليزية تشرح بالعربية وتتوفر في دليل المصطلحات — بلا حاجز لغوي." },
     playground: { title: "محرك C++ التفاعلي", desc: "اكتب وشغّل C++ حقيقياً مباشرة في المتصفح، بدون تركيب. جرّب كل الأمثلة بنفسك." },
     projects: { title: "مشاريع حقيقية", desc: "من آلة حاسبة بسيطة إلى لعبة Snake بمحركك ونواة نظام تشغيل يعمل فعلاً في QEMU." },
-    progress: { title: "تتبع التقدم", desc: "اعرف أين أنت بالضبط، وكم الدروس أكملتها، وما هو المستوى التالي — مع تشجيع من Miku." },
+    progress: { title: "تتبع التقدم", desc: "اعرف أين أنت بالضبط، وكم الدروس أكملتها، وما هو المستوى التالي — مع تشجيع من مريم." },
     career: { title: "مسار مهني واضح", desc: "مصمم للسوق: مهارات حقيقية الطلب في هندسة الأنظمة وتطوير محركات الألعاب." },
   },
   en: {
@@ -74,7 +74,7 @@ const FEATURES_COPY: Record<Locale, Record<string, { title: string; desc: string
     glossary: { title: "Arabic explanations + glossary", desc: "Every English term is explained in Arabic and indexed in a dedicated glossary — no language barrier in your way." },
     playground: { title: "Interactive C++ playground", desc: "Write and run real C++ right in your browser, no installs. Try every example yourself and experiment freely." },
     projects: { title: "Real projects", desc: "From a simple calculator to a Snake game with your own engine and an OS kernel that actually runs in QEMU." },
-    progress: { title: "Progress tracking", desc: "Know exactly where you are, how many lessons you finished, and what stage comes next — with Miku cheering you on." },
+    progress: { title: "Progress tracking", desc: "Know exactly where you are, how many lessons you finished, and what stage comes next — with Maryam cheering you on." },
     career: { title: "A clear career path", desc: "Designed for the job market: skills actually in demand in systems programming and game engineering." },
   },
 };
@@ -131,7 +131,7 @@ export default function LandingPage({ params }: Props) {
     : "ETM teaches you C++ with a complete university-level curriculum, clear explanations, interactive examples, and real projects — from your first line of code to a game engine and an OS kernel that actually runs.";
   const ctaStart = isAr ? "ابدأ الرحلة — مجاناً" : "Start the journey — free";
   const ctaPlayground = isAr ? "جرّب المحرك C++" : "Try the C++ playground";
-  const ctaGuide = isAr ? "جديد هنا؟ يقوّدك Miku" : "New here? Miku will show you around";
+  const ctaGuide = isAr ? "جديد هنا؟ تقودك مريم" : "New here? Maryam will show you around";
 
   const statsLessons = isAr ? "دروس تفاعلية" : "Interactive lessons";
   const statsCourses = isAr ? "كورسات متكاملة" : "Complete courses";
@@ -151,14 +151,13 @@ export default function LandingPage({ params }: Props) {
   const ctaSources = isAr ? "تصفح المصادر" : "Browse the sources";
   const ctaBooks = isAr ? "الكتب المجانية" : "Free books";
   const freeForever = isAr ? "مجاناً إلى الأبد" : "Free forever";
-  const mikuz = isAr ? "يقوّد Miku خطاك" : "Miku guides you";
   const pomodoro = isAr ? "تركيز Pomodoro" : "Pomodoro focus";
   const join = isAr ? "انضم لآلاف المتعلمين العرب —" : "Join thousands of Arabic learners —";
   const freeForever2 = isAr ? "مجاناً إلى الأبد" : "free forever";
 
-  const mikuCopy = isAr
-    ? { name: "Miku Chan", buddy: "رفيقة دراستك في ETM", ready: "جاهز متى أرادك — هيا بصناعة! 🎵", missionTitle: "مهمة اليوم", mission: <>أكمل الدرس <b className="text-white">&quot;Hello World&quot;</b> في C++ Basics، ثم شغّله في المحرك.</>, streak: "أيام متتالية", focus: "وقت تركيز", videos: "فيديوهات ElZero" }
-    : { name: "Miku Chan", buddy: "Your study buddy at ETM", ready: "Ready when you are — let's code! 🎵", missionTitle: "Today's mission", mission: <>Finish lesson <b className="text-white">&quot;Hello World&quot;</b> in C++ Basics, then run it in the playground.</>, streak: "days streak", focus: "focus time", videos: "ElZero videos" };
+  const maryamCopy = isAr
+    ? { name: "مريم", buddy: "مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة", ready: "جاهزة متى أردت — هيا نبدأ! 🚀", missionTitle: "مهمة اليوم", mission: <>أكمل الدرس <b className="text-white">&quot;Hello World&quot;</b> في C++ Basics، ثم شغّله في المحرك.</>, streak: "أيام متتالية", focus: "وقت تركيز", videos: "فيديوهات ElZero" }
+    : { name: "Maryam", buddy: "Maryam — your AI engineering companion", ready: "Ready when you are — let's code! 🚀", missionTitle: "Today's mission", mission: <>Finish lesson <b className="text-white">&quot;Hello World&quot;</b> in C++ Basics, then run it in the playground.</>, streak: "days streak", focus: "focus time", videos: "ElZero videos" };
 
   return (
     <div>
@@ -218,29 +217,29 @@ export default function LandingPage({ params }: Props) {
               <div className="animate-float">
                 <div className="rounded-2xl border border-white/10 bg-ink-900/70 p-6 shadow-2xl backdrop-blur">
                   <div className="flex items-center gap-4">
-                    <MikuAvatar size={84} />
+                    <MaryamAvatar size={84} />
                     <div>
-                      <div className="font-black text-white text-lg">{mikuCopy.name}</div>
-                      <div className="text-sm text-slate-400">{mikuCopy.buddy}</div>
-                      <div className="mt-2 text-xs text-emerald-400 font-bold">{mikuCopy.ready}</div>
+                      <div className="font-black text-white text-lg">{maryamCopy.name}</div>
+                      <div className="text-sm text-slate-400">{maryamCopy.buddy}</div>
+                      <div className="mt-2 text-xs text-emerald-400 font-bold">{maryamCopy.ready}</div>
                     </div>
                   </div>
                   <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm text-slate-300 leading-6">
-                    <div className="font-bold text-cyan-400 mb-1">{mikuCopy.missionTitle}</div>
-                    <p>{mikuCopy.mission}</p>
+                    <div className="font-bold text-cyan-400 mb-1">{maryamCopy.missionTitle}</div>
+                    <p>{maryamCopy.mission}</p>
                   </div>
                   <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
                       <div className="font-black text-white text-lg">3</div>
-                      <div className="text-[11px] text-slate-500">{mikuCopy.streak}</div>
+                      <div className="text-[11px] text-slate-500">{maryamCopy.streak}</div>
                     </div>
                     <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
                       <div className="font-black text-white text-lg">25m</div>
-                      <div className="text-[11px] text-slate-500">{mikuCopy.focus}</div>
+                      <div className="text-[11px] text-slate-500">{maryamCopy.focus}</div>
                     </div>
                     <div className="rounded-lg bg-white/[0.03] border border-white/10 p-2">
                       <div className="font-black text-white text-lg">{videoCount}</div>
-                      <div className="text-[11px] text-slate-500">{mikuCopy.videos}</div>
+                      <div className="text-[11px] text-slate-500">{maryamCopy.videos}</div>
                     </div>
                   </div>
                 </div>

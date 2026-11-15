@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   Sparkles,
 } from "lucide-react";
-import MikuAvatar from "@/components/MikuAvatar";
+import MaryamAvatar from "@/components/MaryamAvatar";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -23,7 +23,7 @@ const SECTIONS: {
   color: string;
   title: { ar: string; en: string };
   body: { ar: string; en: string };
-  miku: { ar: string; en: string };
+  maryam: { ar: string; en: string };
 }[] = [
   {
     icon: BookOpen,
@@ -33,7 +33,7 @@ const SECTIONS: {
       ar: "كل شيء ستتعلمه منظم في 4 مستويات: Foundations ثم Intermediate ثم Advanced ثم Expert. كل مستوى فيه كورسات، وكل كورس فيه دروس. ابدأ من أول Foundations — الترتيب مهم لأن كل درس يبني على الدرس السابق.",
       en: "Everything you will learn is organized into 4 levels: Foundations, Intermediate, Advanced, and Expert. Each level has courses, and each course has lessons. Start at the top of Foundations — the order matters because every lesson builds on the previous one.",
     },
-    miku: {
+    maryam: {
       ar: "ابدأ من Foundations لو معندكش خبرة. كل مستوى بيبني على اللي قبله، فمت.skipش حاجة!",
       en: "Start with Foundations if you have no experience. Each level builds on the last — don't skip!",
     },
@@ -43,10 +43,10 @@ const SECTIONS: {
     color: "from-violet-400 to-fuchsia-500",
     title: { ar: "٢. دراسة الدرس", en: "2. Studying a Lesson" },
     body: {
-      ar: "افتح الدرس واقرأ الشرح، وشغّل أمثلة الكود في الـ Playground، ثم حل الـ Quiz في النهاية. لما تخلص اضغط زر Completed عشان Miku يتابع تقدمك.",
-      en: "Open a lesson and read the explanation, run the code examples in the Playground, then solve the quiz at the end. When you are done, press the Completed button so Miku can track your progress.",
+      ar: "افتح الدرس واقرأ الشرح، وشغّل أمثلة الكود في الـ Playground، ثم حل الـ Quiz في النهاية. لما تخلص اضغط زر Completed عشان مريم تتابع تقدمك.",
+      en: "Open a lesson and read the explanation, run the code examples in the Playground, then solve the quiz at the end. When you are done, press the Completed button so Maryam can track your progress.",
     },
-    miku: {
+    maryam: {
       ar: "اقرأ، جرّب، وحل الـ Quiz. ولو خلصته اضغط Completed عشان أعرف وصلت فين.",
       en: "Read, try, solve the quiz — then hit Completed so I know where you are!",
     },
@@ -59,7 +59,7 @@ const SECTIONS: {
       ar: "الـ Playground يترجم ويشغّل C++ حقيقي داخل متصفحك — بدون تركيب. انسخ أي مثال من الدرس، عدّل القيم، واضغط Run. التجريب أسرع طريق للتعلم.",
       en: "The playground compiles and runs real C++ in your browser — no installs. Copy any example from a lesson, change the values, and press Run. Experimenting is the fastest way to learn.",
     },
-    miku: {
+    maryam: {
       ar: "اكتب أي كود واضغط Run. جرب تعدّل القيم وتشوف النتيجة — ده أسرع طريقة تتعلم بيها.",
       en: "Write any code and hit Run. Change values and see the result — fastest way to learn!",
     },
@@ -72,7 +72,7 @@ const SECTIONS: {
       ar: "اللوحة توضح دروسك المكتملة، وفيديوهات ElZero المشاهدة، ووقت تركيزك اليوم، وسلسلة أيامك، وما تبقى في المنهج. زورها متى ما أردت ترى كم سرت.",
       en: "The dashboard shows your completed lessons, ElZero videos watched, focus time today, your day streak, and exactly what is left in the curriculum. Check it whenever you want to see how far you have come.",
     },
-    miku: {
+    maryam: {
       ar: "الديب بورد بتوريك وصلت فين وإيه اللي فاضل. زره كل يوم وشوف تقدمك!",
       en: "The dashboard shows where you are and what's left. Visit every day!",
     },
@@ -85,7 +85,7 @@ const SECTIONS: {
       ar: "اضغط زر المؤقّت في الزاوية السفلية. جلسة Focus مدتها 25 دقيقة، ثم استراحة 5 دقائق. بعد 4 جلسات تركز تنال استراحة طويلة. شغّل Study Radio — 8 محطات SomaFM حية مجانية — لتبقى في منطقة التركيز.",
       en: "Press the timer button in the bottom corner. A Focus session runs for 25 minutes, then a 5-minute break. After 4 focus sessions you earn a long break. Turn on Study Radio — pick from 8 free live SomaFM stations — to stay in the zone.",
     },
-    miku: {
+    maryam: {
       ar: "25 دقيقة Focus وبعدها 5 دقايق Break. أنا هذكرك لو سهات عني! 🎵",
       en: "25 minutes of focus, then a 5-minute break. I'll remind you if you drift! 🎵",
     },
@@ -98,7 +98,7 @@ const SECTIONS: {
       ar: "78 فيديو من قائمة ElZero Web School — أساسيات البرمجة بـ C++. كل فيديو له صفحته فيها ملخص، وأهم المصطلحات، وQuiz سريع، ومثال كود.",
       en: "78 videos from the ElZero Web School Fundamentals of Programming with C++ playlist. Every video has its own page with a summary, the most important terminology, a quick quiz, and a code example.",
     },
-    miku: {
+    maryam: {
       ar: "لكل فيديو ملخص + Quiz + أهم المصطلحات. شوف الفيديو على يوتيوب وبعدين تعال هنا تحل الامتحان.",
       en: "Each video has a summary + quiz + key terms. Watch it on YouTube, then solve the exam here!",
     },
@@ -111,7 +111,7 @@ const SECTIONS: {
       ar: "كل مصطلح إنجليزي في المنهج مشروح بالعربية في دليل المصطلحات. لو قابلت كلمة ما تفهمها، ابحث عنها هناك.",
       en: "Every English term in the curriculum is explained in Arabic in the glossary. If you meet a word you do not understand, search for it there.",
     },
-    miku: {
+    maryam: {
       ar: "مفيش حاجز لغوي قدامك — أي كلمة إنجليزي متشرحة بالعربي في القاموس.",
       en: "No language barrier — every English word is explained in Arabic in the glossary.",
     },
@@ -124,7 +124,7 @@ const SECTIONS: {
       ar: "سجّل بحساب GitHub عشان تستخدم اسمك الحقيقي وصورتك عبر المنصة. تقدمك محفوظ على جهازك ومرتبط بهويتك في GitHub.",
       en: "Sign in with your GitHub account to use your real name and profile picture across the platform. Your progress is saved on your device and linked to your GitHub identity.",
     },
-    miku: {
+    maryam: {
       ar: "سجّل بحساب GitHub عشان صورتك واسمك يبوا حقيقيين. مليش أي دليل غير كده!",
       en: "Sign in with GitHub so your name and picture are real. Deal!",
     },
@@ -137,7 +137,7 @@ const SECTIONS: {
       ar: "المشاريع هي المكان الذي تجتمع فيه كل المفاهيم: آلة حاسبة، لعبة Snake بمحركك، نواة نظام تشغيل تعمل بـ QEMU، والمزيد. ابنِها بالترتيب وضعها في بورتفوليوك.",
       en: "Projects are where everything comes together: a calculator, a Snake game with your own engine, an operating system kernel in QEMU, and more. Build them in order and put them on your portfolio.",
     },
-    miku: {
+    maryam: {
       ar: "المشاريع هي اللي بتثبت المعلومة. ابنِ مشروع حقيقي وتحطه في البورتفوليو بتاعك.",
       en: "Projects are what make it stick. Build a real one for your portfolio.",
     },
@@ -146,14 +146,15 @@ const SECTIONS: {
 
 const COPY = {
   ar: {
-    metaTitle: "شروحات Miku",
+    metaTitle: "شروحات مريم",
     metaDescription:
-      "Miku تشرح لك كيف تستخدم كل جزء من ETM: المنهج، الدروس، المحرك، لوحة التحكم، Pomodoro، فيديوهات ElZero، دليل المصطلحات والمزيد.",
-    badge: "شروحات Miku",
+      "مريم تشرح لك كيف تستخدم كل جزء من ETM: المنهج، الدروس، المحرك، لوحة التحكم، Pomodoro، فيديوهات ElZero، دليل المصطلحات والمزيد.",
+    badge: "شروحات مريم",
+    name: "مريم",
     titleLead: "تعلّم كيف تستخدم",
     titleHighlight: "ETM",
     intro1: "أهلاً! أنا",
-    intro2: "، رفيقتك في الدراسة. هذا كل ما تحتاج معرفته عن المنصة — من أول درس إلى مشروعك النهائي.",
+    intro2: " — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة. هذا كل ما تحتاج معرفته عن المنصة — من أول درس إلى مشروعك النهائي.",
     quickStartTitle: "البدء السريع — أول 15 دقيقة",
     quickStart: [
       "افتح المنهج وابدأ الدرس الأول",
@@ -165,19 +166,20 @@ const COPY = {
     startLesson: "ابدأ الدرس الأول",
     bottomTitle: "هذا كل شيء أيها البطل! 🏆",
     bottomBody:
-      "الآن تعرف كيف تستخدم المنصة كاملة. كل ما تبقى هو أن تبدأ التعلم — Miku ستكون هنا لو احتجت مساعدة.",
+      "الآن تعرف كيف تستخدم المنصة كاملة. كل ما تبقى هو أن تبدأ التعلم — مريم ستكون هنا لو احتجت مساعدة.",
     startLearning: "ابدأ التعلم",
     goDashboard: "اذهب للوحة التحكم",
   },
   en: {
-    metaTitle: "Miku's Tutorials",
+    metaTitle: "Maryam's Tutorials",
     metaDescription:
-      "Miku explains how to use every part of ETM: curriculum, lessons, playground, dashboard, pomodoro, ElZero videos, glossary and more.",
-    badge: "Miku's Tutorials",
+      "Maryam explains how to use every part of ETM: curriculum, lessons, playground, dashboard, pomodoro, ElZero videos, glossary and more.",
+    badge: "Maryam's Tutorials",
+    name: "Maryam",
     titleLead: "Learn how to use",
     titleHighlight: "ETM",
     intro1: "Hi! I am",
-    intro2: ", your study buddy. Here is everything you need to know about the platform — from your first lesson to your final project.",
+    intro2: " — your AI engineering companion. Here is everything you need to know about the platform — from your first lesson to your final project.",
     quickStartTitle: "Quick start — your first 15 minutes",
     quickStart: [
       "Open the Curriculum and start the first lesson",
@@ -189,7 +191,7 @@ const COPY = {
     startLesson: "Start the first lesson",
     bottomTitle: "That is everything, champion! 🏆",
     bottomBody:
-      "You know how to use the whole platform now. The only thing left is to start learning — Miku will be right here if you need help.",
+      "You know how to use the whole platform now. The only thing left is to start learning — Maryam will be right here if you need help.",
     startLearning: "Start learning",
     goDashboard: "Go to dashboard",
   },
@@ -221,7 +223,7 @@ export default function GuidePage({
     <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12">
       <div className="text-center max-w-2xl mx-auto">
         <div className="flex justify-center mb-4">
-          <MikuAvatar size={88} />
+          <MaryamAvatar size={88} />
         </div>
         <span className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-1.5 text-sm font-bold text-cyan-300">
           <GraduationCap className="h-4 w-4" />
@@ -231,7 +233,7 @@ export default function GuidePage({
           {c.titleLead} <span className="gradient-text">{c.titleHighlight}</span>
         </h1>
         <p className="mt-4 text-slate-400 leading-8 text-base sm:text-lg">
-          {c.intro1} <b className="text-white">Miku</b>
+          {c.intro1} <b className="text-white">{c.name}</b>
           {c.intro2}
         </p>
       </div>
@@ -277,9 +279,9 @@ export default function GuidePage({
               {s.body[locale]}
             </p>
             <div className="mt-4 flex items-start gap-2 rounded-xl border border-cyan-500/15 bg-cyan-500/[0.06] p-3">
-              <MikuAvatar size={26} className="mt-0.5 shrink-0" />
+              <MaryamAvatar size={26} className="mt-0.5 shrink-0" />
               <p className="text-sm text-cyan-100 leading-6" dir="auto">
-                {s.miku[locale]}
+                {s.maryam[locale]}
               </p>
             </div>
           </div>

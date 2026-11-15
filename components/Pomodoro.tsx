@@ -20,10 +20,10 @@ import {
   Rocket,
   Flame,
 } from "lucide-react";
-import { useMiku } from "./Miku";
+import { useMaryam } from "./Maryam";
 import PomodoroMusic from "./PomodoroMusic";
 import { trackEvent } from "@/lib/progress/store";
-import { POMODORO_MESSAGES } from "@/lib/miku";
+import { POMODORO_MESSAGES } from "@/lib/maryam";
 import { useLocale, useCopy } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
 import {
@@ -58,9 +58,9 @@ const AMBIENT_ICONS: Record<AmbientKind, typeof Brain> = {
 const COPY = {
   ar: {
     modes: { focus: "تركيز", short: "استراحة قصيرة", long: "استراحة طويلة" },
-    tagline: "ركّز مع Miku 🎵",
+    tagline: "ركّز مع مريم 🎵",
     close: "إغلاق",
-    overtime: "تجاوزت الوقت — Miku تنتظرك!",
+    overtime: "تجاوزت الوقت — مريم تنتظرك!",
     focusing: "تركيز...",
     resting: "استراحة...",
     paused: "متوقف مؤقتاً",
@@ -86,9 +86,9 @@ const COPY = {
   },
   en: {
     modes: { focus: "Focus", short: "Short Break", long: "Long Break" },
-    tagline: "Focus with Miku 🎵",
+    tagline: "Focus with Maryam 🎵",
     close: "Close",
-    overtime: "Overtime — Miku is waiting!",
+    overtime: "Overtime — Maryam is waiting!",
     focusing: "Focusing...",
     resting: "Resting...",
     paused: "Paused",
@@ -191,7 +191,7 @@ function fmt(s: number): string {
 }
 
 export default function Pomodoro() {
-  const { say } = useMiku();
+  const { say } = useMaryam();
   const locale = useLocale();
   const c = useCopy(COPY);
   const messages = POMODORO_MESSAGES[locale];
@@ -373,7 +373,7 @@ export default function Pomodoro() {
     c.notifyBreakBody,
   ]);
 
-  // ---- tab visibility (Miku notices when you leave) ----
+  // ---- tab visibility (Maryam notices when you leave) ----
   useEffect(() => {
     const onVis = () => {
       if (document.hidden) {
