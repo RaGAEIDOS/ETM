@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="coverTitle">
+  <title id="coverTitle">Islamic arch and lantern cover — navy, teal and amber</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#020617"/>
+      <stop offset="0.5" stop-color="#071722"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#f59e0b" stop-opacity="0.1"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.78">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.6"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbbf24"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="archStroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbbf24" stop-opacity="0.9"/>
+      <stop offset="0.55" stop-color="#22d3ee" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#0d9488" stop-opacity="0.25"/>
+    </linearGradient>
+    <pattern id="lattice" width="90" height="90" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#22d3ee" stroke-opacity="0.1" stroke-width="1">
+        <path d="M45 0 90 45 45 90 0 45Z"/>
+        <path d="M0 0 45 45 0 90M90 0 45 45 90 90"/>
+      </g>
+    </pattern>
+    <radialGradient id="lampGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fbbf24" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#lattice)"/>
+  <rect width="1200" height="675" fill="url(#glow)"/>
+
+  <!-- pointed Islamic arch -->
+  <path
+    d="M370 620V330C370 226 454 142 600 96c146 46 230 130 230 234v290"
+    fill="#0b1220"
+    fill-opacity="0.55"
+    stroke="url(#archStroke)"
+    stroke-width="2"
+  />
+  <path
+    d="M402 620V336c0-88 76-162 198-202 122 40 198 114 198 202v284"
+    fill="none"
+    stroke="#22d3ee"
+    stroke-opacity="0.25"
+    stroke-width="1.2"
+  />
+  <path
+    d="M600 134v486"
+    stroke="#f59e0b"
+    stroke-opacity="0.22"
+    stroke-width="1"
+    stroke-dasharray="4 10"
+  />
+
+  <!-- hanging lantern -->
+  <g transform="translate(600 300)">
+    <circle r="132" fill="url(#lampGlow)"/>
+    <path d="M0-124v38" stroke="url(#gold)" stroke-width="2"/>
+    <path d="M0-92c34 18 52 46 52 78 0 44-23 76-52 92-29-16-52-48-52-92 0-32 18-60 52-78Z"
+      fill="#f59e0b" fill-opacity="0.12" stroke="url(#gold)" stroke-width="2"/>
+    <path d="M0-70c20 12 32 30 32 52 0 30-14 52-32 64-18-12-32-34-32-64 0-22 12-40 32-52Z"
+      fill="url(#gold)" fill-opacity="0.35" stroke="url(#gold)" stroke-width="1"/>
+    <path d="M-38 78h76M-26 92h52" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+    <circle cy="-4" r="7" fill="#fde68a"/>
+    <g stroke="#fbbf24" stroke-opacity="0.5" stroke-width="1">
+      <path d="M-70 0h-26M70 0h26M0-120v-16"/>
+    </g>
+  </g>
+
+  <!-- open book -->
+  <g transform="translate(600 556)" fill="none" stroke-linecap="round">
+    <path d="M-196 0c64-30 128-30 196-2 68-28 132-28 196 2" stroke="url(#gold)" stroke-width="2.4"/>
+    <path d="M-196 0v26c64-28 128-28 196 0 68-28 132-28 196 0V0" stroke="#22d3ee" stroke-opacity="0.35" stroke-width="1.4"/>
+    <path d="M0-2v27" stroke="url(#gold)" stroke-width="2"/>
+    <path d="M-158 12c44-14 88-12 132 4M158 12c-44-14-88-12-132 4" stroke="#f59e0b" stroke-opacity="0.35" stroke-width="1.2"/>
+  </g>
+
+  <!-- floating stars -->
+  <g fill="#22d3ee" fill-opacity="0.55">
+    <circle cx="210" cy="180" r="2.4"/>
+    <circle cx="990" cy="170" r="2.4"/>
+    <circle cx="290" cy="470" r="1.8"/>
+    <circle cx="920" cy="460" r="1.8"/>
+    <circle cx="160" cy="330" r="1.6"/>
+    <circle cx="1040" cy="340" r="1.6"/>
+  </g>
+  <g fill="#fbbf24" fill-opacity="0.35">
+    <circle cx="340" cy="110" r="1.5"/>
+    <circle cx="860" cy="110" r="1.5"/>
+    <circle cx="250" cy="600" r="1.4"/>
+    <circle cx="950" cy="600" r="1.4"/>
+  </g>
+
+  <rect width="1200" height="675" fill="url(#vignette)"/>
+  <rect x="1" y="1" width="1198" height="673" fill="none" stroke="url(#teal)" stroke-opacity="0.28" stroke-width="2"/>
+</svg>

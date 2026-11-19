@@ -285,6 +285,8 @@ export function toggleCompletion(track: Track, itemId: string, topic?: string): 
           ? stats.doneCs50xVideoIds.includes(itemId)
           : track === "linux"
             ? stats.doneLinuxVideoIds.includes(itemId)
+            : track === "religious"
+              ? stats.doneReligiousLessonIds.includes(itemId)
             : track === "elzero-web"
               ? stats.doneElzeroWebVideoIds.includes(itemId)
               : stats.doneLessonIds.includes(itemId);
@@ -299,6 +301,7 @@ export function isItemDone(file: ProgressFile, track: Track, itemId: string): bo
   if (track === "programmingadvices") return stats.doneProgrammingAdvicesVideoIds.includes(itemId);
   if (track === "cs50x") return stats.doneCs50xVideoIds.includes(itemId);
   if (track === "linux") return stats.doneLinuxVideoIds.includes(itemId);
+  if (track === "religious") return stats.doneReligiousLessonIds.includes(itemId);
   if (track === "elzero-web") return stats.doneElzeroWebVideoIds.includes(itemId);
   return stats.doneLessonIds.includes(itemId);
 }
@@ -469,7 +472,9 @@ export function useProgressStore(): ProgressStore {
             ? stats.doneProgrammingAdvicesVideoIds.includes(itemId)
             : track === "linux"
               ? stats.doneLinuxVideoIds.includes(itemId)
-              : track === "elzero-web"
+              : track === "religious"
+                ? stats.doneReligiousLessonIds.includes(itemId)
+                : track === "elzero-web"
                 ? stats.doneElzeroWebVideoIds.includes(itemId)
                 : stats.doneLessonIds.includes(itemId),
     [stats]

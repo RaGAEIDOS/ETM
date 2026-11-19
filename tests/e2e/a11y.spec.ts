@@ -24,6 +24,9 @@ const PAGES = [
   ["books", "/books"],
   ["dashboard", "/dashboard"],
   ["glossary", "/glossary"],
+  ["islamic-studies", "/islamic-studies"],
+  ["islamic-studies-course-1", "/islamic-studies/course/islam-essentials"],
+  ["islamic-studies-course-2", "/islamic-studies/course/contemporary-awareness"],
 ] as const;
 
 for (const [name, route] of PAGES) {

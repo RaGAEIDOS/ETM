@@ -16,6 +16,7 @@ import { projects } from "@/lib/projects";
 import HeroBanner from "@/components/HeroBanner";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
+import ReligiousCoursesBand from "@/components/religious/ReligiousCoursesBand";
 import { localeFromParams, pageMetadata } from "@/lib/i18n/server";
 import { localePath, type Locale } from "@/lib/i18n/config";
 
@@ -168,6 +169,9 @@ export default function LandingPage({ params }: Props) {
           })}
         </div>
       </section>
+
+      {/* ============ RELIGIOUS COURSES ============ */}
+      <ReligiousCoursesBand locale={locale} />
 
       {/* ============ HOW IT WORKS ============ */}
       <section className="border-y border-white/5 bg-white/[0.02] py-20">

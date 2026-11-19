@@ -30,6 +30,7 @@ const COURSE_LINKS = [
   { href: "/english", key: "english" },
   { href: "/linux", key: "linux" },
   { href: "/programmingadvices", key: "programmingadvices" },
+  { href: "/islamic-studies", key: "religious" },
 ] as const;
 
 const COPY = {
@@ -43,6 +44,7 @@ const COPY = {
     cs50x: "CS50x من Harvard",
     linux: "لينكس",
     programmingadvices: "Programming Advices",
+    religious: "الدورات الدينية",
     playground: "المحرر",
     leaderboard: "صدارة المتعلمين",
     projects: "المشاريع",
@@ -65,6 +67,7 @@ const COPY = {
     cs50x: "CS50x — Harvard",
     linux: "Linux",
     programmingadvices: "Programming Advices",
+    religious: "Islamic Studies",
     playground: "Playground",
     leaderboard: "Front-Runners",
     projects: "Projects",

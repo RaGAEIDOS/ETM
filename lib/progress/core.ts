@@ -20,6 +20,7 @@ export type Track =
   | "cs50x"
   | "elzero-web"
   | "linux"
+  | "religious"
   | "projects"
   | "playground"
   | "books";
@@ -289,7 +290,9 @@ export interface DerivedProgress {
   doneElzeroWebVideoIds: string[];
   /** Linux (Linuxtopia) video ids completed, Linux track. */
   doneLinuxVideoIds: string[];
-  /** cpp + elzero + english + programmingadvices + cs50x + elzero-web + linux lessons completed. */
+  /** Islamic Studies lesson ids completed, religious track. */
+  doneReligiousLessonIds: string[];
+  /** cpp + elzero + english + programmingadvices + cs50x + elzero-web + linux + religious lessons completed. */
   totalCompletions: number;
   minutesByDay: Record<string, number>;
   totalFocusMinutes: number;
@@ -326,6 +329,7 @@ const TRACKS: Track[] = [
   "cs50x",
   "elzero-web",
   "linux",
+  "religious",
   "projects",
   "playground",
   "books",
@@ -349,6 +353,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
   const doneProgrammingAdvices = new Set<string>();
   const doneElzeroWeb = new Set<string>();
   const doneLinux = new Set<string>();
+  const doneReligious = new Set<string>();
   const minutesByDay: Record<string, number> = {};
   const dayHadActivity: Record<string, boolean> = {};
   const perTopic: Record<string, TopicAccuracy> = {};
@@ -389,6 +394,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
         else if (e.track === "cs50x") doneCs50x.add(e.itemId);
         else if (e.track === "elzero-web") doneElzeroWeb.add(e.itemId);
         else if (e.track === "linux") doneLinux.add(e.itemId);
+        else if (e.track === "religious") doneReligious.add(e.itemId);
         else doneCpp.add(e.itemId); // cpp + projects-style completions both count as lesson ids
         break;
       }
@@ -400,6 +406,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
         else if (e.track === "cs50x") doneCs50x.delete(e.itemId);
         else if (e.track === "elzero-web") doneElzeroWeb.delete(e.itemId);
         else if (e.track === "linux") doneLinux.delete(e.itemId);
+        else if (e.track === "religious") doneReligious.delete(e.itemId);
         else doneCpp.delete(e.itemId);
         break;
       }
@@ -450,6 +457,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
   for (const id of Array.from(doneCpp)) map[id] = true;
   for (const id of Array.from(doneElzero)) map[`elzero-${id}`] = true;
   for (const id of Array.from(doneLinux)) map[`linux-${id}`] = true;
+  for (const id of Array.from(doneReligious)) map[`religious-${id}`] = true;
   for (const id of Array.from(doneProgrammingAdvices)) map[`pa-${id}`] = true;
 
   const weakTopics = Object.entries(perTopic)
@@ -482,6 +490,7 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
     doneCs50xVideoIds: Array.from(doneCs50x),
     doneElzeroWebVideoIds: Array.from(doneElzeroWeb),
     doneLinuxVideoIds: Array.from(doneLinux),
+    doneReligiousLessonIds: Array.from(doneReligious),
     totalCompletions:
       doneCpp.size +
       doneElzero.size +
@@ -489,7 +498,8 @@ export function deriveProgress(events: ProgressEvent[], opts: DeriveOptions = {}
       doneProgrammingAdvices.size +
       doneCs50x.size +
       doneElzeroWeb.size +
-      doneLinux.size,
+      doneLinux.size +
+      doneReligious.size,
     minutesByDay,
     totalFocusMinutes,
     minutesThisWeek,

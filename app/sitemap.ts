@@ -6,6 +6,7 @@ import { englishCourses, englishVideos } from "@/lib/english-videos";
 import { CS50X_LECTURES } from "@/lib/cs50x";
 import { linuxVideos } from "@/lib/linux-videos";
 import { paCourses, paVideos } from "@/lib/programmingadvices-videos";
+import { allReligiousLessons, religiousCourses } from "@/lib/religious";
 
 const BASE_URL = "https://etm-learning.vercel.app";
 
@@ -84,6 +85,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entries.push(entry(`/programmingadvices/${video.id}`, "monthly", 0.5));
   });
   entries.push(entry("/programmingadvices/review", "monthly", 0.4));
+  entries.push(entry("/islamic-studies", "weekly", 0.8));
+  religiousCourses.forEach((course) => {
+    entries.push(entry(`/islamic-studies/course/${course.id}`, "monthly", 0.6));
+  });
+  allReligiousLessons().forEach(({ lesson }) => {
+    entries.push(entry(`/islamic-studies/${lesson.id}`, "monthly", 0.5));
+  });
   stages.forEach((stage) => {
     entries.push(entry(`/learn/${stage.id}`, "weekly", 0.8));
     stage.courses.forEach((course) => {

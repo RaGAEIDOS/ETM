@@ -33,6 +33,7 @@ import HeroBanner from "@/components/HeroBanner";
 import Stat from "@/components/Stat";
 import Reveal from "@/components/Reveal";
 import ResumeCard from "@/components/ResumeCard";
+import ReligiousCoursesBand from "@/components/religious/ReligiousCoursesBand";
 
 const FEATURES: { key: string; icon: typeof BookOpen; color: string }[] = [
   { key: "curriculum", icon: BookOpen, color: "from-cyan-400 to-blue-500" },
@@ -319,6 +320,9 @@ export default function HomePage() {
           })}
         </div>
       </section>
+
+      {/* ============ RELIGIOUS COURSES ============ */}
+      <ReligiousCoursesBand locale={locale} />
 
       {/* ============ LEVELS ============ */}
       <section className="border-y border-white/5 bg-white/[0.02] py-20">

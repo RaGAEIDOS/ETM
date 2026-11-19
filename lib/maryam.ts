@@ -213,6 +213,16 @@ export const PAGE_TIPS: Record<string, Record<Locale, MaryamTip>> = {
       body: "Linuxtopia's Arabic Linux course (2021): Arabic summaries, flashcards, quizzes and a fully simulated browser terminal — nothing real ever runs, you learn by understanding.",
     },
   },
+  religious: {
+    ar: {
+      title: "الدورات الدينية 🕌",
+      body: "مسار جديد في أصول الدين والوعي المعاصر: «ما لا يسع المسلم جهله» للدكتور سامح الجنداوي، و«سلسلة تأسيس وعي المسلم المعاصر» للدكتور أيمن عبد الرحيم — بدروس تُضاف بعد التحقق من المصدر الرسمي، وتقدم محفوظ مع كل درس.",
+    },
+    en: {
+      title: "Religious courses 🕌",
+      body: "A new track in faith foundations and contemporary awareness: Dr. Sameh El-Gendawy's “What a Muslim Cannot Afford to Ignore” and Dr. Ayman Abdel-Rahman's “Building the Contemporary Muslim's Awareness” — lessons land after the official source is verified, with progress saved per lesson.",
+    },
+  },
   dashboard: {
     ar: {
       title: "الداش بورد 📊",
@@ -337,6 +347,7 @@ export function tipForPath(pathname: string, locale: Locale): MaryamTip {
   if (n.startsWith("/cs50x")) return PAGE_TIPS.cs50x[locale];
   if (n.startsWith("/leaderboard")) return PAGE_TIPS.leaderboard[locale];
   if (n.startsWith("/linux")) return PAGE_TIPS.linux[locale];
+  if (n.startsWith("/islamic-studies")) return PAGE_TIPS.religious[locale];
   if (n.startsWith("/dashboard")) return PAGE_TIPS.dashboard[locale];
   if (n.startsWith("/progress")) return PAGE_TIPS.progress[locale];
   if (n.startsWith("/projects")) return PAGE_TIPS.projects[locale];
