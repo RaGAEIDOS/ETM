@@ -137,7 +137,8 @@ test.describe("Programming Advices track (pilot)", () => {
     }
 
     // The facade must not create a YouTube iframe before the learner clicks.
-    await expect(page.locator("iframe")).toHaveCount(0);
+    // Ad rails may mount their own third-party iframes; only YouTube matters here.
+    await expect(page.locator('iframe[src*="youtube"]')).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Load the video from YouTube/ })).toBeVisible();
 
     // Conservative content is labelled as such.
@@ -268,14 +269,14 @@ test.describe("Programming Advices track (pilot)", () => {
     expect(stored ?? "").toContain("programmingadvices");
   });
 
-  test("Miku: hint before answering, then explain my wrong answer", async ({ page }) => {
+  test("Maryam: hint before answering, then explain my wrong answer", async ({ page }) => {
     seedMikuDone(page);
     await page.goto("/en/programmingadvices/pa1-05", { waitUntil: "domcontentloaded" });
     await waitHydrated(page);
     await page.getByRole("tab", { name: "Practice" }).click();
 
     const first = page.locator("div.space-y-5 > div").first();
-    await first.getByRole("button", { name: "Miku hint" }).click();
+    await first.getByRole("button", { name: "Maryam hint" }).click();
     await expect(
       first.getByText("Divide by 2 repeatedly and read the remainders bottom-up.")
     ).toBeVisible();
@@ -383,16 +384,15 @@ test.describe("Programming Advices track (pilot)", () => {
     seedMikuDone(page);
     await page.goto("/en/programmingadvices", { waitUntil: "domcontentloaded" });
 
-    await page.getByRole("button", { name: "Theme" }).click();
-    await page.getByRole("menuitemradio", { name: "Codecademy" }).click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "codecademy");
+    await page.getByRole("button", { name: "Theme: Terminal" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "terminal");
     const accent = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue("--etm-accent").trim()
+      getComputedStyle(document.documentElement).getPropertyValue("--tw-cyan-400").trim()
     );
-    expect(accent).toBe("250 204 21");
+    expect(accent).toBe("0 255 65");
 
     await page.reload({ waitUntil: "domcontentloaded" });
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "codecademy");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "terminal");
     // Content is unaffected by the theme.
     await expect(page.getByRole("heading", { name: "The two courses" })).toBeVisible();
   });

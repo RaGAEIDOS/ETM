@@ -9,7 +9,8 @@ test.describe("Maryam study buddy", () => {
     await expect(page.getByText("Tutorials")).toBeVisible();
     await expect(page.getByRole("link", { name: /Tutorials/i })).toBeVisible();
     const tagline = page.getByText("Maryam — your AI engineering companion", { exact: true });
-    await expect(tagline.nth(1)).toBeVisible();
+    await expect(tagline).toHaveCount(1);
+    await expect(tagline).toBeVisible();
   });
 
   test("responds as Maryam in Arabic", async ({ page }) => {
@@ -17,7 +18,8 @@ test.describe("Maryam study buddy", () => {
     await page.goto("/ar/landing", { waitUntil: "domcontentloaded" });
     await page.getByRole("button", { name: "مساعدة مريم" }).click();
     const tagline = page.getByText("مريم — رفيقة رحلتك في الذكاء الاصطناعي والبرمجة", { exact: true });
-    await expect(tagline.nth(1)).toBeVisible();
+    await expect(tagline).toHaveCount(1);
+    await expect(tagline).toBeVisible();
   });
 
   test("mascot assets resolve through the locale middleware", async ({ request }) => {
