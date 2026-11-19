@@ -11,37 +11,27 @@ import { CheckCircle2, Circle, Clock3, Layers } from "lucide-react";
 import { useCopy, useLocale } from "@/lib/i18n/context";
 import { formatNumber } from "@/lib/i18n/config";
 import { useProgressStore } from "@/lib/progress/store";
-import type { ReligiousModule } from "@/lib/religious";
+import {
+  formatReligiousDuration,
+  type ReligiousModule,
+} from "@/lib/religious";
 
 const COPY = {
   ar: {
     lessons: (n: string) => `${n} دروس`,
-    emptyTitle: "المنهج قيد الإعداد",
-    emptyBody:
-      "لم تُضف الوحدات والفيديوهات بعد. سيظهر هنا تقسيم الدورة إلى وحدات ودروس فور اعتماد المحتوى من المصدر الرسمي.",
+    emptyTitle: "لا توجد دروس منشورة بعد",
+    emptyBody: "لم تُضف دروس إلى هذه الوحدة بعد.",
     done: "مكتمل",
     open: "غير مكتمل",
   },
   en: {
     lessons: (n: string) => `${n} lessons`,
-    emptyTitle: "Curriculum in preparation",
-    emptyBody:
-      "Modules and videos have not been added yet. The course structure will appear here once the content is verified against the official source.",
+    emptyTitle: "No lessons published yet",
+    emptyBody: "No lessons have been added to this module yet.",
     done: "Completed",
     open: "Not completed",
   },
 } as const;
-
-function formatDuration(iso?: string): string {
-  if (!iso) return "";
-  const m = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
-  if (!m) return "";
-  const h = Number(m[1] ?? 0);
-  const min = Number(m[2] ?? 0);
-  const s = Number(m[3] ?? 0);
-  if (h > 0) return `${h}:${String(min).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  return `${min}:${String(s).padStart(2, "0")}`;
-}
 
 export default function ReligiousLessonList({
   modules,
@@ -116,7 +106,7 @@ export default function ReligiousLessonList({
                         dir="ltr"
                       >
                         <Clock3 className="h-3.5 w-3.5" aria-hidden />
-                        {formatDuration(lesson.duration)}
+                        {formatReligiousDuration(lesson.duration)}
                       </span>
                     )}
                   </Link>

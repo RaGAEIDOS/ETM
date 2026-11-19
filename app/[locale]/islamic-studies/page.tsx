@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   BookOpenCheck,
+  FileText,
   GraduationCap,
   Layers,
   ListChecks,
@@ -14,6 +15,7 @@ import {
   RELIGIOUS_CATEGORIES,
   religiousCourses,
   religiousLessonCount,
+  religiousResourcesOfCourse,
 } from "@/lib/religious";
 import ReligiousCoursesExplorer from "@/components/religious/ReligiousCoursesExplorer";
 
@@ -22,15 +24,16 @@ const COPY = {
     metaTitle: "الدورات الدينية — علوم شرعية بمنهج منظم",
     metaDescription:
       "دورتان في أصول الدين والوعي المعاصر: «ما لا يسع المسلم جهله» للدكتور سامح الجنداوي، و«سلسلة تأسيس وعي المسلم المعاصر» للدكتور أيمن عبد الرحيم — مع تتبع التقدم داخل ETM.",
-    badge: "مسار جديد · علوم شرعية",
+    badge: "علوم شرعية · منهجان كاملان",
     titleLead: "الدورات",
     titleAccent: "الدينية",
     intro:
-      "دورتان مختارتان في أصول الدين والوعي المعاصر، بنفس تجربة ETM: صفحة مستقلة لكل دورة، اسم المحاضر، تصنيف واضح، وتتبع لتقدمك — ودروس تُضاف تدريجيًا بعد التحقق من المصدر الرسمي.",
+      "دورتان كاملتان في أصول الدين والوعي المعاصر، بنفس تجربة ETM: صفحة مستقلة لكل دورة، المحاضرات كاملة بالمدد الرسمية، ملفات PDF ملحقة، ومشغّل يحفظ موضعك وتقدمك.",
     courses: (n: string) => `${n} دورات`,
-    lessons: (n: string) => `${n} درسًا متاحًا الآن`,
+    lessons: (n: string) => `${n} محاضرة كاملة`,
     categories: (n: string) => `${n} تصنيفات`,
-    soon: "الدروس قيد الإعداد",
+    pdfs: (n: string) => `${n} ملفات PDF`,
+    soon: "لا توجد دروس منشورة بعد",
     howTitle: "كيف يعمل هذا المسار؟",
     how: [
       {
@@ -39,30 +42,31 @@ const COPY = {
       },
       {
         title: "تعلّم بالوحدات",
-        body: "عند إضافة المحتوى الرسمي، تُقسَّم كل دورة إلى وحدات ودروس، ويظهر كل درس في صفحته الخاصة.",
+        body: "كل دورة مقسمة إلى وحدات ومحاضرات مرقّمة، وكل محاضرة في صفحتها الخاصة مع مدة الفيديو ومصادر مستواها.",
       },
       {
         title: "تابع تقدمك",
-        body: "إتمام الدروس يُحفظ في نفس نظام التقدم الموحّد في ETM، ويظهر على بطاقة الدورة وصفحتها.",
+        body: "إتمام المحاضرات وموضع المشاهدة يُحفظان في نفس نظام التقدم الموحّد في ETM، ويظهران على بطاقة الدورة وصفحتها.",
       },
     ],
-    honestyTitle: "مصدر المحتوى",
+    honestyTitle: "مصادر موثّقة",
     honestyBody:
-      "لا تُضاف فيديوهات أو روابط أو نصوص إلا بعد التحقق من المصدر الرسمي للمحاضر. حتى ذلك الحين، تبقى صفحات الدورات صادقة بشأن حالة المحتوى.",
+      "الفيديوهات والمدد مأخوذة من قوائم التشغيل الرسمية للمحاضرين. ملفات الـPDF مرفقة من مصادرها المنشورة، وكتاب دورة الدكتور سامح متاح عبر منشور قناته الرسمية على تيليجرام.",
   },
   en: {
     metaTitle: "Religious courses — structured Islamic studies",
     metaDescription:
       "Two courses in faith foundations and contemporary awareness: “What a Muslim Cannot Afford to Ignore” by Dr. Sameh El-Gendawy, and “Building the Contemporary Muslim's Awareness” by Dr. Ayman Abdel-Rahman — with progress tracking inside ETM.",
-    badge: "New track · Islamic studies",
+    badge: "Islamic studies · two complete curricula",
     titleLead: "Religious",
     titleAccent: "courses",
     intro:
-      "Two selected courses in faith foundations and contemporary awareness, with the same ETM experience: a dedicated page per course, the instructor, a clear category, and progress tracking — with lessons added gradually after verifying the official source.",
+      "Two complete courses in faith foundations and contemporary awareness, with the same ETM experience: a dedicated page per course, every lecture with its official duration, attached PDFs, and a player that remembers your position and progress.",
     courses: (n: string) => `${n} courses`,
-    lessons: (n: string) => `${n} lessons available now`,
+    lessons: (n: string) => `${n} complete lectures`,
     categories: (n: string) => `${n} categories`,
-    soon: "Lessons being prepared",
+    pdfs: (n: string) => `${n} PDF files`,
+    soon: "No lessons published yet",
     howTitle: "How this track works",
     how: [
       {
@@ -71,16 +75,16 @@ const COPY = {
       },
       {
         title: "Learn by modules",
-        body: "When official content is added, each course is split into modules and lessons, and every lesson gets its own page.",
+        body: "Each course is split into numbered modules and lectures, and every lecture has its own page with the video duration and its level's resources.",
       },
       {
         title: "Track your progress",
-        body: "Completed lessons are stored in ETM's unified progress system and appear on the course card and course page.",
+        body: "Completed lectures and your playback position are stored in ETM's unified progress system and appear on the course card and course page.",
       },
     ],
-    honestyTitle: "Content source",
+    honestyTitle: "Verified sources",
     honestyBody:
-      "No videos, links or texts are added until they are verified against the instructor's official source. Until then, course pages stay honest about the content status.",
+      "Videos and durations come from the instructors' official playlists. PDFs are attached from their published sources, and Dr. Sameh's course book is available through his official Telegram channel post.",
   },
 } as const;
 
@@ -100,6 +104,12 @@ export default function IslamicStudiesPage({ params }: { params: { locale: strin
   const c = COPY[locale];
   const lessonCount = religiousCourses.reduce(
     (total, course) => total + religiousLessonCount(course),
+    0
+  );
+  const pdfCount = religiousCourses.reduce(
+    (total, course) =>
+      total +
+      religiousResourcesOfCourse(course).filter((resource) => resource.kind === "pdf").length,
     0
   );
   const howIcons = [BookOpenCheck, ListChecks, Trophy] as const;
@@ -137,6 +147,12 @@ export default function IslamicStudiesPage({ params }: { params: { locale: strin
               <Layers className="h-3.5 w-3.5" aria-hidden />
               {c.categories(formatNumber(RELIGIOUS_CATEGORIES.length))}
             </p>
+            {pdfCount > 0 && (
+              <p className="mt-1 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-bold text-emerald-200">
+                <FileText className="h-3.5 w-3.5" aria-hidden />
+                {c.pdfs(formatNumber(pdfCount))}
+              </p>
+            )}
           </div>
         </div>
       </header>

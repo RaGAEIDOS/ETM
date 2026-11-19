@@ -4,7 +4,7 @@
  * Course card for the Islamic Studies track. Uses the same card language as
  * the existing tracks: cover, category chip, instructor, progress and CTA.
  * When lessons exist it continues from the first unfinished one; otherwise it
- * links to the course page's honest "content being prepared" state.
+ * links to the course page.
  */
 
 import Link from "@/lib/i18n/navigation";
@@ -15,9 +15,17 @@ import {
   findReligiousCategory,
   religiousLessonCount,
   religiousLessonsOfCourse,
+  religiousResourcesOfCourse,
   type ReligiousCourse,
 } from "@/lib/religious";
-import { ArrowLeft, BookOpen, Compass, ListChecks, UserRound } from "lucide-react";
+import {
+  ArrowLeft,
+  BookOpen,
+  Compass,
+  FileText,
+  ListChecks,
+  UserRound,
+} from "lucide-react";
 import ReligiousCourseProgress from "./ReligiousCourseProgress";
 
 const ICONS = {
@@ -30,19 +38,21 @@ const COPY = {
     course: (n: string) => `دورة ${n}`,
     lessons: (n: string) => `${n} دروس`,
     modules: (n: string) => `${n} وحدات`,
+    pdfs: (n: string) => `${n} ملفات PDF`,
     start: "ابدأ الدورة",
     continue: "تابع من حيث توقفت",
     browse: "استعرض الدورة",
-    soon: "المنهج قيد الإعداد",
+    soon: "لا توجد دروس منشورة بعد",
   },
   en: {
     course: (n: string) => `Course ${n}`,
     lessons: (n: string) => `${n} lessons`,
     modules: (n: string) => `${n} modules`,
+    pdfs: (n: string) => `${n} PDF files`,
     start: "Start the course",
     continue: "Continue where you left off",
     browse: "Browse the course",
-    soon: "Curriculum in preparation",
+    soon: "No lessons published yet",
   },
 } as const;
 
@@ -63,6 +73,9 @@ export default function ReligiousCourseCard({
   const lessons = religiousLessonsOfCourse(course.id);
   const lessonIds = lessons.map((lesson) => lesson.id);
   const lessonCount = religiousLessonCount(course);
+  const pdfCount = religiousResourcesOfCourse(course).filter(
+    (resource) => resource.kind === "pdf"
+  ).length;
   const next = ready ? lessons.find((lesson) => !isDone("religious", lesson.id)) : lessons[0];
   const started = ready && lessons.some((lesson) => isDone("religious", lesson.id));
   const href = next
@@ -130,6 +143,12 @@ export default function ReligiousCourseCard({
               </span>
               {course.modules.length > 0 && (
                 <span>{c.modules(formatNumber(course.modules.length))}</span>
+              )}
+              {pdfCount > 0 && (
+                <span className="inline-flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-emerald-400" aria-hidden />
+                  {c.pdfs(formatNumber(pdfCount))}
+                </span>
               )}
             </>
           ) : (
