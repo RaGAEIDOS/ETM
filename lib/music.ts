@@ -2,8 +2,9 @@
  * Lofi music layer: sources, storage and shared constants.
  *
  * Three sources only:
- * - `lofi`    — the official Lofi Girl live stream (YouTube IFrame API on
- *               youtube-nocookie.com, click-to-load facade, no autoplay).
+ * - `lofi`    — the official Lofi Girl live stream (privacy-enhanced
+ *               youtube-nocookie.com embed controlled through postMessage,
+ *               click-to-load facade, no requests before the click).
  * - `spotify` — the official study playlist, compact 80px embed.
  * - `off`     — no music (ambient sounds are a separate layer).
  *
@@ -26,9 +27,54 @@ export const MUSIC_VOLUME_KEY = "etm-music-volume-v1";
 export const MUSIC_QUIZ_MUTE_KEY = "etm-music-quiz-mute-v1";
 export const COZY_TIP_KEY = "etm-cozy-lofi-tip-v1";
 
-export const LOFI_LIVE_VIDEO_ID = "jfKfPfyJRdk";
+/**
+ * Official Lofi Girl live streams, all verified embeddable. The first entry is
+ * the primary study stream; the rest are the channel's other official radios,
+ * used only when the primary is offline or the embed reports an error.
+ *
+ * A live stream eventually ends when its broadcast stops, so this list is a
+ * resilience chain rather than a permanent guarantee: refresh it from
+ * https://www.lofigirl.com when the channel rotates its streams.
+ */
+export const LOFI_LIVE_VIDEO_ID = "rFZHOHl-L8A";
+export const LOFI_FALLBACK_VIDEO_IDS = [
+  "JD-kMIpDfnY", // sleep radio
+  "E2vONfzoyRI", // jazz radio
+  "4xDzrJKXOOY", // synthwave radio
+  "3PFJ9SETS4M", // house radio
+  "4t4AQ15yj1M", // christmas radio
+] as const;
+export const LOFI_LIVE_VIDEO_IDS = [
+  LOFI_LIVE_VIDEO_ID,
+  ...LOFI_FALLBACK_VIDEO_IDS,
+] as const;
 export const LOFI_CHANNEL_URL = "https://www.youtube.com/@LofiGirl";
 export const LOFI_LIVE_URL = `https://www.youtube.com/watch?v=${LOFI_LIVE_VIDEO_ID}`;
+
+/**
+ * Privacy-enhanced embed URL for the postMessage player API.
+ *
+ * `enablejsapi=1` makes the embed answer `listening` handshakes, and `origin`
+ * lets it validate messages from this site.
+ *
+ * `autoplay` is deliberately 0: an unmuted autoplay request makes YouTube
+ * withhold the player API handshake until the browser grants playback, which
+ * looks like a hang and breaks the timer-follow logic. The facade click mounts
+ * this embed, then playback starts with a `playVideo` command once the player
+ * reports `onReady`.
+ */
+export function lofiEmbedUrl(videoId: string, origin?: string): string {
+  const params = new URLSearchParams({
+    enablejsapi: "1",
+    autoplay: "0",
+    playsinline: "1",
+    rel: "0",
+    modestbranding: "1",
+    controls: "1",
+  });
+  if (origin) params.set("origin", origin);
+  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+}
 export const LOFI_UPLOADS_PLAYLIST_URL =
   "https://www.youtube.com/playlist?list=UUSJ4gkVC6NrvII8umztf0Ow";
 export const LOFI_RADIOS_PLAYLIST_URL =

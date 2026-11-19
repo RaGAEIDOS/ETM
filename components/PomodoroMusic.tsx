@@ -6,7 +6,11 @@
  * Behaviour contract:
  * - Nothing is requested from YouTube or Spotify until the learner picks a
  *   source; Lofi Girl additionally needs a click on its facade before the
- *   IFrame API is loaded (no autoplay before interaction).
+ *   privacy-enhanced embed is created (no autoplay before interaction).
+ * - The embed is a plain youtube-nocookie.com iframe controlled through the
+ *   postMessage player API, because the `www.youtube.com/iframe_api` script is
+ *   blocked on some networks. If a stream reports an error or never answers
+ *   the handshake, the next official Lofi Girl stream is tried automatically.
  * - Music follows the timer: starts on focus, pauses on breaks, resumes with
  *   the next focus. The learner can always override with play/pause.
  * - Volume is stored per theme (cozy 40, terminal 25, others 30 by default).
@@ -44,7 +48,8 @@ import {
   DEFAULT_MUSIC_VOLUME,
   formatClock,
   LOFI_LIVE_URL,
-  LOFI_LIVE_VIDEO_ID,
+  LOFI_LIVE_VIDEO_IDS,
+  lofiEmbedUrl,
   LOFI_UPLOADS_PLAYLIST_URL,
   markCozyTipSeen,
   persistQuizMute,
@@ -59,15 +64,36 @@ import {
   volumeForTheme,
   type MusicSource,
 } from "@/lib/music";
-import {
-  loadYouTubeIframeApi,
-  type YouTubeNamespace,
-  type YouTubePlayer,
-} from "@/lib/youtube-iframe";
 
 export type PomodoroMode = "focus" | "short" | "long";
 
 type PlayerStatus = "idle" | "loading" | "ready" | "error";
+
+/** Messages from the embedded player carry this id/channel pair. */
+const LOFI_WIDGET_ID = "etm-pomodoro-lofi";
+const LOFI_READY_TIMEOUT_MS = 10_000;
+const LOFI_HANDSHAKE_INTERVAL_MS = 500;
+const LOFI_MESSAGE_ORIGINS = new Set([
+  "https://www.youtube-nocookie.com",
+  "https://www.youtube.com",
+]);
+
+interface LofiMessage {
+  event?: string;
+  id?: string;
+  channel?: string;
+  info?: unknown;
+}
+
+interface LofiInfo {
+  playerState?: unknown;
+  volume?: unknown;
+  muted?: unknown;
+  videoData?: {
+    errorCode?: unknown;
+    isPlayable?: unknown;
+  } | null;
+}
 
 interface PomodoroMusicProps {
   mode: PomodoroMode;
@@ -157,12 +183,15 @@ export default function PomodoroMusic({
   const [status, setStatus] = useState<PlayerStatus>("idle");
   const [ytPlaying, setYtPlaying] = useState(false);
   const [spotifyReady, setSpotifyReady] = useState(false);
+  const [videoIndex, setVideoIndex] = useState(0);
+  const [mountNonce, setMountNonce] = useState(0);
 
-  const wrapRef = useRef<HTMLDivElement | null>(null);
   const spotifyRef = useRef<HTMLIFrameElement | null>(null);
-  const playerRef = useRef<YouTubePlayer | null>(null);
-  const loadingRef = useRef(false);
-  const autoplayAfterLoadRef = useRef(false);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const videoIndexRef = useRef(0);
+  const failureHandledRef = useRef(false);
+  const handshakeTimerRef = useRef<number | null>(null);
+  const readyTimeoutRef = useRef<number | null>(null);
 
   const sourceRef = useRef<MusicSource>("off");
   const volumeRef = useRef(DEFAULT_MUSIC_VOLUME);
@@ -258,110 +287,199 @@ export default function PomodoroMusic({
     []
   );
 
-  // ---- YouTube IFrame player (loaded only after a click) ----
-  const mountLofiPlayer = useCallback(
-    async (autoplay: boolean) => {
-      if (typeof window === "undefined") return;
-      setPlayerMounted(true);
-      autoplayAfterLoadRef.current = autoplay;
+  // ---- Lofi Girl embed (created only after a click) ----
+  const clearLofiTimers = useCallback(() => {
+    if (handshakeTimerRef.current !== null) {
+      window.clearInterval(handshakeTimerRef.current);
+      handshakeTimerRef.current = null;
+    }
+    if (readyTimeoutRef.current !== null) {
+      window.clearTimeout(readyTimeoutRef.current);
+      readyTimeoutRef.current = null;
+    }
+  }, []);
 
-      if (playerRef.current) {
-        if (autoplay) playerRef.current.playVideo();
-        return;
-      }
-      if (loadingRef.current) return;
+  const postToLofi = useCallback((payload: Record<string, unknown>) => {
+    const target = iframeRef.current?.contentWindow;
+    if (!target) return;
+    try {
+      target.postMessage(JSON.stringify(payload), "*");
+    } catch {
+      /* the embed navigated away — the ready timeout will advance */
+    }
+  }, []);
 
-      const wrap = wrapRef.current;
-      if (!wrap) {
-        setStatus("error");
-        return;
-      }
-
-      loadingRef.current = true;
-      setStatus("loading");
-      const ok = await loadYouTubeIframeApi();
-      if (!ok) {
-        loadingRef.current = false;
-        setStatus("error");
-        return;
-      }
-
-      const w = window as unknown as { YT?: YouTubeNamespace };
-      if (!w.YT?.Player) {
-        loadingRef.current = false;
-        setStatus("error");
-        return;
-      }
-
-      try {
-        wrap.innerHTML = "";
-        const mount = document.createElement("div");
-        mount.className = "h-full w-full";
-        wrap.appendChild(mount);
-        const player = new w.YT.Player(mount, {
-          videoId: LOFI_LIVE_VIDEO_ID,
-          host: "https://www.youtube-nocookie.com",
-          playerVars: {
-            autoplay: 0,
-            playsinline: 1,
-            rel: 0,
-            modestbranding: 1,
-            controls: 1,
-          },
-          events: {
-            onReady: (event) => {
-              playerRef.current = event.target;
-              event.target.setVolume(volumeRef.current);
-              loadingRef.current = false;
-              setStatus("ready");
-              if (autoplayAfterLoadRef.current) {
-                event.target.playVideo();
-                setWantPlay(true);
-                wantPlayRef.current = true;
-              }
-            },
-            onStateChange: (event) => {
-              setYtPlaying(event.data === 1);
-            },
-            onError: () => {
-              loadingRef.current = false;
-              setYtPlaying(false);
-              setStatus("error");
-            },
-          },
-        });
-        playerRef.current = player;
-      } catch {
-        loadingRef.current = false;
-        setStatus("error");
-      }
+  const sendLofiCommand = useCallback(
+    (func: string, args: unknown[] = []) => {
+      postToLofi({
+        event: "command",
+        func,
+        args,
+        id: LOFI_WIDGET_ID,
+        channel: "widget",
+      });
     },
-    []
+    [postToLofi]
   );
 
-  const retryLofi = useCallback(() => {
-    try {
-      playerRef.current?.destroy();
-    } catch {
-      /* already gone */
-    }
-    playerRef.current = null;
-    loadingRef.current = false;
-    setStatus("idle");
+  const resetLofiMount = useCallback(() => {
+    clearLofiTimers();
+    failureHandledRef.current = false;
+    videoIndexRef.current = 0;
+    setVideoIndex(0);
     setPlayerMounted(false);
-    void mountLofiPlayer(true);
-  }, [mountLofiPlayer]);
+    setStatus("idle");
+    setYtPlaying(false);
+  }, [clearLofiTimers]);
 
+  /** Mount the embed after an explicit click and ask it to start playing. */
+  const startLofi = useCallback(() => {
+    clearLofiTimers();
+    failureHandledRef.current = false;
+    videoIndexRef.current = 0;
+    setVideoIndex(0);
+    setWantPlay(true);
+    wantPlayRef.current = true;
+    setPlayerMounted(true);
+    setStatus("loading");
+    setYtPlaying(false);
+    setMountNonce((value) => value + 1);
+  }, [clearLofiTimers]);
+
+  /** Advance to the next official stream, or surface the manual error UI. */
+  const failCurrentStream = useCallback(() => {
+    if (failureHandledRef.current) return;
+    failureHandledRef.current = true;
+    clearLofiTimers();
+    setYtPlaying(false);
+    const next = videoIndexRef.current + 1;
+    if (next < LOFI_LIVE_VIDEO_IDS.length) {
+      videoIndexRef.current = next;
+      setVideoIndex(next);
+      setMountNonce((value) => value + 1);
+      setStatus("loading");
+      return;
+    }
+    setStatus("error");
+  }, [clearLofiTimers]);
+
+  const retryLofi = useCallback(() => {
+    clearLofiTimers();
+    failureHandledRef.current = false;
+    videoIndexRef.current = 0;
+    setVideoIndex(0);
+    setMountNonce((value) => value + 1);
+    setPlayerMounted(true);
+    setStatus("loading");
+    setYtPlaying(false);
+  }, [clearLofiTimers]);
+
+  // ---- postMessage handshake + ready timeout ----
   useEffect(() => {
-    return () => {
-      try {
-        playerRef.current?.destroy();
-      } catch {
-        /* already gone */
-      }
-      playerRef.current = null;
+    if (!mounted || source !== "lofi" || !playerMounted) return;
+    failureHandledRef.current = false;
+    setStatus("loading");
+    setYtPlaying(false);
+
+    const handshake = () => {
+      postToLofi({
+        event: "listening",
+        id: LOFI_WIDGET_ID,
+        channel: "widget",
+      });
     };
-  }, []);
+    handshake();
+    const interval = window.setInterval(handshake, LOFI_HANDSHAKE_INTERVAL_MS);
+    const timeout = window.setTimeout(
+      failCurrentStream,
+      LOFI_READY_TIMEOUT_MS
+    );
+    handshakeTimerRef.current = interval;
+    readyTimeoutRef.current = timeout;
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(timeout);
+      if (handshakeTimerRef.current === interval) {
+        handshakeTimerRef.current = null;
+      }
+      if (readyTimeoutRef.current === timeout) {
+        readyTimeoutRef.current = null;
+      }
+    };
+  }, [
+    mounted,
+    source,
+    playerMounted,
+    videoIndex,
+    mountNonce,
+    postToLofi,
+    failCurrentStream,
+  ]);
+
+  // ---- player messages: ready, state and error ----
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onLofiMessage = (event: MessageEvent) => {
+      if (!LOFI_MESSAGE_ORIGINS.has(event.origin)) return;
+      const iframe = iframeRef.current;
+      if (!iframe) return;
+      if (event.source && event.source !== iframe.contentWindow) return;
+
+      let payload: unknown = event.data;
+      if (typeof payload === "string") {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          return;
+        }
+      }
+      if (!payload || typeof payload !== "object") return;
+      const message = payload as LofiMessage;
+      if (message.id && message.id !== LOFI_WIDGET_ID) return;
+      if (message.channel && message.channel !== "widget") return;
+
+      if (message.event === "onReady") {
+        clearLofiTimers();
+        setStatus("ready");
+        return;
+      }
+
+      if (message.event === "onError") {
+        failCurrentStream();
+        return;
+      }
+
+      if (
+        message.event !== "infoDelivery" &&
+        message.event !== "onStateChange"
+      ) {
+        return;
+      }
+      const info = message.info as LofiInfo | number | null | undefined;
+      if (info === null || info === undefined) return;
+      if (typeof info === "number") {
+        setYtPlaying(info === 1);
+        return;
+      }
+      if (typeof info !== "object") return;
+
+      if (info.videoData?.errorCode) {
+        failCurrentStream();
+        return;
+      }
+      if (info.videoData?.isPlayable === false) {
+        failCurrentStream();
+        return;
+      }
+      if (typeof info.playerState === "number") {
+        setYtPlaying(info.playerState === 1);
+      }
+    };
+    window.addEventListener("message", onLofiMessage);
+    return () => window.removeEventListener("message", onLofiMessage);
+  }, [clearLofiTimers, failCurrentStream]);
+
+  useEffect(() => () => clearLofiTimers(), [clearLofiTimers]);
 
   // ---- source selection ----
   const chooseSource = useCallback(
@@ -373,39 +491,46 @@ export default function PomodoroMusic({
       if (next === "off") {
         setWantPlay(false);
         wantPlayRef.current = false;
-        playerRef.current?.pauseVideo();
-        setYtPlaying(false);
+        sendLofiCommand("pauseVideo");
+        resetLofiMount();
         spotifyPost("pause");
         return;
       }
       if (next === "lofi") {
         spotifyPost("pause");
-        if (mode === "focus" && running && playerRef.current) {
+        if (mode === "focus" && running && playerMounted) {
           setWantPlay(true);
           wantPlayRef.current = true;
         }
         return;
       }
-      playerRef.current?.pauseVideo();
-      setYtPlaying(false);
+      sendLofiCommand("pauseVideo");
+      resetLofiMount();
       if (mode === "focus" && running) {
         setWantPlay(true);
         wantPlayRef.current = true;
       }
     },
-    [mode, running, spotifyPost]
+    [
+      mode,
+      running,
+      spotifyPost,
+      sendLofiCommand,
+      resetLofiMount,
+      playerMounted,
+    ]
   );
 
   const toggleMusic = useCallback(() => {
     if (sourceRef.current === "off") return;
-    if (sourceRef.current === "lofi" && !playerRef.current) {
-      void mountLofiPlayer(true);
+    if (sourceRef.current === "lofi" && !playerMounted) {
+      startLofi();
       return;
     }
     const next = !wantPlayRef.current;
     setWantPlay(next);
     wantPlayRef.current = next;
-  }, [mountLofiPlayer]);
+  }, [playerMounted, startLofi]);
 
   const changeVolume = useCallback(
     (value: number) => {
@@ -493,16 +618,33 @@ export default function PomodoroMusic({
   const musicOn = wantPlay && !blockedByQuiz;
 
   useEffect(() => {
-    if (!mounted || status !== "ready") return;
-    const player = playerRef.current;
-    if (!player) return;
-    if (source === "lofi" && musicOn) {
-      player.setVolume(volumeRef.current);
-      player.playVideo();
-    } else {
-      player.pauseVideo();
+    if (
+      !mounted ||
+      status !== "ready" ||
+      source !== "lofi" ||
+      !playerMounted
+    ) {
+      return;
     }
-  }, [mounted, status, source, musicOn]);
+    // Give the widget a moment after onReady before accepting commands; the
+    // embed can answer the handshake a beat before its command channel is up.
+    const timer = window.setTimeout(() => {
+      if (musicOn) {
+        sendLofiCommand("setVolume", [volumeRef.current]);
+        sendLofiCommand("playVideo");
+      } else {
+        sendLofiCommand("pauseVideo");
+      }
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [
+    mounted,
+    status,
+    source,
+    musicOn,
+    playerMounted,
+    sendLofiCommand,
+  ]);
 
   useEffect(() => {
     if (!mounted || source !== "spotify") return;
@@ -511,11 +653,11 @@ export default function PomodoroMusic({
 
   useEffect(() => {
     volumeRef.current = volume;
-    if (source === "lofi" && playerRef.current) {
-      playerRef.current.setVolume(volume);
+    if (source === "lofi" && playerMounted) {
+      sendLofiCommand("setVolume", [volume]);
     }
     if (source === "spotify") spotifyPost("volume", volume);
-  }, [volume, source, spotifyPost]);
+  }, [volume, source, playerMounted, sendLofiCommand, spotifyPost]);
 
   // ---- now-playing badge in the page title during focus ----
   const focusRunning = mode === "focus" && running;
@@ -549,8 +691,17 @@ export default function PomodoroMusic({
 
   if (!mounted) return null;
 
+  const embedOrigin =
+    typeof window === "undefined" ? undefined : window.location.origin;
+  const currentVideoId =
+    LOFI_LIVE_VIDEO_IDS[videoIndex] ?? LOFI_LIVE_VIDEO_IDS[0];
+
+  const lofiBuffering =
+    source === "lofi" && wantPlay && !blockedByQuiz && !ytPlaying;
   const playingLabel = blockedByQuiz && wantPlay
     ? c.pausedForQuiz
+    : lofiBuffering
+    ? c.loading
     : musicOn
     ? c.playingNow
     : c.pausedMusic;
@@ -560,7 +711,7 @@ export default function PomodoroMusic({
       <div className="flex items-center gap-2 text-sm font-bold text-white">
         <Music2 className="h-4 w-4 text-cyan-400" />
         <span>{c.title}</span>
-        {musicOn && (
+        {musicOn && (source !== "lofi" || ytPlaying) && (
           <span className="ms-auto inline-flex items-center gap-1 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2 py-0.5 text-[9px] font-bold text-cyan-300">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-cyan-400" />
             {c.playingNow}
@@ -657,7 +808,7 @@ export default function PomodoroMusic({
                     </div>
                     <button
                       type="button"
-                      onClick={() => void mountLofiPlayer(true)}
+                      onClick={() => startLofi()}
                       disabled={status === "loading"}
                       className="shrink-0 rounded-lg bg-rose-500 px-2.5 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-rose-400 disabled:opacity-60"
                     >
@@ -672,6 +823,7 @@ export default function PomodoroMusic({
                     type="button"
                     onClick={toggleMusic}
                     disabled={status !== "ready"}
+                    data-testid="lofi-toggle"
                     className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-[11px] font-bold text-slate-200 transition-colors hover:bg-white/10 disabled:opacity-60"
                   >
                     {musicOn ? (
@@ -693,14 +845,27 @@ export default function PomodoroMusic({
               )}
             </>
           )}
-          {/* The mount node must exist even in the error state so Retry can
-              rebuild the player without remounting the whole music section. */}
-          <div
-            ref={wrapRef}
-            className={`mt-2 h-36 overflow-hidden rounded-xl border border-white/10 bg-black ${
-              playerMounted && status !== "error" ? "" : "hidden"
-            }`}
-          />
+          {playerMounted && status !== "error" && (
+            <div className="mt-2 h-36 overflow-hidden rounded-xl border border-white/10 bg-black">
+              <iframe
+                key={`${videoIndex}-${mountNonce}`}
+                ref={iframeRef}
+                src={lofiEmbedUrl(currentVideoId, embedOrigin)}
+                title={`${c.lofi} — 24/7`}
+                data-testid="lofi-iframe"
+                className="h-full w-full border-0"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                referrerPolicy="strict-origin-when-cross-origin"
+                onLoad={() =>
+                  postToLofi({
+                    event: "listening",
+                    id: LOFI_WIDGET_ID,
+                    channel: "widget",
+                  })
+                }
+              />
+            </div>
+          )}
         </div>
       )}
 
