@@ -251,6 +251,40 @@ test("quiz mute pauses playback while a quiz is visible", async ({ page }) => {
     .toContain("playVideo");
 });
 
+test("a blocked embed host retries the same stream on www.youtube.com", async ({
+  page,
+}) => {
+  await page.route("https://www.youtube-nocookie.com/embed/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/html; charset=utf-8",
+      body: "<!doctype html><html><body>blocked</body></html>",
+    })
+  );
+  await page.route("https://www.youtube.com/embed/**", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "text/html; charset=utf-8",
+      body: stubEmbed(),
+    })
+  );
+
+  await openPomodoro(page);
+  await chooseLofi(page);
+  await page.getByRole("button", { name: "Play Lofi Girl" }).click();
+
+  const iframe = page.getByTestId("lofi-iframe");
+  await expect
+    .poll(async () => (await iframe.getAttribute("src")) ?? "", {
+      timeout: 25_000,
+    })
+    .toContain(`https://www.youtube.com/embed/${PRIMARY_ID}`);
+
+  const toggle = page.getByTestId("lofi-toggle");
+  await expect(toggle).toBeEnabled();
+  await expect(toggle).toHaveText("Pause");
+});
+
 test("a dead primary stream falls back to the next official stream", async ({
   page,
 }) => {

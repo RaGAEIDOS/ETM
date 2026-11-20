@@ -62,8 +62,21 @@ export const LOFI_LIVE_URL = `https://www.youtube.com/watch?v=${LOFI_LIVE_VIDEO_
  * looks like a hang and breaks the timer-follow logic. The facade click mounts
  * this embed, then playback starts with a `playVideo` command once the player
  * reports `onReady`.
+ *
+ * Some networks block one embed host but not the other, so the player starts
+ * on the privacy-enhanced host and retries the same stream on `www.youtube.com`
+ * if no handshake arrives.
  */
-export function lofiEmbedUrl(videoId: string, origin?: string): string {
+export const LOFI_EMBED_HOSTS = [
+  "https://www.youtube-nocookie.com",
+  "https://www.youtube.com",
+] as const;
+
+export function lofiEmbedUrl(
+  videoId: string,
+  origin?: string,
+  host: string = LOFI_EMBED_HOSTS[0]
+): string {
   const params = new URLSearchParams({
     enablejsapi: "1",
     autoplay: "0",
@@ -73,7 +86,7 @@ export function lofiEmbedUrl(videoId: string, origin?: string): string {
     controls: "1",
   });
   if (origin) params.set("origin", origin);
-  return `https://www.youtube-nocookie.com/embed/${videoId}?${params.toString()}`;
+  return `${host}/embed/${videoId}?${params.toString()}`;
 }
 export const LOFI_UPLOADS_PLAYLIST_URL =
   "https://www.youtube.com/playlist?list=UUSJ4gkVC6NrvII8umztf0Ow";

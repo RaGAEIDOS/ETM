@@ -47,6 +47,7 @@ import {
   clampVolume,
   DEFAULT_MUSIC_VOLUME,
   formatClock,
+  LOFI_EMBED_HOSTS,
   LOFI_LIVE_URL,
   LOFI_LIVE_VIDEO_IDS,
   lofiEmbedUrl,
@@ -184,11 +185,13 @@ export default function PomodoroMusic({
   const [ytPlaying, setYtPlaying] = useState(false);
   const [spotifyReady, setSpotifyReady] = useState(false);
   const [videoIndex, setVideoIndex] = useState(0);
+  const [hostIndex, setHostIndex] = useState(0);
   const [mountNonce, setMountNonce] = useState(0);
 
   const spotifyRef = useRef<HTMLIFrameElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const videoIndexRef = useRef(0);
+  const hostIndexRef = useRef(0);
   const failureHandledRef = useRef(false);
   const handshakeTimerRef = useRef<number | null>(null);
   const readyTimeoutRef = useRef<number | null>(null);
@@ -326,7 +329,9 @@ export default function PomodoroMusic({
     clearLofiTimers();
     failureHandledRef.current = false;
     videoIndexRef.current = 0;
+    hostIndexRef.current = 0;
     setVideoIndex(0);
+    setHostIndex(0);
     setPlayerMounted(false);
     setStatus("idle");
     setYtPlaying(false);
@@ -337,7 +342,9 @@ export default function PomodoroMusic({
     clearLofiTimers();
     failureHandledRef.current = false;
     videoIndexRef.current = 0;
+    hostIndexRef.current = 0;
     setVideoIndex(0);
+    setHostIndex(0);
     setWantPlay(true);
     wantPlayRef.current = true;
     setPlayerMounted(true);
@@ -346,8 +353,8 @@ export default function PomodoroMusic({
     setMountNonce((value) => value + 1);
   }, [clearLofiTimers]);
 
-  /** Advance to the next official stream, or surface the manual error UI. */
-  const failCurrentStream = useCallback(() => {
+  /** Move to the next official stream after an explicit player error. */
+  const advanceStream = useCallback(() => {
     if (failureHandledRef.current) return;
     failureHandledRef.current = true;
     clearLofiTimers();
@@ -363,11 +370,32 @@ export default function PomodoroMusic({
     setStatus("error");
   }, [clearLofiTimers]);
 
+  /**
+   * No handshake can mean a dead stream or a blocked embed host. Retry the same
+   * stream once on `www.youtube.com` before moving down the stream chain.
+   */
+  const failCurrentStream = useCallback(() => {
+    if (failureHandledRef.current) return;
+    if (hostIndexRef.current === 0) {
+      failureHandledRef.current = true;
+      clearLofiTimers();
+      setYtPlaying(false);
+      hostIndexRef.current = 1;
+      setHostIndex(1);
+      setMountNonce((value) => value + 1);
+      setStatus("loading");
+      return;
+    }
+    advanceStream();
+  }, [advanceStream, clearLofiTimers]);
+
   const retryLofi = useCallback(() => {
     clearLofiTimers();
     failureHandledRef.current = false;
     videoIndexRef.current = 0;
+    hostIndexRef.current = 0;
     setVideoIndex(0);
+    setHostIndex(0);
     setMountNonce((value) => value + 1);
     setPlayerMounted(true);
     setStatus("loading");
@@ -411,6 +439,7 @@ export default function PomodoroMusic({
     source,
     playerMounted,
     videoIndex,
+    hostIndex,
     mountNonce,
     postToLofi,
     failCurrentStream,
@@ -445,7 +474,7 @@ export default function PomodoroMusic({
       }
 
       if (message.event === "onError") {
-        failCurrentStream();
+        advanceStream();
         return;
       }
 
@@ -464,11 +493,11 @@ export default function PomodoroMusic({
       if (typeof info !== "object") return;
 
       if (info.videoData?.errorCode) {
-        failCurrentStream();
+        advanceStream();
         return;
       }
       if (info.videoData?.isPlayable === false) {
-        failCurrentStream();
+        advanceStream();
         return;
       }
       if (typeof info.playerState === "number") {
@@ -477,7 +506,7 @@ export default function PomodoroMusic({
     };
     window.addEventListener("message", onLofiMessage);
     return () => window.removeEventListener("message", onLofiMessage);
-  }, [clearLofiTimers, failCurrentStream]);
+  }, [advanceStream, clearLofiTimers]);
 
   useEffect(() => () => clearLofiTimers(), [clearLofiTimers]);
 
@@ -848,9 +877,13 @@ export default function PomodoroMusic({
           {playerMounted && status !== "error" && (
             <div className="mt-2 h-36 overflow-hidden rounded-xl border border-white/10 bg-black">
               <iframe
-                key={`${videoIndex}-${mountNonce}`}
+                key={`${videoIndex}-${hostIndex}-${mountNonce}`}
                 ref={iframeRef}
-                src={lofiEmbedUrl(currentVideoId, embedOrigin)}
+                src={lofiEmbedUrl(
+                  currentVideoId,
+                  embedOrigin,
+                  LOFI_EMBED_HOSTS[hostIndex]
+                )}
                 title={`${c.lofi} — 24/7`}
                 data-testid="lofi-iframe"
                 className="h-full w-full border-0"
