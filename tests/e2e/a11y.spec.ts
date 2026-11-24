@@ -22,6 +22,8 @@ const PAGES = [
   ["leaderboard", "/leaderboard"],
   ["playground", "/playground"],
   ["books", "/books"],
+  ["books-dopamine-nation", "/books/self-development/dopamine-nation"],
+  ["books-48-laws", "/books/self-development/48-laws-of-power"],
   ["dashboard", "/dashboard"],
   ["glossary", "/glossary"],
   ["islamic-studies", "/islamic-studies"],

@@ -4,9 +4,9 @@
   "private": true,
   "description": "ETM - منصة تعليم البرمجة من الصفر إلى الاحتراف بلغة C++",
   "scripts": {
-    "predev": "node scripts/generate-logo-assets.mjs && node scripts/generate-mascot-manifest.mjs",
+    "predev": "node scripts/generate-logo-assets.mjs && node scripts/generate-mascot-manifest.mjs && node scripts/copy-pdf-worker.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/generate-logo-assets.mjs && node scripts/generate-mascot-manifest.mjs",
+    "prebuild": "node scripts/generate-logo-assets.mjs && node scripts/generate-mascot-manifest.mjs && node scripts/copy-pdf-worker.mjs",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -18,6 +18,7 @@
   "dependencies": {
     "lucide-react": "0.454.0",
     "next": "^14.2.35",
+    "pdfjs-dist": "3.11.174",
     "prismjs": "1.29.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",

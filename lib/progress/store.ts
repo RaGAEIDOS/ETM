@@ -270,6 +270,42 @@ export function saveVideoProgress(
   saveProgressFile(file);
 }
 
+/**
+ * Save the current page of a hosted book. Like video positions, only the
+ * latest bookmark is kept per book so the event log stays small.
+ */
+export function saveBookProgress(bookId: string, page: number, total: number): void {
+  if (typeof window === "undefined") return;
+  const safePage = Math.max(1, Math.floor(page));
+  const safeTotal = Math.max(0, Math.floor(total));
+  const file = loadProgressFile();
+  let found: ProgressEvent | undefined;
+  for (let i = file.events.length - 1; i >= 0; i -= 1) {
+    const e = file.events[i];
+    if (e.track === "books" && e.type === "book_progress" && e.itemId === bookId) {
+      found = e;
+      break;
+    }
+  }
+  const at = new Date().toISOString();
+  const payload = { page: safePage, total: safeTotal };
+  if (found) {
+    found.payload = payload;
+    found.at = at;
+  } else {
+    file.events.push({
+      id: newEventId(),
+      v: 2,
+      track: "books",
+      type: "book_progress",
+      itemId: bookId,
+      payload,
+      at,
+    });
+  }
+  saveProgressFile(file);
+}
+
 export function toggleCompletion(track: Track, itemId: string, topic?: string): boolean {
   if (typeof window === "undefined") return false;
   const file = loadProgressFile();

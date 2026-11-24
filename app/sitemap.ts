@@ -7,6 +7,7 @@ import { CS50X_LECTURES } from "@/lib/cs50x";
 import { linuxVideos } from "@/lib/linux-videos";
 import { paCourses, paVideos } from "@/lib/programmingadvices-videos";
 import { allReligiousLessons, religiousCourses } from "@/lib/religious";
+import { SELF_DEVELOPMENT_BOOKS } from "@/lib/self-development";
 
 const BASE_URL = "https://etm-learning.vercel.app";
 
@@ -91,6 +92,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
   allReligiousLessons().forEach(({ lesson }) => {
     entries.push(entry(`/islamic-studies/${lesson.id}`, "monthly", 0.5));
+  });
+  SELF_DEVELOPMENT_BOOKS.forEach((book) => {
+    entries.push(entry(`/books/self-development/${book.slug}`, "monthly", 0.6));
   });
   stages.forEach((stage) => {
     entries.push(entry(`/learn/${stage.id}`, "weekly", 0.8));

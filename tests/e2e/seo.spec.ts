@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("SEO and sharing", () => {
   const PAGES = [
     ["/en", "ETM"],
-    ["/en/books", "Free Books"],
+    ["/en/books", "Books"],
     ["/en/elzero", "ElZero"],
     ["/en/glossary", "Glossary"],
   ] as const;

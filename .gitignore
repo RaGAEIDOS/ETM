@@ -12,3 +12,4 @@ tsconfig.tsbuildinfo
 *.tsbuildinfo
 test-results/
 playwright-report/
+public/library/pdf.worker.min.js

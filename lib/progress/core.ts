@@ -34,6 +34,7 @@ export type EventType =
   | "exercise_run" // payload: { success: boolean, exerciseId?: string }
   | "term_review" // payload: { term: string, known: boolean }
   | "book_status" // payload: { status: "want" | "reading" | "read" }
+  | "book_progress" // payload: { page: number, total: number }
   | "focus_session" // payload: { minutes: number }
   | "activity"; // generic "learner was here" heartbeat
 
@@ -602,6 +603,38 @@ export function lastEventFor(events: ProgressEvent[], track: Track): ProgressEve
     if (!best || e.at > best.at || (e.at === best.at && e.id > best.id)) best = e;
   }
   return best;
+}
+
+export interface BookProgress {
+  page: number;
+  total: number;
+  at: string;
+}
+
+/**
+ * Latest saved page for a hosted book. Pages are stored as `book_progress`
+ * events on the `books` track, keyed by the book slug.
+ */
+export function latestBookProgress(
+  events: ProgressEvent[],
+  bookId: string
+): BookProgress | null {
+  let best: ProgressEvent | null = null;
+  for (const e of events) {
+    if (e.track !== "books" || e.type !== "book_progress" || e.itemId !== bookId) {
+      continue;
+    }
+    const page = Number(e.payload?.page);
+    if (!Number.isFinite(page) || page < 1) continue;
+    if (!best || e.at > best.at || (e.at === best.at && e.id > best.id)) best = e;
+  }
+  if (!best) return null;
+  const total = Number(best.payload?.total);
+  return {
+    page: Math.floor(Number(best.payload?.page)),
+    total: Number.isFinite(total) && total > 0 ? Math.floor(total) : 0,
+    at: best.at,
+  };
 }
 
 /** Last event overall across all tracks. */
