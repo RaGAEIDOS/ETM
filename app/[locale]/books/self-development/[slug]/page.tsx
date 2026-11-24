@@ -244,7 +244,8 @@ export default function SelfDevelopmentBookPage({
         className={`mt-10 rounded-2xl border ${accent.border} bg-gradient-to-br ${accent.gradient} p-6`}
       >
         <Quote className={`h-6 w-6 ${accent.icon}`} />
-        <p className="mt-3 text-base font-bold leading-8 text-white" dir="rtl">
+        <p className="mt-2 text-xs font-bold text-slate-400">{c.takeaway}</p>
+        <p className="mt-2 text-base font-bold leading-8 text-white" dir="rtl">
           {book.takeaway}
         </p>
       </div>
